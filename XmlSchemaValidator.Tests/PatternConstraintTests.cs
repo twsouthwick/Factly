@@ -11,6 +11,7 @@ namespace XmlSchemaValidator
         [InlineData(null, true)]
         [InlineData("", true)]
         [InlineData("hello", false)]
+        [InlineData("helllo", false)]
         [InlineData("Hello", true)]
         public void SimplePatternTests(string testValue, bool isError)
         {
@@ -26,7 +27,7 @@ namespace XmlSchemaValidator
                 PatternErrors = new DelegateObserver<PatternValidationError>(error =>
                 {
                     Assert.True(isError);
-                    Assert.Equal("hello", error.Pattern.ToString(), StringComparer.Ordinal);
+                    Assert.Equal("he.*lo", error.Pattern.ToString(), StringComparer.Ordinal);
                     Assert.Equal(testValue, (string)error.Value, StringComparer.Ordinal);
                     Assert.Same(item, error.Instance);
 
@@ -130,7 +131,7 @@ namespace XmlSchemaValidator
 
         private class Test1
         {
-            [Regex("hello")]
+            [Regex("he.*lo")]
             public string Test { get; set; }
         }
 
