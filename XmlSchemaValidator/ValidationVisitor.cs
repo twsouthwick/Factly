@@ -8,16 +8,24 @@ namespace XmlSchemaValidator
         private readonly ValidationContext _context;
         private readonly ValidatorBuilder _builder;
         private readonly HashSet<object> _visited;
+        private readonly ValidationResult _result;
 
         public ValidationVisitor(ValidationContext context, in ValidatorBuilder builder)
         {
             _context = context;
             _builder = builder;
             _visited = new HashSet<object>();
-            Result = new ValidationResult();
+            _result = new ValidationResult();
         }
 
-        public ValidationResult Result { get; }
+        public ValidationResult Result
+        {
+            get
+            {
+                _result.ObjectsTested = _visited.Count;
+                return _result;
+            }
+        }
 
         public void Validate(object instance)
         {
@@ -25,8 +33,6 @@ namespace XmlSchemaValidator
             {
                 return;
             }
-
-            Result.ObjectsTested++;
 
             var recurse = new RecurseList<object>();
 
