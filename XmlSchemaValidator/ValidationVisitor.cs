@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace XmlSchemaValidator
 {
-    internal readonly struct ValidationVisitor
+    internal partial struct ValidationVisitor
     {
         private readonly ValidationContext _context;
         private readonly ValidatorBuilder _builder;
@@ -28,7 +28,7 @@ namespace XmlSchemaValidator
 
             Result.ObjectsTested++;
 
-            var recurse = new List<object>();
+            var recurse = new RecurseList<object>();
 
             foreach (var property in instance.GetType().GetProperties())
             {
