@@ -2,11 +2,11 @@
 {
     public static class ValidatorBuilderExtensions
     {
-        public static ValidatorBuilder AddRecursiveDescent<T>(this ValidatorBuilder builder)
+        public static ValidatorBuilder WithDescendants<T>(this ValidatorBuilder builder)
         {
             return builder.WithDescendents(propertyInfo =>
             {
-                return typeof(T) == propertyInfo.PropertyType;
+                return typeof(T).IsAssignableFrom(propertyInfo.PropertyType);
             });
         }
     }
