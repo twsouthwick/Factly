@@ -1,4 +1,6 @@
-﻿namespace XmlSchemaValidator
+﻿using System;
+
+namespace XmlSchemaValidator
 {
     public class Validator
     {
@@ -11,24 +13,24 @@
 
         public void Validate<T>(T item, ValidationContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             var visitor = new ValidationProcessor(context, _builder);
 
             visitor.Validate(item);
+            context.OnCompleted();
         }
 
         public ValidationResult Validate<T>(T item)
         {
-            var observer = new DefaultValidationObserver();
-            var context = new ValidationContext
-            {
-                Observer = observer
-            };
+            var context = new DefaultValidationContext();
 
-            var visitor = new ValidationProcessor(context, _builder);
+            Validate(item, context);
 
-            visitor.Validate(item);
-
-            return observer.ToResult();
+            return context.GetResult();
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Xunit;
 
@@ -20,19 +21,17 @@ namespace XmlSchemaValidator
             var item = new Test1 { Test = testValue };
             var issueRaised = 0;
 
-            var observer = new TestValidationObserver((instance, pattern, value) =>
-            {
-                Assert.True(isError);
-                Assert.Equal("hello", pattern.ToString(), StringComparer.Ordinal);
-                Assert.Equal(testValue, value, StringComparer.Ordinal);
-                Assert.Same(item, instance);
-
-                issueRaised++;
-            });
-
             var context = new ValidationContext
             {
-                Observer = observer
+                PatternErrors = new DelegateObserver<PatternValidationError>(error =>
+                {
+                    Assert.True(isError);
+                    Assert.Equal("hello", error.Pattern.ToString(), StringComparer.Ordinal);
+                    Assert.Equal(testValue, (string)error.Value, StringComparer.Ordinal);
+                    Assert.Same(item, error.Instance);
+
+                    issueRaised++;
+                })
             };
 
             validator.Validate(item, context);
@@ -72,6 +71,46 @@ namespace XmlSchemaValidator
             Assert.Equal(error.Id, StructuralErrors.PatternAppliedToNonString);
             Assert.Equal(error.Instance, item);
             Assert.Equal(error.Property, item.GetType().GetProperty(nameof(TestNotString.Other)));
+        }
+
+        [Fact]
+        public void PatternNoObserverNotString()
+        {
+            var validator = ValidatorBuilder.Create()
+                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .Build();
+
+            var item = new TestNotString();
+            var items = new List<object>();
+            var context = new ValidationContext
+            {
+                Items = new DelegateObserver<object>(items.Add)
+            };
+
+            validator.Validate(item, context);
+
+            var single = Assert.Single(items);
+            Assert.Same(item, single);
+        }
+
+        [Fact]
+        public void PatternNoObserver()
+        {
+            var validator = ValidatorBuilder.Create()
+                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .Build();
+
+            var item = new Test1();
+            var items = new List<object>();
+            var context = new ValidationContext
+            {
+                Items = new DelegateObserver<object>(items.Add)
+            };
+
+            validator.Validate(item, context);
+
+            var single = Assert.Single(items);
+            Assert.Same(item, single);
         }
 
         private class RegexAttribute : Attribute

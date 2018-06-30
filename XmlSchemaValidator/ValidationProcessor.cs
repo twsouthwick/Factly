@@ -13,7 +13,7 @@ namespace XmlSchemaValidator
         {
             _builder = builder;
             _visited = new HashSet<object>();
-            _context = context.Copy();
+            _context = context ?? new DefaultValidationContext();
         }
 
         public void Validate(object instance)
@@ -23,7 +23,7 @@ namespace XmlSchemaValidator
                 return;
             }
 
-            _context.Observer.ItemVisited(instance);
+            _context.Items?.OnNext(instance);
 
             var childrenList = new DescendantList<object>();
 
@@ -52,7 +52,7 @@ namespace XmlSchemaValidator
         {
             if (property.PropertyType != typeof(string))
             {
-                _context.Observer.StructuralError(new StructuralError(StructuralErrors.PatternAppliedToNonString, instance, property));
+                _context.StructuralErrors?.OnNext(new StructuralError(StructuralErrors.PatternAppliedToNonString, instance, property));
                 return;
             }
 
@@ -65,10 +65,9 @@ namespace XmlSchemaValidator
 
             var value = (string)propertyValue;
 
-
             if (value == null || !pattern.IsMatch(value))
             {
-                _context.Observer.InvalidPattern(instance, property, pattern, value);
+                _context.PatternErrors?.OnNext(new PatternValidationError(instance, property, pattern, propertyValue));
             }
         }
     }
