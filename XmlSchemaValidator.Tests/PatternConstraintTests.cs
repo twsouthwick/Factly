@@ -43,6 +43,20 @@ namespace XmlSchemaValidator
             Assert.Equal(1, result.ObjectsTested);
         }
 
+        [Fact]
+        public void NoPattern()
+        {
+            var validator = ValidatorBuilder.Create()
+                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .Build();
+
+            var item = new TestNoPattern { Test = "hello" };
+            var result = validator.Validate(item);
+
+            Assert.Equal(0, result.TotalErrors);
+            Assert.Equal(1, result.ObjectsTested);
+        }
+
         private class RegexAttribute : Attribute
         {
             public RegexAttribute(string pattern)
@@ -51,6 +65,11 @@ namespace XmlSchemaValidator
             }
 
             public string Pattern { get; }
+        }
+
+        private class TestNoPattern
+        {
+            public string Test { get; set; }
         }
 
         private class Test1
