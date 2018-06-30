@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace XmlSchemaValidator
 {
-    internal class ValidationErrorFilterObserver : ValidationObserver
+    internal readonly struct ValidationVisitor
     {
         private readonly ValidationContext _context;
         private readonly ValidatorBuilder _builder;
         private readonly HashSet<object> _visited;
 
-        public ValidationErrorFilterObserver(ValidationContext context, in ValidatorBuilder builder)
+        public ValidationVisitor(ValidationContext context, in ValidatorBuilder builder)
         {
             _context = context;
             _builder = builder;
             _visited = new HashSet<object>();
+            Result = new ValidationResult();
         }
 
-        public ValidationResult Result { get; } = new ValidationResult();
+        public ValidationResult Result { get; }
 
         public void Validate(object instance)
         {
@@ -35,9 +36,7 @@ namespace XmlSchemaValidator
 
                 if (_builder.Pattern is PatternConstraint pattern)
                 {
-                    var regex = pattern.GetRegex(property);
-
-                    InvalidPattern(instance, regex, (string)propertyValue);
+                    ValidatePattern(pattern, instance, property, propertyValue);
                 }
 
                 if (propertyValue != null && _builder.RecursiveHandler?.Invoke(property) == true)
@@ -52,12 +51,16 @@ namespace XmlSchemaValidator
             }
         }
 
-        public override void InvalidPattern(object instance, Regex pattern, string value)
+        private void ValidatePattern(PatternConstraint constraint, object instance, PropertyInfo property, object propertyValue)
         {
+            var pattern = constraint.GetRegex(property);
+
             if (pattern == null)
             {
                 return;
             }
+
+            var value = (string)propertyValue;
 
             if (value == null || !pattern.IsMatch(value))
             {

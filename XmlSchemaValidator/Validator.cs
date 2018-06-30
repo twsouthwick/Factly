@@ -13,7 +13,7 @@
 
         public ValidationResult Validate<T>(ValidationContext context, T item)
         {
-            var observer = new ValidationErrorFilterObserver(context, _builder);
+            var observer = new ValidationVisitor(context, _builder);
 
             observer.Validate(item);
 
