@@ -3,6 +3,20 @@ using System.Reflection;
 
 namespace XmlSchemaValidator
 {
+    internal class DefaultValidationObserver : ValidationObserver
+    {
+        private readonly ValidationResult _result;
+
+        internal DefaultValidationObserver(ValidationResult result)
+        {
+            _result = result;
+        }
+
+        public override void StructuralError(ValidationError error)
+        {
+            _result.AddStructuralError(error);
+        }
+    }
     internal partial struct ValidationVisitor
     {
         private readonly ValidationContext _context;
@@ -12,10 +26,10 @@ namespace XmlSchemaValidator
 
         public ValidationVisitor(ValidationContext context, in ValidatorBuilder builder)
         {
-            _context = context;
             _builder = builder;
             _visited = new HashSet<object>();
             _result = new ValidationResult();
+            _context = context.Copy(_result);
         }
 
         public ValidationResult Result
@@ -59,6 +73,12 @@ namespace XmlSchemaValidator
 
         private void ValidatePattern(PatternConstraint constraint, object instance, PropertyInfo property, object propertyValue)
         {
+            if (property.PropertyType != typeof(string))
+            {
+                _context.Observer.StructuralError(new ValidationError(ValidationErrors.PatternAppliedToNonString, instance, property));
+                return;
+            }
+
             var pattern = constraint.GetRegex(property);
 
             if (pattern == null)
@@ -67,6 +87,7 @@ namespace XmlSchemaValidator
             }
 
             var value = (string)propertyValue;
+
 
             if (value == null || !pattern.IsMatch(value))
             {

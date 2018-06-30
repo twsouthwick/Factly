@@ -57,6 +57,25 @@ namespace XmlSchemaValidator
             Assert.Equal(1, result.ObjectsTested);
         }
 
+        [Fact]
+        public void PatternNotString()
+        {
+            var validator = ValidatorBuilder.Create()
+                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .Build();
+
+            var item = new TestNotString();
+            var result = validator.Validate(item);
+
+            Assert.Equal(0, result.TotalErrors);
+            Assert.Equal(1, result.ObjectsTested);
+            var error = Assert.Single(result.StructuralErrors);
+
+            Assert.Equal(error.Id, ValidationErrors.PatternAppliedToNonString);
+            Assert.Equal(error.Instance, item);
+            Assert.Equal(error.Property, item.GetType().GetProperty(nameof(TestNotString.Other)));
+        }
+
         private class RegexAttribute : Attribute
         {
             public RegexAttribute(string pattern)
@@ -76,6 +95,12 @@ namespace XmlSchemaValidator
         {
             [Regex("hello")]
             public string Test { get; set; }
+        }
+
+        private class TestNotString
+        {
+            [Regex("hello")]
+            public int Other { get; set; }
         }
     }
 }
