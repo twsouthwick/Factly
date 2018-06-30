@@ -3,13 +3,13 @@ using System.Reflection;
 
 namespace XmlSchemaValidator
 {
-    internal partial struct ValidationVisitor
+    internal readonly struct ValidationProcessor
     {
         private readonly ValidationContext _context;
         private readonly ValidatorBuilder _builder;
         private readonly HashSet<object> _visited;
 
-        public ValidationVisitor(ValidationContext context, in ValidatorBuilder builder)
+        public ValidationProcessor(ValidationContext context, in ValidatorBuilder builder)
         {
             _builder = builder;
             _visited = new HashSet<object>();

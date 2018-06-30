@@ -11,7 +11,7 @@
 
         public void Validate<T>(T item, ValidationContext context)
         {
-            var visitor = new ValidationVisitor(context, _builder);
+            var visitor = new ValidationProcessor(context, _builder);
 
             visitor.Validate(item);
         }
@@ -24,7 +24,7 @@
                 Observer = observer
             };
 
-            var visitor = new ValidationVisitor(context, _builder);
+            var visitor = new ValidationProcessor(context, _builder);
 
             visitor.Validate(item);
 
