@@ -69,7 +69,7 @@ namespace XmlSchemaValidator
             Assert.Empty(result.Errors);
             var error = Assert.Single(result.StructuralErrors);
 
-            Assert.Equal(error.Id, ValidationErrors.PatternAppliedToNonString);
+            Assert.Equal(error.Id, StructuralErrors.PatternAppliedToNonString);
             Assert.Equal(error.Instance, item);
             Assert.Equal(error.Property, item.GetType().GetProperty(nameof(TestNotString.Other)));
         }

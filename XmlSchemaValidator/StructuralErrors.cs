@@ -1,6 +1,6 @@
 ﻿namespace XmlSchemaValidator
 {
-    public static class ValidationErrors
+    public static class StructuralErrors
     {
         public const string PatternAppliedToNonString = "E0001";
     }

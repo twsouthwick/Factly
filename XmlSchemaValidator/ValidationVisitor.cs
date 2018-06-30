@@ -52,7 +52,7 @@ namespace XmlSchemaValidator
         {
             if (property.PropertyType != typeof(string))
             {
-                _context.Observer.StructuralError(new StructuralError(ValidationErrors.PatternAppliedToNonString, instance, property));
+                _context.Observer.StructuralError(new StructuralError(StructuralErrors.PatternAppliedToNonString, instance, property));
                 return;
             }
 
