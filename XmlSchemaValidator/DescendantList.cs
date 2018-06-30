@@ -4,7 +4,7 @@ namespace XmlSchemaValidator
 {
     internal partial struct ValidationVisitor
     {
-        internal struct RecurseList<T>
+        internal struct DescendantList<T>
         {
             private static readonly List<T> _default = new List<T>(0);
             private List<T> _list;

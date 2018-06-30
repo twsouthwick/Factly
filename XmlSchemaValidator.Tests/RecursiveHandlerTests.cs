@@ -69,7 +69,7 @@ namespace XmlSchemaValidator
         private Validator GetValidator()
         {
             return ValidatorBuilder.Create()
-                .AddRecursiveDescent(_ => true)
+                .WithDescendents(_ => true)
                 .Build();
         }
 

@@ -7,38 +7,38 @@ namespace XmlSchemaValidator
     {
         private ValidatorBuilder(
             PatternConstraint pattern,
-            Func<PropertyInfo, bool> recursiveHandler
+            Func<PropertyInfo, bool> isDescendant
             )
         {
             Pattern = pattern;
-            RecursiveHandler = recursiveHandler;
+            IsDescendant = isDescendant;
         }
 
         internal PatternConstraint Pattern { get; }
 
-        internal Func<PropertyInfo, bool> RecursiveHandler { get; }
+        internal Func<PropertyInfo, bool> IsDescendant { get; }
 
         public static ValidatorBuilder Create() => default;
 
-        public ValidatorBuilder AddRegexConstraint<T>(Func<T, string> patternFunc)
+        public ValidatorBuilder WithRegexConstraint<T>(Func<T, string> patternConstraint)
             where T : Attribute
         {
-            return CreateNew(pattern: new PatternConstraint<T>(patternFunc));
+            return CreateNew(pattern: new PatternConstraint<T>(patternConstraint));
         }
 
-        public ValidatorBuilder AddRecursiveDescent(Func<PropertyInfo, bool> recursiveHandler)
+        public ValidatorBuilder WithDescendents(Func<PropertyInfo, bool> isDescendant)
         {
-            return CreateNew(recursiveHandler: recursiveHandler);
+            return CreateNew(isDescendant: isDescendant);
         }
 
         private ValidatorBuilder CreateNew(
             PatternConstraint pattern = null,
-            Func<PropertyInfo, bool> recursiveHandler = null
+            Func<PropertyInfo, bool> isDescendant = null
             )
         {
             return new ValidatorBuilder(
                 pattern ?? Pattern,
-                recursiveHandler ?? RecursiveHandler
+                isDescendant ?? IsDescendant
                 );
         }
 

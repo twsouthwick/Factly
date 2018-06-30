@@ -4,7 +4,7 @@
     {
         public static ValidatorBuilder AddRecursiveDescent<T>(this ValidatorBuilder builder)
         {
-            return builder.AddRecursiveDescent(propertyInfo =>
+            return builder.WithDescendents(propertyInfo =>
             {
                 return typeof(T) == propertyInfo.PropertyType;
             });

@@ -34,7 +34,7 @@ namespace XmlSchemaValidator
                 return;
             }
 
-            var recurse = new RecurseList<object>();
+            var childrenList = new DescendantList<object>();
 
             foreach (var property in instance.GetType().GetProperties())
             {
@@ -45,13 +45,13 @@ namespace XmlSchemaValidator
                     ValidatePattern(pattern, instance, property, propertyValue);
                 }
 
-                if (propertyValue != null && _builder.RecursiveHandler?.Invoke(property) == true)
+                if (propertyValue != null && _builder.IsDescendant?.Invoke(property) == true)
                 {
-                    recurse.Add(propertyValue);
+                    childrenList.Add(propertyValue);
                 }
             }
 
-            foreach (var item in recurse)
+            foreach (var item in childrenList)
             {
                 Validate(item);
             }

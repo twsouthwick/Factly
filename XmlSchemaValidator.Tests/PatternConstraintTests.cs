@@ -14,7 +14,7 @@ namespace XmlSchemaValidator
         public void SimplePatternTests(string testValue, bool isError)
         {
             var validator = ValidatorBuilder.Create()
-                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
                 .Build();
 
             var item = new Test1 { Test = testValue };
