@@ -2,5 +2,6 @@
 {
     public class ValidationContext
     {
+        public ValidationObserver Observer { get; set; }
     }
 }

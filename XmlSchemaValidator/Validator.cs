@@ -13,7 +13,9 @@
 
         public ValidationResult Validate<T>(ValidationContext context, T item)
         {
-            return default;
+            var result = new ValidationResult();
+
+            return result;
         }
     }
 }
