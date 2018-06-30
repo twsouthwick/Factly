@@ -11,7 +11,7 @@ namespace XmlSchemaValidator
         [InlineData("", true)]
         [InlineData("hello", false)]
         [InlineData("Hello", true)]
-        public void Test1(string testValue, bool isError)
+        public void SimplePatternTests(string testValue, bool isError)
         {
             var validator = ValidatorBuilder.Create()
                 .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
@@ -40,38 +40,23 @@ namespace XmlSchemaValidator
 
             Assert.Equal(expectedCount, issueRaised);
             Assert.Equal(expectedCount, result.TotalErrors);
+            Assert.Equal(1, result.ObjectsTested);
         }
 
-        private class TestValidationObserver : ValidationObserver
+        private class RegexAttribute : Attribute
         {
-            private readonly Action<object, Regex, string> _invalidPattern;
-
-            public TestValidationObserver(
-                Action<object, Regex, string> invalidPattern)
+            public RegexAttribute(string pattern)
             {
-                _invalidPattern = invalidPattern;
+                Pattern = pattern;
             }
 
-            public override void InvalidPattern(object instance, Regex pattern, string value)
-            {
-                _invalidPattern?.Invoke(instance, pattern, value);
-            }
+            public string Pattern { get; }
         }
-    }
 
-    public class RegexAttribute : Attribute
-    {
-        public RegexAttribute(string pattern)
+        private class Test1
         {
-            Pattern = pattern;
+            [Regex("hello")]
+            public string Test { get; set; }
         }
-
-        public string Pattern { get; }
-    }
-
-    public class Test1
-    {
-        [Regex("hello")]
-        public string Test { get; set; }
     }
 }
