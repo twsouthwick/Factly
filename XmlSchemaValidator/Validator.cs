@@ -9,14 +9,14 @@
             _builder = builder;
         }
 
-        public ValidationResult Validate<T>(T item) => ValidateInternal(default, item);
+        public ValidationResult Validate<T>(T item) => ValidateInternal(item, default);
 
-        public void Validate<T>(ValidationContext context, T item)
+        public void Validate<T>(T item, ValidationContext context)
         {
-            ValidateInternal(context, item);
+            ValidateInternal(item, context);
         }
 
-        public ValidationResult ValidateInternal<T>(ValidationContext context, T item)
+        private ValidationResult ValidateInternal<T>(T item, ValidationContext context)
         {
             var observer = new ValidationVisitor(context, _builder);
 
