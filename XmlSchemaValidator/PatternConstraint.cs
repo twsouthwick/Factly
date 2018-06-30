@@ -1,16 +1,25 @@
 ﻿using System;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace XmlSchemaValidator
 {
-    internal class PatternConstraint<T> : IPatternConstraint
+    internal abstract class PatternConstraint
     {
-        private readonly Func<T, string> _pattern;
+        protected abstract string GetPattern(object obj);
 
-        public PatternConstraint(Func<T, string> patternFunc)
+        protected abstract Type Type { get; }
+
+        public Regex GetRegex(PropertyInfo property)
         {
-            _pattern = patternFunc;
-        }
+            var attribute = property.GetCustomAttribute(Type);
 
-        public string GetPattern(object obj) => _pattern((T)obj);
+            if (attribute is null)
+            {
+                return null;
+            }
+
+            return new Regex(GetPattern(attribute), RegexOptions.Compiled);
+        }
     }
 }

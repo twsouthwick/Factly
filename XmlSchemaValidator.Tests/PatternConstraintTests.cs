@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using Xunit;
 
 namespace XmlSchemaValidator
@@ -8,26 +9,33 @@ namespace XmlSchemaValidator
         [Theory]
         [InlineData(null, true)]
         [InlineData("", true)]
-        [InlineData("hello", true)]
-        public void Test1(string pattern, bool isError)
+        [InlineData("hello", false)]
+        [InlineData("Hello", true)]
+        public void Test1(string testValue, bool isError)
         {
             var validator = ValidatorBuilder.Create()
                 .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
                 .Build();
 
-            var item = new Test1 { Test = pattern };
+            var item = new Test1 { Test = testValue };
             var issueRaised = 0;
 
-            var context = new TestValidationObserver((instance, expected, actual) =>
+            var observer = new TestValidationObserver((instance, pattern, value) =>
             {
                 Assert.True(isError);
-                Assert.Equal(pattern, expected);
-                Assert.Equal("hello", actual, StringComparer.Ordinal);
+                Assert.Equal("hello", pattern.ToString(), StringComparer.Ordinal);
+                Assert.Equal(testValue, value, StringComparer.Ordinal);
+                Assert.Same(item, instance);
 
                 issueRaised++;
             });
 
-            var result = validator.Validate(item);
+            var context = new ValidationContext
+            {
+                Observer = observer
+            };
+
+            var result = validator.Validate(context, item);
             var expectedCount = isError ? 1 : 0;
 
             Assert.Equal(expectedCount, issueRaised);
@@ -36,17 +44,17 @@ namespace XmlSchemaValidator
 
         private class TestValidationObserver : ValidationObserver
         {
-            private readonly Action<object, string, string> _invalidPattern;
+            private readonly Action<object, Regex, string> _invalidPattern;
 
             public TestValidationObserver(
-                Action<object, string, string> invalidPattern)
+                Action<object, Regex, string> invalidPattern)
             {
                 _invalidPattern = invalidPattern;
             }
 
-            public override void InvalidPattern(object instance, string expected, string actual)
+            public override void InvalidPattern(object instance, Regex pattern, string value)
             {
-                _invalidPattern?.Invoke(instance, expected, actual);
+                _invalidPattern?.Invoke(instance, pattern, value);
             }
         }
     }

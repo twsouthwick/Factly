@@ -13,9 +13,11 @@
 
         public ValidationResult Validate<T>(ValidationContext context, T item)
         {
-            var result = new ValidationResult();
+            var observer = new ValidationErrorFilterObserver(context, _builder);
 
-            return result;
+            observer.Validate(item);
+
+            return observer.Result;
         }
     }
 }

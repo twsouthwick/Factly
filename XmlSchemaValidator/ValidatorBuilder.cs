@@ -4,12 +4,12 @@ namespace XmlSchemaValidator
 {
     public readonly struct ValidatorBuilder
     {
-        private readonly IPatternConstraint _pattern;
-
-        private ValidatorBuilder(IPatternConstraint pattern)
+        private ValidatorBuilder(PatternConstraint pattern)
         {
-            _pattern = pattern;
+            Pattern = pattern;
         }
+
+        internal PatternConstraint Pattern { get; }
 
         public static ValidatorBuilder Create() => default;
 
@@ -20,10 +20,10 @@ namespace XmlSchemaValidator
         }
 
         private ValidatorBuilder CreateNew(
-            IPatternConstraint pattern = null)
+            PatternConstraint pattern = null)
         {
             return new ValidatorBuilder(
-                pattern: pattern ?? _pattern
+                pattern: pattern ?? Pattern
                 );
         }
 
