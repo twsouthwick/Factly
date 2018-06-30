@@ -8,23 +8,12 @@ namespace XmlSchemaValidator
         private readonly ValidationContext _context;
         private readonly ValidatorBuilder _builder;
         private readonly HashSet<object> _visited;
-        private readonly ValidationResult _result;
 
         public ValidationVisitor(ValidationContext context, in ValidatorBuilder builder)
         {
             _builder = builder;
             _visited = new HashSet<object>();
-            _result = new ValidationResult();
-            _context = context.Copy(_result);
-        }
-
-        public ValidationResult Result
-        {
-            get
-            {
-                _result.ObjectsTested = _visited.Count;
-                return _result;
-            }
+            _context = context.Copy();
         }
 
         public void Validate(object instance)
@@ -33,6 +22,8 @@ namespace XmlSchemaValidator
             {
                 return;
             }
+
+            _context.Observer.ItemVisited(instance);
 
             var childrenList = new DescendantList<object>();
 
@@ -61,7 +52,7 @@ namespace XmlSchemaValidator
         {
             if (property.PropertyType != typeof(string))
             {
-                _context.Observer.StructuralError(new ValidationError(ValidationErrors.PatternAppliedToNonString, instance, property));
+                _context.Observer.StructuralError(new StructuralError(ValidationErrors.PatternAppliedToNonString, instance, property));
                 return;
             }
 
@@ -77,8 +68,7 @@ namespace XmlSchemaValidator
 
             if (value == null || !pattern.IsMatch(value))
             {
-                Result.Increment();
-                _context.Observer.InvalidPattern(instance, pattern, value);
+                _context.Observer.InvalidPattern(instance, property, pattern, value);
             }
         }
     }

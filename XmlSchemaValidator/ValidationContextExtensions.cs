@@ -2,11 +2,11 @@
 {
     internal static class ValidationContextExtensions
     {
-        public static ValidationContext Copy(this ValidationContext context, ValidationResult result)
+        public static ValidationContext Copy(this ValidationContext context)
         {
             return new ValidationContext
             {
-                Observer = context?.Observer ?? new DefaultValidationObserver(result)
+                Observer = context?.Observer ?? new DefaultValidationObserver()
             };
         }
     }

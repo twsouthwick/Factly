@@ -9,20 +9,26 @@
             _builder = builder;
         }
 
-        public ValidationResult Validate<T>(T item) => ValidateInternal(item, default);
-
         public void Validate<T>(T item, ValidationContext context)
         {
-            ValidateInternal(item, context);
+            var visitor = new ValidationVisitor(context, _builder);
+
+            visitor.Validate(item);
         }
 
-        private ValidationResult ValidateInternal<T>(T item, ValidationContext context)
+        public ValidationResult Validate<T>(T item)
         {
-            var observer = new ValidationVisitor(context, _builder);
+            var observer = new DefaultValidationObserver();
+            var context = new ValidationContext
+            {
+                Observer = observer
+            };
 
-            observer.Validate(item);
+            var visitor = new ValidationVisitor(context, _builder);
 
-            return observer.Result;
+            visitor.Validate(item);
+
+            return observer.ToResult();
         }
     }
 }

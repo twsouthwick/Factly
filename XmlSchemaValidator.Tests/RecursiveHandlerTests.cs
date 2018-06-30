@@ -13,8 +13,8 @@ namespace XmlSchemaValidator
 
             var results = GetValidator().Validate(instance);
 
-            Assert.Equal(0, results.TotalErrors);
-            Assert.Equal(1, results.ObjectsTested);
+            Assert.Empty(results.Errors);
+            Assert.Single(results.Items);
         }
 
         [Fact]
@@ -27,8 +27,8 @@ namespace XmlSchemaValidator
 
             var results = GetValidator().Validate(instance);
 
-            Assert.Equal(0, results.TotalErrors);
-            Assert.Equal(2, results.ObjectsTested);
+            Assert.Empty(results.Errors);
+            Assert.Equal(2, results.Items.Count);
         }
 
         [Fact]
@@ -43,8 +43,8 @@ namespace XmlSchemaValidator
 
             var results = GetValidator().Validate(instance);
 
-            Assert.Equal(0, results.TotalErrors);
-            Assert.Equal(2, results.ObjectsTested);
+            Assert.Empty(results.Errors);
+            Assert.Equal(2, results.Items.Count);
         }
 
         [Fact]
@@ -62,8 +62,8 @@ namespace XmlSchemaValidator
               .Build();
             var results = validator.Validate(instance);
 
-            Assert.Equal(0, results.TotalErrors);
-            Assert.Equal(2, results.ObjectsTested);
+            Assert.Empty(results.Errors);
+            Assert.Equal(2, results.Items.Count);
         }
 
         private Validator GetValidator()

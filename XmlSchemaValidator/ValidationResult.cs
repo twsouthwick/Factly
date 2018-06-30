@@ -4,16 +4,21 @@ namespace XmlSchemaValidator
 {
     public class ValidationResult
     {
-        private readonly List<ValidationError> _structuralErrors = new List<ValidationError>();
+        internal ValidationResult(
+            IReadOnlyCollection<StructuralError> structuralErrors,
+            IReadOnlyCollection<ValidationError> errors,
+            IReadOnlyCollection<object> items
+            )
+        {
+            StructuralErrors = structuralErrors;
+            Errors = errors;
+            Items = items;
+        }
 
-        public IReadOnlyCollection<ValidationError> StructuralErrors => _structuralErrors;
+        public IReadOnlyCollection<StructuralError> StructuralErrors { get; }
 
-        public int TotalErrors { get; private set; }
+        public IReadOnlyCollection<ValidationError> Errors { get; }
 
-        public int ObjectsTested { get; internal set; }
-
-        internal void Increment() => TotalErrors++;
-
-        internal void AddStructuralError(ValidationError error) => _structuralErrors.Add(error);
+        public IReadOnlyCollection<object> Items { get; }
     }
 }

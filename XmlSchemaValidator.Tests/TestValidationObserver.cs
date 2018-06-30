@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace XmlSchemaValidator
@@ -13,7 +14,7 @@ namespace XmlSchemaValidator
             _invalidPattern = invalidPattern;
         }
 
-        public override void InvalidPattern(object instance, Regex pattern, string value)
+        public override void InvalidPattern(object instance, PropertyInfo property, Regex pattern, string value)
         {
             _invalidPattern?.Invoke(instance, pattern, value);
         }

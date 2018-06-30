@@ -51,8 +51,9 @@ namespace XmlSchemaValidator
             var item = new TestNoPattern { Test = "hello" };
             var result = validator.Validate(item);
 
-            Assert.Equal(0, result.TotalErrors);
-            Assert.Equal(1, result.ObjectsTested);
+            Assert.Empty(result.Errors);
+            Assert.Empty(result.StructuralErrors);
+            Assert.Single(result.Items);
         }
 
         [Fact]
@@ -65,8 +66,7 @@ namespace XmlSchemaValidator
             var item = new TestNotString();
             var result = validator.Validate(item);
 
-            Assert.Equal(0, result.TotalErrors);
-            Assert.Equal(1, result.ObjectsTested);
+            Assert.Empty(result.Errors);
             var error = Assert.Single(result.StructuralErrors);
 
             Assert.Equal(error.Id, ValidationErrors.PatternAppliedToNonString);
