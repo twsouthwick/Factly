@@ -35,12 +35,10 @@ namespace XmlSchemaValidator
                 Observer = observer
             };
 
-            var result = validator.Validate(context, item);
+            validator.Validate(context, item);
             var expectedCount = isError ? 1 : 0;
 
             Assert.Equal(expectedCount, issueRaised);
-            Assert.Equal(expectedCount, result.TotalErrors);
-            Assert.Equal(1, result.ObjectsTested);
         }
 
         [Fact]
