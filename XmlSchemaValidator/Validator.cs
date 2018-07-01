@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace XmlSchemaValidator
 {
-    public class Validator
+    public sealed class Validator
     {
-        private readonly ValidatorBuilder _builder;
+        private readonly Dictionary<Type, TypeValidator> _typeValidators;
 
-        internal Validator(ValidatorBuilder builder)
+        internal Validator(Dictionary<Type, TypeValidator> typeValidators)
         {
-            _builder = builder;
+            _typeValidators = typeValidators;
         }
 
         public void Validate<T>(T item, ValidationContext context)
@@ -18,9 +19,8 @@ namespace XmlSchemaValidator
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var visitor = new ValidationProcessor(context, _builder);
+            new ValidationProcessor(_typeValidators, context).Validate(item);
 
-            visitor.Validate(item);
             context.OnCompleted();
         }
 

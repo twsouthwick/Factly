@@ -59,6 +59,7 @@ namespace XmlSchemaValidator
 
             var validator = ValidatorBuilder.Create()
               .WithDescendants<TestClass>()
+              .AddKnownType<TestClass>()
               .Build();
             var results = validator.Validate(instance);
 
@@ -77,8 +78,9 @@ namespace XmlSchemaValidator
             instance1.Value = instance;
 
             var validator = ValidatorBuilder.Create()
-              .WithDescendants<TestClassBase>()
-              .Build();
+                .AddKnownType<TestClass>()
+                .WithDescendants<TestClassBase>()
+                .Build();
             var results = validator.Validate(instance);
 
             Assert.Empty(results.Errors);
@@ -89,6 +91,7 @@ namespace XmlSchemaValidator
         {
             return ValidatorBuilder.Create()
                 .WithDescendents(_ => true)
+                .AddKnownType<TestClass>()
                 .Build();
         }
 

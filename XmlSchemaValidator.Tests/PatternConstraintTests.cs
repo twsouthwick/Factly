@@ -17,6 +17,7 @@ namespace XmlSchemaValidator
         {
             var validator = ValidatorBuilder.Create()
                 .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .AddKnownType(typeof(Test1))
                 .Build();
 
             var item = new Test1 { Test = testValue };
@@ -46,6 +47,7 @@ namespace XmlSchemaValidator
         {
             var validator = ValidatorBuilder.Create()
                 .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .AddKnownType<TestNoPattern>()
                 .Build();
 
             var item = new TestNoPattern { Test = "hello" };
@@ -59,39 +61,29 @@ namespace XmlSchemaValidator
         [Fact]
         public void PatternNotString()
         {
-            var validator = ValidatorBuilder.Create()
+            var builder = ValidatorBuilder.Create()
                 .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
-                .Build();
+                .AddKnownType<TestNotString>();
 
-            var item = new TestNotString();
-            var result = validator.Validate(item);
+            var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
-            Assert.Empty(result.Errors);
-            var error = Assert.Single(result.StructuralErrors);
-
-            Assert.Equal(error.Id, StructuralErrors.PatternAppliedToNonString);
-            Assert.Equal(error.Instance, item);
-            Assert.Equal(error.Property, item.GetType().GetProperty(nameof(TestNotString.Other)));
+            Assert.Equal(StructuralErrors.PatternAppliedToNonString, exp.Id);
+            Assert.Equal(typeof(TestNotString), exp.Type);
+            Assert.Equal(typeof(TestNotString).GetProperty(nameof(TestNotString.Other)), exp.Property);
         }
 
         [Fact]
         public void PatternNoObserverNotString()
         {
-            var validator = ValidatorBuilder.Create()
+            var builder = ValidatorBuilder.Create()
                 .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
-                .Build();
+                .AddKnownType<TestNotString>();
 
-            var item = new TestNotString();
-            var items = new List<object>();
-            var context = new ValidationContext
-            {
-                Items = new DelegateObserver<object>(items.Add)
-            };
+            var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
-            validator.Validate(item, context);
-
-            var single = Assert.Single(items);
-            Assert.Same(item, single);
+            Assert.Equal(StructuralErrors.PatternAppliedToNonString, exp.Id);
+            Assert.Equal(typeof(TestNotString), exp.Type);
+            Assert.Equal(typeof(TestNotString).GetProperty(nameof(TestNotString.Other)), exp.Property);
         }
 
         [Fact]
@@ -99,6 +91,7 @@ namespace XmlSchemaValidator
         {
             var validator = ValidatorBuilder.Create()
                 .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .AddKnownType<Test1>()
                 .Build();
 
             var item = new Test1();

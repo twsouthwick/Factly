@@ -1,73 +1,39 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
 
 namespace XmlSchemaValidator
 {
     internal readonly struct ValidationProcessor
     {
-        private readonly ValidationContext _context;
-        private readonly ValidatorBuilder _builder;
+        private readonly Dictionary<Type, TypeValidator> _typeValidators;
         private readonly HashSet<object> _visited;
 
-        public ValidationProcessor(ValidationContext context, in ValidatorBuilder builder)
+        public ValidationProcessor(Dictionary<Type, TypeValidator> typeValidators, ValidationContext context)
         {
-            _builder = builder;
+            _typeValidators = typeValidators;
             _visited = new HashSet<object>();
-            _context = context ?? new DefaultValidationContext();
+            Context = context;
         }
 
-        public void Validate(object instance)
+        public ValidationContext Context { get; }
+
+        public void Validate(object item)
         {
-            if (!_visited.Add(instance))
+            if (item == null)
             {
                 return;
             }
 
-            _context.Items?.OnNext(instance);
-
-            var childrenList = new DescendantList<object>();
-
-            foreach (var property in instance.GetType().GetProperties())
-            {
-                var propertyValue = property.GetValue(instance);
-
-                if (_builder.Pattern is PatternConstraint pattern)
-                {
-                    ValidatePattern(pattern, instance, property, propertyValue);
-                }
-
-                if (propertyValue != null && _builder.IsDescendant?.Invoke(property) == true)
-                {
-                    childrenList.Add(propertyValue);
-                }
-            }
-
-            foreach (var item in childrenList)
-            {
-                Validate(item);
-            }
-        }
-
-        private void ValidatePattern(PatternConstraint constraint, object instance, PropertyInfo property, object propertyValue)
-        {
-            if (property.PropertyType != typeof(string))
-            {
-                _context.StructuralErrors?.OnNext(new StructuralError(StructuralErrors.PatternAppliedToNonString, instance, property));
-                return;
-            }
-
-            var pattern = constraint.GetRegex(property);
-
-            if (pattern == null)
+            if (!_visited.Add(item))
             {
                 return;
             }
 
-            var value = (string)propertyValue;
+            Context.Items?.OnNext(item);
 
-            if (value == null || !pattern.IsMatch(value))
+            if (_typeValidators.TryGetValue(item.GetType(), out var validator))
             {
-                _context.PatternErrors?.OnNext(new PatternValidationError(instance, property, pattern, propertyValue));
+                validator.Validate(item, this);
             }
         }
     }

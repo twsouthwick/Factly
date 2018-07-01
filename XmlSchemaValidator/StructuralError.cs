@@ -11,6 +11,5 @@ namespace XmlSchemaValidator
         }
 
         public string Id { get; }
-
     }
 }
