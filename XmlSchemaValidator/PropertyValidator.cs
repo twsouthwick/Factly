@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -8,13 +10,13 @@ namespace XmlSchemaValidator
     {
         private readonly PropertyInfo _property;
         private readonly Func<object, object> _getter;
-        private readonly Regex _pattern;
+        private readonly IConstraint[] _constraints;
 
-        private PropertyValidator(PropertyInfo property, bool shouldDescend, Regex pattern)
+        private PropertyValidator(PropertyInfo property, bool shouldDescend, IConstraint[] constraints)
         {
             _property = property;
             _getter = property.GetValue;
-            _pattern = pattern;
+            _constraints = constraints;
             Type = property.PropertyType;
             ShouldDescend = shouldDescend;
         }
@@ -23,12 +25,11 @@ namespace XmlSchemaValidator
         {
             var value = _getter(item);
 
-            if (_pattern != null)
+            foreach (var constraint in _constraints)
             {
-                var strValue = (string)value;
-                if (strValue == null || !_pattern.IsMatch(strValue))
+                if (constraint.Validate(item, value) is ValidationError error)
                 {
-                    processor.Context.PatternErrors?.OnNext(new PatternValidationError(item, _property, _pattern, strValue));
+                    processor.Context.Errors?.OnNext(error);
                 }
             }
 
@@ -44,20 +45,18 @@ namespace XmlSchemaValidator
 
         public static PropertyValidator Create(PropertyInfo property, ValidatorBuilder builder)
         {
-            var pattern = builder.Pattern?.GetRegex(property);
+            var constraints = builder.Constraints
+                .Select(factory => factory(property))
+                .Where(constraint => constraint != null)
+                .ToArray();
             var shouldDescend = builder.IsDescendant?.Invoke(property) ?? false;
 
-            if (pattern != null && property.PropertyType != typeof(string))
-            {
-                throw new ValidatorException("Type of property must be string if a pattern is specified", StructuralErrors.PatternAppliedToNonString, property.DeclaringType, property);
-            }
-
-            if (pattern == null && !shouldDescend)
+            if (constraints.Length == 0 && !shouldDescend)
             {
                 return default;
             }
 
-            return new PropertyValidator(property, shouldDescend, pattern);
+            return new PropertyValidator(property, shouldDescend, constraints);
         }
     }
 }

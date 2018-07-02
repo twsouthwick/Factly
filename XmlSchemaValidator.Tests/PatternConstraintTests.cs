@@ -25,12 +25,13 @@ namespace XmlSchemaValidator
 
             var context = new ValidationContext
             {
-                PatternErrors = new DelegateObserver<PatternValidationError>(error =>
+                Errors = new DelegateObserver<ValidationError>(error =>
                 {
+                    var patternError = Assert.IsType<PatternValidationError>(error);
                     Assert.True(isError);
-                    Assert.Equal("he.*lo", error.Pattern.ToString(), StringComparer.Ordinal);
-                    Assert.Equal(testValue, (string)error.Value, StringComparer.Ordinal);
-                    Assert.Same(item, error.Instance);
+                    Assert.Equal("he.*lo", patternError.Pattern.ToString(), StringComparer.Ordinal);
+                    Assert.Equal(testValue, (string)patternError.Value, StringComparer.Ordinal);
+                    Assert.Same(item, patternError.Instance);
 
                     issueRaised++;
                 })

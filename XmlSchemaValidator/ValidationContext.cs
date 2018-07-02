@@ -4,7 +4,7 @@ namespace XmlSchemaValidator
 {
     public class ValidationContext
     {
-        public IObserver<PatternValidationError> PatternErrors { get; set; }
+        public IObserver<ValidationError> Errors { get; set; }
 
         public IObserver<StructuralError> StructuralErrors { get; set; }
 
@@ -12,7 +12,7 @@ namespace XmlSchemaValidator
 
         internal void OnCompleted()
         {
-            PatternErrors?.OnCompleted();
+            Errors?.OnCompleted();
             StructuralErrors?.OnCompleted();
             Items?.OnCompleted();
         }

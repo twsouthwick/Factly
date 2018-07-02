@@ -1,25 +1,46 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace XmlSchemaValidator
 {
-    internal abstract class PatternConstraint
+    internal class PatternConstraint : IConstraint
     {
-        protected abstract string GetPattern(object obj);
+        private readonly Regex _regex;
+        private readonly PropertyInfo _property;
 
-        protected abstract Type Type { get; }
-
-        public Regex GetRegex(PropertyInfo property)
+        public PatternConstraint(PropertyInfo property, string pattern)
         {
-            var attribute = property.GetCustomAttribute(Type);
+            if (pattern == null)
+            {
+                throw new ArgumentNullException(nameof(pattern));
+            }
 
-            if (attribute is null)
+            if (property.PropertyType != typeof(string))
+            {
+                throw new ValidatorException("Type of property must be string if a pattern is specified", StructuralErrors.PatternAppliedToNonString, property.DeclaringType, property);
+            }
+
+            _regex = new Regex(pattern, RegexOptions.Compiled);
+            _property = property;
+        }
+
+        public ValidationError Validate(object instance, object value)
+        {
+            if (value == null)
+            {
+                return new PatternValidationError(instance, _property, _regex, value);
+            }
+
+            Debug.Assert(value is string);
+
+            if (_regex.IsMatch((string)value))
             {
                 return null;
             }
 
-            return new Regex(GetPattern(attribute), RegexOptions.Compiled);
+            return new PatternValidationError(instance, _property, _regex, value);
         }
     }
 }

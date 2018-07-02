@@ -27,5 +27,21 @@ namespace XmlSchemaValidator
         {
             return builder.AddKnownTypes(assembly, typeof(T).IsAssignableFrom);
         }
+
+        public static ValidatorBuilder WithRegexConstraint<T>(this ValidatorBuilder builder, Func<T, string> patternConstraint)
+            where T : Attribute
+        {
+            return builder.AddConstraint(propertyInfo =>
+            {
+                var attribute = propertyInfo.GetCustomAttribute<T>();
+
+                if (attribute == null)
+                {
+                    return null;
+                }
+
+                return new PatternConstraint(propertyInfo, patternConstraint(attribute));
+            });
+        }
     }
 }

@@ -9,7 +9,7 @@
         public DefaultValidationContext()
         {
             _patternErrors = new ListObserver<ValidationError>();
-            PatternErrors = _patternErrors;
+            Errors = _patternErrors;
 
             _structuralErrors = new ListObserver<StructuralError>();
             StructuralErrors = _structuralErrors;

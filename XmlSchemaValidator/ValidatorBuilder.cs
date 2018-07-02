@@ -8,16 +8,19 @@ namespace XmlSchemaValidator
     public readonly struct ValidatorBuilder
     {
         private readonly ImmutableHashSet<Type> _types;
+        private readonly ImmutableList<Func<PropertyInfo, IConstraint>> _constraints;
 
         private ValidatorBuilder(
             PatternConstraint pattern,
             Func<PropertyInfo, bool> isDescendant,
-            ImmutableHashSet<Type> types
+            ImmutableHashSet<Type> types,
+            ImmutableList<Func<PropertyInfo, IConstraint>> constraints
             )
         {
             Pattern = pattern;
             IsDescendant = isDescendant;
             _types = types ?? ImmutableHashSet.Create<Type>();
+            _constraints = constraints ?? ImmutableList.Create<Func<PropertyInfo, IConstraint>>();
         }
 
         internal PatternConstraint Pattern { get; }
@@ -26,18 +29,13 @@ namespace XmlSchemaValidator
 
         internal ImmutableHashSet<Type> Types => _types ?? ImmutableHashSet.Create<Type>();
 
+        internal ImmutableList<Func<PropertyInfo, IConstraint>> Constraints => _constraints ?? ImmutableList.Create<Func<PropertyInfo, IConstraint>>();
+
         public static ValidatorBuilder Create() => default;
 
-        public ValidatorBuilder WithRegexConstraint<T>(Func<T, string> patternConstraint)
-            where T : Attribute
-        {
-            return Update(pattern: new PatternConstraint<T>(patternConstraint));
-        }
+        public ValidatorBuilder AddConstraint(Func<PropertyInfo, IConstraint> constraint) => Update(constraints: Constraints.Add(constraint));
 
-        public ValidatorBuilder WithDescendents(Func<PropertyInfo, bool> isDescendant)
-        {
-            return Update(isDescendant: isDescendant);
-        }
+        public ValidatorBuilder WithDescendents(Func<PropertyInfo, bool> isDescendant) => Update(isDescendant: isDescendant);
 
         public ValidatorBuilder AddKnownTypes(IEnumerable<Type> types)
         {
@@ -59,18 +57,19 @@ namespace XmlSchemaValidator
         private ValidatorBuilder Update(
             PatternConstraint pattern = null,
             Func<PropertyInfo, bool> isDescendant = null,
-            ImmutableHashSet<Type> types = default
+            ImmutableHashSet<Type> types = default,
+            ImmutableList<Func<PropertyInfo, IConstraint>> constraints = null
             )
         {
             return new ValidatorBuilder(
                 pattern ?? Pattern,
                 isDescendant ?? IsDescendant,
-                types ?? Types
+                types ?? Types,
+                constraints ?? Constraints
                 );
         }
 
         public Validator Build() => new ValidatorCompiler(this).Compile();
-
 
         private readonly struct ValidatorCompiler
         {
