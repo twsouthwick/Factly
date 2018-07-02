@@ -69,54 +69,36 @@ namespace ObjectValidator
                 );
         }
 
-        public Validator Build() => new ValidatorCompiler(this).Compile();
-
-        private readonly struct ValidatorCompiler
+        public Validator Build()
         {
-            private readonly ValidatorBuilder _builder;
-            private readonly HashSet<Type> _visited;
-            private readonly Dictionary<Type, TypeValidator> _typeValidators;
-
-            public ValidatorCompiler(ValidatorBuilder builder)
+            if (Types.IsEmpty)
             {
-                _builder = builder;
-                _visited = new HashSet<Type>();
-                _typeValidators = new Dictionary<Type, TypeValidator>();
+                throw new ValidatorException("Must declare types for compilation", StructuralErrors.NoTypes, null, null);
             }
 
-            public Validator Compile()
+            var visited = new HashSet<Type>();
+            var left = new Queue<Type>(Types);
+            var validators = new Dictionary<Type, TypeValidator>();
+
+            while (left.Count > 0)
             {
-                if (_builder.Types.IsEmpty)
+                var type = left.Dequeue();
+                if (visited.Add(type))
                 {
-                    throw new ValidatorException("Must declare types for compilation", StructuralErrors.NoTypes, null, null);
-                }
+                    var compiledType = new TypeValidator(type, this);
+                    validators.Add(type, compiledType);
 
-                foreach (var type in _builder.Types)
-                {
-                    Compile(type);
-                }
-
-                return new Validator(_typeValidators);
-            }
-
-            private void Compile(Type type)
-            {
-                if (!_visited.Add(type))
-                {
-                    return;
-                }
-
-                var compiledType = new TypeValidator(type, _builder);
-                _typeValidators.Add(type, compiledType);
-
-                foreach (var property in compiledType.Properties)
-                {
-                    if (property.ShouldDescend)
+                    foreach (var property in compiledType.Properties)
                     {
-                        Compile(property.Type);
+                        if (property.ShouldDescend)
+                        {
+                            left.Enqueue(property.Type);
+                        }
                     }
                 }
             }
+
+            return new Validator(validators);
         }
     }
 }
