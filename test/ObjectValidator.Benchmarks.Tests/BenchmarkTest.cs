@@ -8,26 +8,45 @@ namespace ObjectValidator.Benchmarks.Tests
     [MemoryDiagnoser]
     public class BenchmarkTest
     {
+        private ValidatorBuilder _validatorBuilder;
         private Validator _validator;
+        private ValidationContext _context = new ValidationContext();
 
         [GlobalSetup]
         public void Setup()
         {
-            _validator = ValidatorBuild();
+            _validatorBuilder = CreateValidatorBuilder();
+            _validator = _validatorBuilder.Build();
         }
 
         [Benchmark]
-        public Validator ValidatorBuild()
+        public ValidatorBuilder CreateValidatorBuilder()
         {
             return ValidatorBuilder
                 .Create()
                 .AddKnownType<TestClass>()
-                .AddRegexConstraint<RegexAttribute>(a => a.Pattern)
-                .Build();
+                .AddRegexConstraint<RegexAttribute>(a => a.Pattern);
+        }
+
+        [Benchmark]
+        public Validator BuildValidator()
+        {
+            return _validatorBuilder.Build();
         }
 
         [Benchmark]
         public void ValidationStep()
+        {
+            var instance = new TestClass
+            {
+                Value = "somethin"
+            };
+
+            _validator.Validate(instance, _context);
+        }
+
+        [Benchmark]
+        public void ValidationStepNoContext()
         {
             var instance = new TestClass
             {
