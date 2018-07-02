@@ -6,20 +6,18 @@ namespace ObjectValidator
 {
     internal readonly struct PropertyValidator
     {
-        private readonly PropertyInfo _property;
         private readonly Func<object, object> _getter;
         private readonly IConstraint[] _constraints;
 
         private PropertyValidator(PropertyInfo property, bool shouldDescend, IConstraint[] constraints)
         {
-            _property = property;
             _getter = property.GetPropertyDelegate();
             _constraints = constraints;
             Type = property.PropertyType;
             ShouldDescend = shouldDescend;
         }
 
-        public void Validate(object item, ValidationProcessor processor)
+        public object Validate(object item, ValidationContext context)
         {
             var value = _getter(item);
 
@@ -27,14 +25,11 @@ namespace ObjectValidator
             {
                 if (constraint.Validate(item, value) is ValidationError error)
                 {
-                    processor.Context.Errors?.OnNext(error);
+                    context.Errors?.OnNext(error);
                 }
             }
 
-            if (ShouldDescend)
-            {
-                processor.Validate(value);
-            }
+            return value;
         }
 
         public Type Type { get; }

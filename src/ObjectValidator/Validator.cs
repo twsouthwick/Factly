@@ -19,7 +19,37 @@ namespace ObjectValidator
                 throw new ArgumentNullException(nameof(context));
             }
 
-            new ValidationProcessor(_typeValidators, context).Validate(item);
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            var visited = new HashSet<object>();
+            var items = new Queue<object>();
+            items.Enqueue(item);
+
+            while (items.Count > 0)
+            {
+                var current = items.Dequeue();
+
+                if (visited.Add(current))
+                {
+                    context.Items?.OnNext(current);
+
+                    if (_typeValidators.TryGetValue(current.GetType(), out var type))
+                    {
+                        foreach (var property in type.Properties)
+                        {
+                            var value = property.Validate(current, context);
+
+                            if (value != null && property.ShouldDescend)
+                            {
+                                items.Enqueue(value);
+                            }
+                        }
+                    }
+                }
+            }
 
             context.OnCompleted();
         }

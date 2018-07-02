@@ -14,13 +14,5 @@ namespace ObjectValidator
         }
 
         public PropertyValidator[] Properties { get; }
-
-        public void Validate(object item, ValidationProcessor processor)
-        {
-            foreach (var property in Properties)
-            {
-                property.Validate(item, processor);
-            }
-        }
     }
 }
