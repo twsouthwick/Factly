@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     public class ValidationResult
     {

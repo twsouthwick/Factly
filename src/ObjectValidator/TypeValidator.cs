@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     internal readonly struct TypeValidator
     {

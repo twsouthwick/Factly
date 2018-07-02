@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     public readonly struct ValidatorBuilder
     {

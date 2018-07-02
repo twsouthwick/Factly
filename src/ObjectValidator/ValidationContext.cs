@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     public class ValidationContext
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     public sealed class Validator
     {

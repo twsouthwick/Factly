@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     internal class ListObserver<T> : IObserver<T>
     {

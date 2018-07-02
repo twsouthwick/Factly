@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     internal class PatternConstraint : IConstraint
     {

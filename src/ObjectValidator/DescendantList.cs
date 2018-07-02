@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     internal struct DescendantList<T>
     {

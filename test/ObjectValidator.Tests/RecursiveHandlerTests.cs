@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     public class RecursiveHandlerTests
     {

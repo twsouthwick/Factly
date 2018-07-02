@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     public class ValidatorException : Exception
     {

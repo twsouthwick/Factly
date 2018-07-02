@@ -1,4 +1,4 @@
-﻿namespace XmlSchemaValidator
+﻿namespace ObjectValidator
 {
     internal class DefaultValidationContext : ValidationContext
     {

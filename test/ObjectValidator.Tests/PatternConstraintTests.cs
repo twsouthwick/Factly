@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Xunit;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     public class PatternConstraintTests
     {

@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     public class PatternValidationError : ValidationError
     {

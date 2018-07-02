@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     internal readonly struct PropertyValidator
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     internal class DelegateObserver<T> : IObserver<T>
     {

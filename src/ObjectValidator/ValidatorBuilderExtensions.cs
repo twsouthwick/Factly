@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace XmlSchemaValidator
+namespace ObjectValidator
 {
     public static class ValidatorBuilderExtensions
     {

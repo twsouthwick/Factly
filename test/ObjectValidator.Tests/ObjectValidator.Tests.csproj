@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\XmlSchemaValidator\XmlSchemaValidator.csproj" />
+    <ProjectReference Include="..\..\src\ObjectValidator\ObjectValidator.csproj" />
   </ItemGroup>
 
 </Project>

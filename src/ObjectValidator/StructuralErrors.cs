@@ -1,4 +1,4 @@
-﻿namespace XmlSchemaValidator
+﻿namespace ObjectValidator
 {
     public static class StructuralErrors
     {
