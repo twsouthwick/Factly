@@ -22,7 +22,7 @@ namespace ObjectValidator.Benchmarks.Tests
             return ValidatorBuilder
                 .Create()
                 .AddKnownType<TestClass>()
-                .WithRegexConstraint<RegexAttribute>(a => a.Pattern)
+                .AddRegexConstraint<RegexAttribute>(a => a.Pattern)
                 .Build();
         }
 

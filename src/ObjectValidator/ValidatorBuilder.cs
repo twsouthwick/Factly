@@ -35,7 +35,7 @@ namespace ObjectValidator
 
         public ValidatorBuilder AddConstraint(Func<PropertyInfo, IConstraint> constraint) => Update(constraints: Constraints.Add(constraint));
 
-        public ValidatorBuilder WithDescendents(Func<PropertyInfo, bool> isDescendant) => Update(isDescendant: isDescendant);
+        public ValidatorBuilder AddDescendantFilter(Func<PropertyInfo, bool> isDescendant) => Update(isDescendant: isDescendant);
 
         public ValidatorBuilder AddKnownTypes(IEnumerable<Type> types)
         {

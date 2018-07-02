@@ -58,7 +58,7 @@ namespace ObjectValidator
             instance1.Value = instance;
 
             var validator = ValidatorBuilder.Create()
-              .WithDescendants<TestClass>()
+              .AddDescendantFilter<TestClass>()
               .AddKnownType<TestClass>()
               .Build();
             var results = validator.Validate(instance);
@@ -79,7 +79,7 @@ namespace ObjectValidator
 
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestClass>()
-                .WithDescendants<TestClassBase>()
+                .AddDescendantFilter<TestClassBase>()
                 .Build();
             var results = validator.Validate(instance);
 
@@ -90,7 +90,7 @@ namespace ObjectValidator
         private Validator GetValidator()
         {
             return ValidatorBuilder.Create()
-                .WithDescendents(_ => true)
+                .AddDescendantFilter(_ => true)
                 .AddKnownType<TestClass>()
                 .Build();
         }

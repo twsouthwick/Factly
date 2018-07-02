@@ -6,9 +6,9 @@ namespace ObjectValidator
 {
     public static class ValidatorBuilderExtensions
     {
-        public static ValidatorBuilder WithDescendants<T>(this ValidatorBuilder builder)
+        public static ValidatorBuilder AddDescendantFilter<T>(this ValidatorBuilder builder)
         {
-            return builder.WithDescendents(propertyInfo =>
+            return builder.AddDescendantFilter(propertyInfo =>
             {
                 return typeof(T).IsAssignableFrom(propertyInfo.PropertyType);
             });
@@ -28,7 +28,7 @@ namespace ObjectValidator
             return builder.AddKnownTypes(assembly, typeof(T).IsAssignableFrom);
         }
 
-        public static ValidatorBuilder WithRegexConstraint<T>(this ValidatorBuilder builder, Func<T, string> patternConstraint)
+        public static ValidatorBuilder AddRegexConstraint<T>(this ValidatorBuilder builder, Func<T, string> patternConstraint)
             where T : Attribute
         {
             return builder.AddConstraint(propertyInfo =>

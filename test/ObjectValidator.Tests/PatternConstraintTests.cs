@@ -16,7 +16,7 @@ namespace ObjectValidator
         public void SimplePatternTests(string testValue, bool isError)
         {
             var validator = ValidatorBuilder.Create()
-                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
                 .AddKnownType(typeof(Test1))
                 .Build();
 
@@ -47,7 +47,7 @@ namespace ObjectValidator
         public void NoPattern()
         {
             var validator = ValidatorBuilder.Create()
-                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
                 .AddKnownType<TestNoPattern>()
                 .Build();
 
@@ -62,7 +62,7 @@ namespace ObjectValidator
         public void PatternNotString()
         {
             var builder = ValidatorBuilder.Create()
-                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
                 .AddKnownType<TestNotString>();
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
@@ -76,7 +76,7 @@ namespace ObjectValidator
         public void PatternNoObserverNotString()
         {
             var builder = ValidatorBuilder.Create()
-                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
                 .AddKnownType<TestNotString>();
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
@@ -90,7 +90,7 @@ namespace ObjectValidator
         public void PatternNoObserver()
         {
             var validator = ValidatorBuilder.Create()
-                .WithRegexConstraint<RegexAttribute>(r => r.Pattern)
+                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
                 .AddKnownType<Test1>()
                 .Build();
 
