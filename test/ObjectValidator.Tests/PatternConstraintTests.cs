@@ -55,7 +55,6 @@ namespace ObjectValidator
             var result = validator.Validate(item);
 
             Assert.Empty(result.Errors);
-            Assert.Empty(result.StructuralErrors);
             Assert.Single(result.Items);
         }
 
