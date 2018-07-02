@@ -7,11 +7,13 @@ namespace ObjectValidator
     internal readonly struct PropertyValidator
     {
         private readonly PropertyInfo _property;
+        private readonly Func<object, object> _getter;
         private readonly IConstraint[] _constraints;
 
         private PropertyValidator(PropertyInfo property, bool shouldDescend, IConstraint[] constraints)
         {
             _property = property;
+            _getter = property.GetPropertyDelegate();
             _constraints = constraints;
             Type = property.PropertyType;
             ShouldDescend = shouldDescend;
@@ -19,7 +21,7 @@ namespace ObjectValidator
 
         public void Validate(object item, ValidationProcessor processor)
         {
-            var value = _property.GetValue(item);
+            var value = _getter(item);
 
             foreach (var constraint in _constraints)
             {
