@@ -1,77 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace ObjectValidator
 {
-    public readonly struct ValidatorBuilder
+    public sealed class ValidatorBuilder
     {
-        private readonly ImmutableHashSet<Type> _types;
-        private readonly ImmutableList<Func<PropertyInfo, IConstraint>> _constraints;
-
-        private ValidatorBuilder(
-            PatternConstraint pattern,
-            Func<PropertyInfo, bool> isDescendant,
-            ImmutableHashSet<Type> types,
-            ImmutableList<Func<PropertyInfo, IConstraint>> constraints
-            )
+        private ValidatorBuilder()
         {
-            Pattern = pattern;
-            IsDescendant = isDescendant;
-            _types = types ?? ImmutableHashSet.Create<Type>();
-            _constraints = constraints ?? ImmutableList.Create<Func<PropertyInfo, IConstraint>>();
+            Types = new HashSet<Type>();
+            Constraints = new List<Func<PropertyInfo, IConstraint>>();
         }
 
-        internal PatternConstraint Pattern { get; }
+        internal PatternConstraint Pattern { get; private set; }
 
-        internal Func<PropertyInfo, bool> IsDescendant { get; }
+        internal Func<PropertyInfo, bool> IsDescendant { get; private set; }
 
-        internal ImmutableHashSet<Type> Types => _types ?? ImmutableHashSet.Create<Type>();
+        internal HashSet<Type> Types { get; }
 
-        internal ImmutableList<Func<PropertyInfo, IConstraint>> Constraints => _constraints ?? ImmutableList.Create<Func<PropertyInfo, IConstraint>>();
+        internal List<Func<PropertyInfo, IConstraint>> Constraints { get; }
 
-        public static ValidatorBuilder Create() => default;
+        public static ValidatorBuilder Create() => new ValidatorBuilder();
 
-        public ValidatorBuilder AddConstraint(Func<PropertyInfo, IConstraint> constraint) => Update(constraints: Constraints.Add(constraint));
+        public ValidatorBuilder AddConstraint(Func<PropertyInfo, IConstraint> constraint)
+        {
+            Constraints.Add(constraint);
+            return this;
+        }
 
-        public ValidatorBuilder AddDescendantFilter(Func<PropertyInfo, bool> isDescendant) => Update(isDescendant: isDescendant);
+        public ValidatorBuilder AddDescendantFilter(Func<PropertyInfo, bool> isDescendant)
+        {
+            IsDescendant = isDescendant;
+            return this;
+        }
 
         public ValidatorBuilder AddKnownTypes(IEnumerable<Type> types)
         {
-            var builder = Types.ToBuilder();
-
             foreach (var type in types)
             {
-                builder.Add(type);
+                Types.Add(type);
             }
 
-            return Update(types: builder.ToImmutable());
+            return this;
         }
 
         public ValidatorBuilder AddKnownType(Type type)
         {
-            return Update(types: Types.Add(type));
-        }
-
-        private ValidatorBuilder Update(
-            PatternConstraint pattern = null,
-            Func<PropertyInfo, bool> isDescendant = null,
-            ImmutableHashSet<Type> types = default,
-            ImmutableList<Func<PropertyInfo, IConstraint>> constraints = null
-            )
-        {
-            return new ValidatorBuilder(
-                pattern ?? Pattern,
-                isDescendant ?? IsDescendant,
-                types ?? Types,
-                constraints ?? Constraints
-                );
+            Types.Add(type);
+            return this;
         }
 
         public Validator Build()
         {
-            if (Types.IsEmpty)
+            if (Types.Count == 0)
             {
                 throw new ValidatorException("Must declare types for compilation", Errors.NoTypes, null, null);
             }

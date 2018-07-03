@@ -1,23 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.3;net45;netcoreapp2.0</TargetFrameworks>
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <Compile Remove="PropertyExtensions.*.cs" />
   </ItemGroup>
 
   <Choose>
     <When Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
       <ItemGroup>
-        <Compile Remove="PropertyExtensions.Emit.cs" />
+        <Compile Include="PropertyExtensions.Expressions.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+      <ItemGroup>
+        <Compile Include="PropertyExtensions.Get.cs" />
       </ItemGroup>
     </When>
     <Otherwise>
       <ItemGroup>
-        <Compile Remove="PropertyExtensions.Expressions.cs" />
+        <Compile Include="PropertyExtensions.Emit.cs" />
       </ItemGroup>
     </Otherwise>
   </Choose>
