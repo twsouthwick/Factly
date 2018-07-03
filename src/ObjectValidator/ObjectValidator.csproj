@@ -5,26 +5,16 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="PropertyExtensions.*.cs" />
-  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <DefineConstants>$(DefineConstants);FEATURE_TYPEINFO</DefineConstants>
+  </PropertyGroup>
 
-  <Choose>
-    <When Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-      <ItemGroup>
-        <Compile Include="PropertyExtensions.Expressions.cs" />
-      </ItemGroup>
-    </When>
-    <When Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-      <ItemGroup>
-        <Compile Include="PropertyExtensions.Get.cs" />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <Compile Include="PropertyExtensions.Emit.cs" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DefineConstants>$(DefineConstants);FEATURE_PROPERTYINFO_GETGETMETHOD</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT</DefineConstants>
+  </PropertyGroup>
 
 </Project>
