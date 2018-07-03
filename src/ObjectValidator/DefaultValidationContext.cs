@@ -13,9 +13,6 @@ namespace ObjectValidator
             Items = _items.Add;
         }
 
-        public ValidationResult GetResult()
-        {
-            return new ValidationResult(_errors, _items);
-        }
+        internal ValidationResult GetResult() => new ValidationResult(_errors, _items);
     }
 }
