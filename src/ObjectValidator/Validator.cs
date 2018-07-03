@@ -48,6 +48,10 @@ namespace ObjectValidator
                             }
                         }
                     }
+                    else
+                    {
+                        throw new ValidatorException("Unknown type", Errors.UnknownType, current.GetType(), null);
+                    }
                 }
             }
 

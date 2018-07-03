@@ -67,7 +67,7 @@ namespace ObjectValidator
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
-            Assert.Equal(StructuralErrors.PatternAppliedToNonString, exp.Id);
+            Assert.Equal(Errors.PatternAppliedToNonString, exp.Id);
             Assert.Equal(typeof(TestNotString), exp.Type);
             Assert.Equal(typeof(TestNotString).GetProperty(nameof(TestNotString.Other)), exp.Property);
         }
@@ -81,7 +81,7 @@ namespace ObjectValidator
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
-            Assert.Equal(StructuralErrors.PatternAppliedToNonString, exp.Id);
+            Assert.Equal(Errors.PatternAppliedToNonString, exp.Id);
             Assert.Equal(typeof(TestNotString), exp.Type);
             Assert.Equal(typeof(TestNotString).GetProperty(nameof(TestNotString.Other)), exp.Property);
         }
