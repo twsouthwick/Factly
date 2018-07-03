@@ -25,7 +25,7 @@ namespace ObjectValidator
 
             var context = new ValidationContext
             {
-                Errors = new DelegateObserver<ValidationError>(error =>
+                Errors = error =>
                 {
                     var patternError = Assert.IsType<PatternValidationError>(error);
                     Assert.True(isError);
@@ -34,7 +34,7 @@ namespace ObjectValidator
                     Assert.Same(item, patternError.Instance);
 
                     issueRaised++;
-                })
+                }
             };
 
             validator.Validate(item, context);
@@ -98,7 +98,7 @@ namespace ObjectValidator
             var items = new List<object>();
             var context = new ValidationContext
             {
-                Items = new DelegateObserver<object>(items.Add)
+                Items = items.Add
             };
 
             validator.Validate(item, context);

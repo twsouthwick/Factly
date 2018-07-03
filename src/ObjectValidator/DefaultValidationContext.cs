@@ -1,25 +1,21 @@
-﻿namespace ObjectValidator
+﻿using System.Collections.Generic;
+
+namespace ObjectValidator
 {
     internal class DefaultValidationContext : ValidationContext
     {
-        private readonly ListObserver<ValidationError> _patternErrors;
-        private readonly ListObserver<object> _items;
+        private readonly List<ValidationError> _errors = new List<ValidationError>();
+        private readonly List<object> _items = new List<object>();
 
         public DefaultValidationContext()
         {
-            _patternErrors = new ListObserver<ValidationError>();
-            Errors = _patternErrors;
-
-            _items = new ListObserver<object>();
-            Items = _items;
+            Errors = _errors.Add;
+            Items = _items.Add;
         }
 
         public ValidationResult GetResult()
         {
-            return new ValidationResult(
-                _patternErrors.Items,
-                _items.Items
-                );
+            return new ValidationResult(_errors, _items);
         }
     }
 }

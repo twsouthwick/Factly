@@ -34,7 +34,7 @@ namespace ObjectValidator
 
                 if (visited.Add(current))
                 {
-                    context.Items?.OnNext(current);
+                    context.Items?.Invoke(current);
 
                     if (_typeValidators.TryGetValue(current.GetType(), out var type))
                     {
@@ -54,8 +54,6 @@ namespace ObjectValidator
                     }
                 }
             }
-
-            context.OnCompleted();
         }
 
         public ValidationResult Validate(object item)
