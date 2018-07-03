@@ -12,7 +12,7 @@ namespace ObjectValidator
             _typeValidators = typeValidators;
         }
 
-        public void Validate<T>(T item, ValidationContext context)
+        public void Validate(object item, ValidationContext context)
         {
             if (context == null)
             {
@@ -58,7 +58,7 @@ namespace ObjectValidator
             context.OnCompleted();
         }
 
-        public ValidationResult Validate<T>(T item)
+        public ValidationResult Validate(object item)
         {
             var context = new DefaultValidationContext();
 
