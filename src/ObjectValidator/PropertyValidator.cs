@@ -42,7 +42,7 @@ namespace ObjectValidator
                 .Select(factory => factory(property))
                 .Where(constraint => constraint != null)
                 .ToArray();
-            var shouldDescend = builder.IsDescendant?.Invoke(property) ?? false;
+            var shouldDescend = builder.DescendantFilters.Any(t => t(property));
 
             if (constraints.Length == 0 && !shouldDescend)
             {
