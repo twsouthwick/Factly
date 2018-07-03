@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 #if FEATURE_REFEMIT
@@ -62,6 +63,19 @@ namespace ObjectValidator
         public static bool IsAssignableFrom(this Type type, Type other)
         {
             return type.GetTypeInfo().IsAssignableFrom(other.GetTypeInfo());
+        }
+
+        public static IEnumerable<Type> GetExportedTypes(this Assembly assembly)
+        {
+            return assembly.ExportedTypes;
+        }
+#endif
+
+#if MISSING_FEATURE_CUSTOMATTRIBUTE
+        public static T GetCustomAttribute<T>(this PropertyInfo property)
+            where T : Attribute
+        {
+            return (T)Attribute.GetCustomAttribute(property, typeof(T));
         }
 #endif
     }

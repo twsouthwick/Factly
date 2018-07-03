@@ -5,9 +5,7 @@ namespace ObjectValidator
 {
     internal class ListObserver<T> : IObserver<T>
     {
-        private readonly List<T> _list = new List<T>();
-
-        public IReadOnlyCollection<T> Items => _list;
+        public List<T> Items { get; } = new List<T>();
 
         public void OnCompleted()
         {
@@ -17,6 +15,6 @@ namespace ObjectValidator
         {
         }
 
-        public void OnNext(T value) => _list.Add(value);
+        public void OnNext(T value) => Items.Add(value);
     }
 }

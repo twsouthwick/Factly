@@ -16,7 +16,7 @@ namespace ObjectValidator
 
         public static ValidatorBuilder AddKnownTypes(this ValidatorBuilder builder, Assembly assembly, Func<Type, bool> selector)
         {
-            var types = assembly.ExportedTypes.Where(selector);
+            var types = assembly.GetExportedTypes().Where(selector);
 
             return builder.AddKnownTypes(types);
         }
