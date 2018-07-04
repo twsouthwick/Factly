@@ -4,6 +4,7 @@
   <PropertyGroup>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\ObjectValidator.ruleset</CodeAnalysisRuleSet>
     <LangVersion>7.3</LangVersion>
+    <TestNet35 Condition=" '$(TestNet35)' == '' ">false</TestNet35>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -15,9 +16,9 @@
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\ObjectValidator.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- Used to test for .NET 3.5 scenarios -->
-    <!--<DefineConstants>$(DefineConstants);NO_CANCELLATION_TOKEN</DefineConstants>-->
+  <PropertyGroup Condition="$(TestNet35)">
+    <!-- Used to test for .NET 3.5 scenarios as xUnit doesn't directly support it-->
+    <DefineConstants>$(DefineConstants);NO_CANCELLATION_TOKEN</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>

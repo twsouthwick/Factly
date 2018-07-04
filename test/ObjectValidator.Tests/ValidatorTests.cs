@@ -104,7 +104,7 @@ namespace ObjectValidator
 
             var instance = new TestClass1
             {
-                Instance = new TestClass2()
+                Instance = new TestClass2(),
             };
 
             Assert.Throws<OperationCanceledException>(() => validator.Validate(instance, context.Context));
