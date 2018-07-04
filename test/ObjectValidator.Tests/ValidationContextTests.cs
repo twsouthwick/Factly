@@ -26,6 +26,32 @@ namespace ObjectValidator
         }
 
         [Fact]
+        public void ValidationContextCopiedTest()
+        {
+            var count = 0;
+            var context = new TestValidationContext();
+
+            var validator = ValidatorBuilder.Create()
+                .AddKnownType<Test>()
+                .AddDescendantFilter<Test>()
+                .AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
+                {
+                    Assert.NotSame(context.Context, ctx);
+
+                    Assert.NotNull(ctx.OnError);
+                    Assert.NotNull(ctx.OnItem);
+                    Assert.NotNull(ctx.OnUnknownType);
+
+                    count++;
+                }))
+                .Build();
+
+            validator.Validate(new Test(), context.Context);
+
+            Assert.Equal(1, count);
+        }
+
+        [Fact]
         public void SetToReadonly()
         {
             var count = 0;
@@ -36,6 +62,7 @@ namespace ObjectValidator
                 .AddDescendantFilter<Test>()
                 .AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
                 {
+                    Assert.NotSame(context.Context, ctx);
                     Assert.Throws<InvalidOperationException>(() => ctx.OnError = context.Errors.Add);
                     Assert.Throws<InvalidOperationException>(() => ctx.OnItem = context.Items.Add);
                     Assert.Throws<InvalidOperationException>(() => ctx.OnUnknownType = context.UnknownTypes.Add);
