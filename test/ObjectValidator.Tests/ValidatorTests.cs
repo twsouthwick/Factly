@@ -12,7 +12,7 @@ namespace ObjectValidator
             var count = 0;
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<CustomStruct>()
-                .AddDescendantFilter(_ => true)
+                .AddPropertyFilter(_ => true)
                 .AddConstraint(_ => new DelegateConstraint(() => count++))
                 .Build();
 
@@ -32,7 +32,7 @@ namespace ObjectValidator
             var count = 0;
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestWithDerivedVirtualProperty>()
-                .AddDescendantFilter<TestWithDerivedVirtualProperty>()
+                .AddPropertyFilter<TestWithDerivedVirtualProperty>()
                 .AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
                 {
                     var value = Assert.IsType<string>(instanceValue);
@@ -52,7 +52,7 @@ namespace ObjectValidator
             var count = 0;
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestWithDerivedVirtualPropertyNew>()
-                .AddDescendantFilter<TestWithDerivedVirtualPropertyNew>()
+                .AddPropertyFilter<TestWithDerivedVirtualPropertyNew>()
                 .AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
                 {
                     var value = Assert.IsType<string>(instanceValue);
@@ -72,7 +72,7 @@ namespace ObjectValidator
             var count = 0;
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestWithVirtualPropertyDerived>()
-                .AddDescendantFilter<TestWithVirtualPropertyDerived>()
+                .AddPropertyFilter<TestWithVirtualPropertyDerived>()
                 .AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
                 {
                     var value = Assert.IsType<string>(instanceValue);
@@ -97,7 +97,7 @@ namespace ObjectValidator
             // Must use a type with multiple types as cancellation is checked at the start of processing each type
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestClass1>()
-                .AddDescendantFilter<TestClass2>()
+                .AddPropertyFilter<TestClass2>()
                 .AddConstraint(_ => new DelegateConstraint(() =>
                 {
                     context.Context.Cancel();
@@ -120,7 +120,7 @@ namespace ObjectValidator
             // Must use a type with multiple types as cancellation is checked at the start of processing each type
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestClass1>()
-                .AddDescendantFilter<TestClass2>()
+                .AddPropertyFilter<TestClass2>()
                 .AddConstraint(_ => new DelegateConstraint(() =>
                 {
                     cts.Cancel();

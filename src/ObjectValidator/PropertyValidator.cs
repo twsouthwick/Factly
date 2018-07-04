@@ -9,12 +9,12 @@ namespace ObjectValidator
         private readonly Func<object, object> _getter;
         private readonly IConstraint[] _constraints;
 
-        private PropertyValidator(PropertyInfo property, bool shouldDescend, IConstraint[] constraints)
+        private PropertyValidator(PropertyInfo property, bool shouldFollow, IConstraint[] constraints)
         {
             _getter = property.GetPropertyDelegate();
             _constraints = constraints;
             Type = property.PropertyType;
-            ShouldDescend = shouldDescend;
+            ShouldFollow = shouldFollow;
         }
 
         public object Validate(object item, ValidationContext context)
@@ -31,7 +31,7 @@ namespace ObjectValidator
 
         public Type Type { get; }
 
-        public bool ShouldDescend { get; }
+        public bool ShouldFollow { get; }
 
         public static PropertyValidator Create(PropertyInfo property, ValidatorBuilder builder)
         {
@@ -39,14 +39,14 @@ namespace ObjectValidator
                 .Select(factory => factory(property))
                 .Where(constraint => constraint != null)
                 .ToArray();
-            var shouldDescend = builder.DescendantFilters.Any(t => t(property));
+            var shouldFollow = builder.PropertyFilters.Any(t => t(property));
 
-            if (constraints.Length == 0 && !shouldDescend)
+            if (constraints.Length == 0 && !shouldFollow)
             {
                 return default;
             }
 
-            return new PropertyValidator(property, shouldDescend, constraints);
+            return new PropertyValidator(property, shouldFollow, constraints);
         }
     }
 }

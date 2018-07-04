@@ -90,7 +90,7 @@ namespace ObjectValidator
                         {
                             var value = property.Validate(current, context);
 
-                            if (value != null && property.ShouldDescend)
+                            if (value != null && property.ShouldFollow)
                             {
                                 items.Enqueue(value);
                             }

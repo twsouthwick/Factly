@@ -10,12 +10,12 @@ namespace ObjectValidator
         {
             Types = new HashSet<Type>();
             Constraints = new List<Func<PropertyInfo, IConstraint>>();
-            DescendantFilters = new List<Func<PropertyInfo, bool>>();
+            PropertyFilters = new List<Func<PropertyInfo, bool>>();
         }
 
         internal PatternConstraint Pattern { get; private set; }
 
-        internal List<Func<PropertyInfo, bool>> DescendantFilters { get; }
+        internal List<Func<PropertyInfo, bool>> PropertyFilters { get; }
 
         internal HashSet<Type> Types { get; }
 
@@ -29,9 +29,9 @@ namespace ObjectValidator
             return this;
         }
 
-        public ValidatorBuilder AddDescendantFilter(Func<PropertyInfo, bool> filter)
+        public ValidatorBuilder AddPropertyFilter(Func<PropertyInfo, bool> filter)
         {
-            DescendantFilters.Add(filter);
+            PropertyFilters.Add(filter);
             return this;
         }
 
@@ -72,7 +72,7 @@ namespace ObjectValidator
 
                     foreach (var property in compiledType.Properties)
                     {
-                        if (property.ShouldDescend)
+                        if (property.ShouldFollow)
                         {
                             left.Enqueue(property.Type);
                         }

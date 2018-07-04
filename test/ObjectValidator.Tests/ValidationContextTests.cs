@@ -33,7 +33,7 @@ namespace ObjectValidator
 
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<Test>()
-                .AddDescendantFilter<Test>()
+                .AddPropertyFilter<Test>()
                 .AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
                 {
                     Assert.NotSame(context.Context, ctx);
@@ -59,7 +59,7 @@ namespace ObjectValidator
 
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<Test>()
-                .AddDescendantFilter<Test>()
+                .AddPropertyFilter<Test>()
                 .AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
                 {
                     Assert.NotSame(context.Context, ctx);

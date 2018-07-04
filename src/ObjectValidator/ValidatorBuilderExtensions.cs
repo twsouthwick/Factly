@@ -7,9 +7,9 @@ namespace ObjectValidator
 {
     public static class ValidatorBuilderExtensions
     {
-        public static ValidatorBuilder AddDescendantFilter<T>(this ValidatorBuilder builder)
+        public static ValidatorBuilder AddPropertyFilter<T>(this ValidatorBuilder builder)
         {
-            return builder.AddDescendantFilter(propertyInfo =>
+            return builder.AddPropertyFilter(propertyInfo =>
             {
                 return typeof(T).IsAssignableFrom(propertyInfo.PropertyType);
             });

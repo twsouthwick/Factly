@@ -61,7 +61,7 @@ namespace ObjectValidator
             instance1.Value = instance;
 
             var validator = ValidatorBuilder.Create()
-              .AddDescendantFilter<TestClass>()
+              .AddPropertyFilter<TestClass>()
               .AddKnownType<TestClass>()
               .Build();
             var context = new TestValidationContext();
@@ -84,7 +84,7 @@ namespace ObjectValidator
 
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestClass>()
-                .AddDescendantFilter<TestClassBase>()
+                .AddPropertyFilter<TestClassBase>()
                 .Build();
             var context = new TestValidationContext();
 
@@ -97,7 +97,7 @@ namespace ObjectValidator
         private Validator GetValidator()
         {
             return ValidatorBuilder.Create()
-                .AddDescendantFilter(_ => true)
+                .AddPropertyFilter(_ => true)
                 .AddKnownType<TestClass>()
                 .Build();
         }

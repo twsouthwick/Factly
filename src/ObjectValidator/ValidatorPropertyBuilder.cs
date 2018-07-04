@@ -18,7 +18,7 @@ namespace ObjectValidator
         {
             if (memberExpression.Body is MemberExpression member && member.Member is PropertyInfo property)
             {
-                _builder.AddDescendantFilter(p => p == property);
+                _builder.AddPropertyFilter(p => p == property);
                 return this;
             }
 
