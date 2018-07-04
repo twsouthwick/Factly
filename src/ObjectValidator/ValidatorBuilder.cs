@@ -55,7 +55,7 @@ namespace ObjectValidator
         {
             if (Types.Count == 0)
             {
-                throw new ValidatorException("Must declare types for compilation", Errors.NoTypes, null, null);
+                throw new ValidatorException(SR.MustDeclareTypes, Errors.NoTypes, null, null);
             }
 
             var visited = new HashSet<Type>();

@@ -65,6 +65,8 @@ namespace ObjectValidator
         {
             return assembly.ExportedTypes;
         }
+#else
+        public static Type GetTypeInfo(this Type type) => type;
 #endif
 
 #if !FEATURE_CUSTOMATTRIBUTE

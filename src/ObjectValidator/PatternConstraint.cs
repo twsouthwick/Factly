@@ -19,7 +19,7 @@ namespace ObjectValidator
 
             if (property.PropertyType != typeof(string))
             {
-                throw new ValidatorException("Type of property must be string if a pattern is specified", Errors.PatternAppliedToNonString, property.DeclaringType, property);
+                throw new ValidatorException(SR.PatternRequiresStringProperty, Errors.PatternAppliedToNonString, property.DeclaringType, property);
             }
 
             _regex = new Regex(pattern, RegexOptions.Compiled);

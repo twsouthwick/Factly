@@ -64,7 +64,7 @@ namespace ObjectValidator
         {
             if (_isReadonly)
             {
-                throw new InvalidOperationException("Context has been marked as readonly as validation has already started");
+                throw new InvalidOperationException(SR.ValidationStartedContextReadonly);
             }
         }
 
