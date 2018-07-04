@@ -20,12 +20,23 @@ namespace ObjectValidator
         public static Func<object, object> GetPropertyDelegate(this PropertyInfo property)
 #if FEATURE_REFEMIT
         {
+            var isValueType = property.PropertyType.IsValueType;
             var callingClass = property.DeclaringType;
-            var method = new DynamicMethod("ValidatorFastPropertyGetter", property.PropertyType, new[] { typeof(object) }, callingClass, true);
+            var propertyType = isValueType ? typeof(object) : property.PropertyType;
+            var method = new DynamicMethod("ValidatorFastPropertyGetter", propertyType, new[] { typeof(object) }, callingClass, true);
 
             var il = method.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Castclass, callingClass);
+
+            if (callingClass.IsValueType)
+            {
+                il.Emit(OpCodes.Unbox, callingClass);
+            }
+            else
+            {
+                il.Emit(OpCodes.Castclass, callingClass);
+            }
+
             il.Emit(OpCodes.Callvirt, property.GetGetMethod(true));
             il.Emit(OpCodes.Ret);
 

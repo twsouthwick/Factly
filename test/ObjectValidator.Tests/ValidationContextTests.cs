@@ -43,6 +43,26 @@ namespace ObjectValidator
             context.Context.Items = context.Items.Add;
         }
 
+        [Fact]
+        public void TestStruct()
+        {
+            var count = 0;
+            var validator = ValidatorBuilder.Create()
+                .AddKnownType<CustomStruct>()
+                .AddDescendantFilter(_ => true)
+                .AddConstraint(_ => new DelegateConstraint(() => count++))
+                .Build();
+
+            validator.Validate(new CustomStruct());
+
+            Assert.Equal(1, count);
+        }
+
+        private struct CustomStruct
+        {
+            public int Test { get; set; }
+        }
+
 #if NO_CANCELLATION_TOKEN
         [Fact]
         public void ValidateCancelTest35()
