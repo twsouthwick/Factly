@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <ItemGroup>
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\stylecop.json" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\stylecop.json">
+      <Visible>false</Visible>
+    </AdditionalFiles>
 
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004">
       <PrivateAssets>All</PrivateAssets>
