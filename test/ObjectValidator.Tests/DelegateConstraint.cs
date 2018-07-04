@@ -2,19 +2,45 @@
 
 namespace ObjectValidator
 {
-    internal class DelegateConstraint : IConstraint
+    internal class ActionConstraint : IConstraint
+    {
+        private readonly Action _action;
+
+        public ActionConstraint(Action action)
         {
-            private readonly Action _action;
+            _action = action;
+        }
 
-            public DelegateConstraint(Action action)
-            {
-                _action = action;
-            }
+        public ValidationError Validate(object instance, object value)
+        {
+            _action();
+            return null;
+        }
+    }
 
-            public ValidationError Validate(object instance, object value)
+    internal class DelegateConstraint : IConstraint
+    {
+        private readonly Func<object, object, ValidationError> _func;
+
+        public DelegateConstraint(Action<object> action)
+            : this((_, value) => action(value))
+        {
+        }
+
+        public DelegateConstraint(Action<object, object> action)
+            : this((instance, value) =>
             {
-                _action();
+                action(instance, value);
                 return null;
-            }
-            }
+            })
+        {
+        }
+
+        public DelegateConstraint(Func<object, object, ValidationError> func)
+        {
+            _func = func;
+        }
+
+        public ValidationError Validate(object instance, object value) => _func(instance, value);
+    }
 }

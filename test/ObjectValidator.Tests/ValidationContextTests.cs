@@ -29,7 +29,7 @@ namespace ObjectValidator
 
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<ValidationContextTests>()
-                .AddConstraint(_ => new DelegateConstraint(() =>
+                .AddConstraint(_ => new ActionConstraint(() =>
                 {
                     Assert.Throws<InvalidOperationException>(() => context.Context.Errors = context.Errors.Add);
                     Assert.Throws<InvalidOperationException>(() => context.Context.Items = context.Items.Add);
@@ -50,7 +50,7 @@ namespace ObjectValidator
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<CustomStruct>()
                 .AddDescendantFilter(_ => true)
-                .AddConstraint(_ => new DelegateConstraint(() => count++))
+                .AddConstraint(_ => new ActionConstraint(() => count++))
                 .Build();
 
             validator.Validate(new CustomStruct());
@@ -61,6 +61,66 @@ namespace ObjectValidator
         private struct CustomStruct
         {
             public int Test { get; set; }
+        }
+
+        [Fact]
+        public void VirtualPropertyTest()
+        {
+            var count = 0;
+            var validator = ValidatorBuilder.Create()
+                .AddKnownType<TestWithDerivedVirtualProperty>()
+                .AddDescendantFilter<TestWithDerivedVirtualProperty>()
+                .AddConstraint(_ => new DelegateConstraint(instanceValue =>
+                {
+                    var value = Assert.IsType<string>(instanceValue);
+                    Assert.Equal(nameof(TestWithDerivedVirtualProperty), value);
+                    count++;
+                }))
+                .Build();
+
+            validator.Validate(new TestWithDerivedVirtualProperty());
+
+            Assert.Equal(1, count);
+        }
+
+        private class TestWithVirtualProperty
+        {
+            public virtual string Test { get; set; } = nameof(TestWithVirtualProperty);
+        }
+
+        private class TestWithDerivedVirtualProperty : TestWithVirtualProperty
+        {
+            public override string Test { get; set; } = nameof(TestWithDerivedVirtualProperty);
+        }
+
+        [Fact]
+        public void VirtualPropertyNewTest()
+        {
+            var count = 0;
+            var validator = ValidatorBuilder.Create()
+                .AddKnownType<TestWithDerivedVirtualPropertyNew>()
+                .AddDescendantFilter<TestWithDerivedVirtualPropertyNew>()
+                .AddConstraint(_ => new DelegateConstraint(instanceValue =>
+                {
+                    var value = Assert.IsType<string>(instanceValue);
+                    Assert.Equal(nameof(TestWithDerivedVirtualPropertyNew), value);
+                    count++;
+                }))
+                .Build();
+
+            validator.Validate(new TestWithDerivedVirtualPropertyNew());
+
+            Assert.Equal(1, count);
+        }
+
+        private class TestWithVirtualPropertyNew
+        {
+            public virtual string Test { get; set; } = nameof(TestWithVirtualPropertyNew);
+        }
+
+        private class TestWithDerivedVirtualPropertyNew : TestWithVirtualPropertyNew
+        {
+            public new string Test { get; set; } = nameof(TestWithDerivedVirtualPropertyNew);
         }
 
         [Fact]
@@ -99,7 +159,7 @@ namespace ObjectValidator
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestClass1>()
                 .AddDescendantFilter<TestClass2>()
-                .AddConstraint(_ => new DelegateConstraint(() =>
+                .AddConstraint(_ => new ActionConstraint(() =>
                 {
                     cts.Cancel();
                 }))

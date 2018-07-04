@@ -27,17 +27,8 @@ namespace ObjectValidator
 
             var il = method.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
-
-            if (callingClass.IsValueType)
-            {
-                il.Emit(OpCodes.Unbox, callingClass);
-            }
-            else
-            {
-                il.Emit(OpCodes.Castclass, callingClass);
-            }
-
-            il.Emit(OpCodes.Callvirt, property.GetGetMethod(true));
+            il.Emit(callingClass.IsValueType ? OpCodes.Unbox : OpCodes.Castclass, callingClass);
+            il.Emit(OpCodes.Call, property.GetGetMethod(true));
             il.Emit(OpCodes.Ret);
 
             return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
