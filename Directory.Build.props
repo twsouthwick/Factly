@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <!-- Used to test for .NET 3.5 scenarios -->
+    <!--<DefineConstants>$(DefineConstants);NO_CANCELLATION_TOKEN</DefineConstants>-->
+  </PropertyGroup>
+</Project>

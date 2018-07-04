@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-#if FEATURE_CANCELLATION_TOKEN
+#if !NO_CANCELLATION_TOKEN
 using CancellationToken = System.Threading.CancellationToken;
 #else
 using CancellationToken = ObjectValidator.Validator.InternalCancellationToken;
@@ -19,11 +19,13 @@ namespace ObjectValidator
             _typeValidators = typeValidators;
         }
 
-#if FEATURE_CANCELLATION_TOKEN
+#if !NO_CANCELLATION_TOKEN
         public void Validate(object item, ValidationContext context, CancellationToken token = default)
         {
-            ValidateInternal(item, context, token);
+            ValidateInternal(item, new ValidationContext(context), token);
         }
+
+        public void Validate(object item, CancellationToken token = default) => Validate(item, null, token);
 #else
         internal readonly struct InternalCancellationToken
         {
@@ -45,9 +47,14 @@ namespace ObjectValidator
 
         public void Validate(object item, ValidationContext context)
         {
-            ValidateInternal(item, context, new InternalCancellationToken(context));
+            var wrappedContext = new ValidationContext(context);
+
+            ValidateInternal(item, wrappedContext, new CancellationToken(new ValidationContext(wrappedContext)));
         }
+
+        public void Validate(object item) => Validate(item, null);
 #endif
+
 
         private void ValidateInternal(object item, ValidationContext context, CancellationToken token)
         {
@@ -67,18 +74,18 @@ namespace ObjectValidator
 
             while (items.Count > 0)
             {
-                token.ThrowIfCancellationRequested();
-
                 var current = items.Dequeue();
 
                 if (visited.Add(current))
                 {
-                    context.Items?.Invoke(current);
+                    context.Items.Invoke(current);
 
                     if (_typeValidators.TryGetValue(current.GetType(), out var type))
                     {
                         foreach (var property in type.Properties)
                         {
+                            token.ThrowIfCancellationRequested();
+
                             var value = property.Validate(current, context);
 
                             if (value != null && property.ShouldDescend)
@@ -93,15 +100,6 @@ namespace ObjectValidator
                     }
                 }
             }
-        }
-
-        public ValidationResult Validate(object item)
-        {
-            var context = new DefaultValidationContext();
-
-            Validate(item, context);
-
-            return context.GetResult();
         }
     }
 }

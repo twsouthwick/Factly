@@ -13,7 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D09D89FE-0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectValidator.Benchmarks.Tests", "test\ObjectValidator.Benchmarks.Tests\ObjectValidator.Benchmarks.Tests.csproj", "{CBF0D0A3-0E98-4FBB-98DE-BFB56972311F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectValidator.DataAnnotations", "src\ObjectValidator.DataAnnotations\ObjectValidator.DataAnnotations.csproj", "{02FE7CE4-3141-4CAE-9067-53D49F320C79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectValidator.DataAnnotations", "src\ObjectValidator.DataAnnotations\ObjectValidator.DataAnnotations.csproj", "{02FE7CE4-3141-4CAE-9067-53D49F320C79}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B031F87D-B87D-4AF6-99C5-56CD7FDDE235}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

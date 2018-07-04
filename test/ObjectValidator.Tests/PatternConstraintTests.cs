@@ -43,6 +43,7 @@ namespace ObjectValidator
             Assert.Equal(expectedCount, issueRaised);
         }
 
+
         [Fact]
         public void NoPattern()
         {
@@ -50,12 +51,13 @@ namespace ObjectValidator
                 .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
                 .AddKnownType<TestNoPattern>()
                 .Build();
+            var context = new TestValidationContext();
 
             var item = new TestNoPattern { Test = "hello" };
-            var result = validator.Validate(item);
+            validator.Validate(item, context.Context);
 
-            Assert.Empty(result.Errors);
-            Assert.Single(result.Items);
+            Assert.Empty(context.Errors);
+            Assert.Single(context.Items);
         }
 
         [Fact]
@@ -101,10 +103,14 @@ namespace ObjectValidator
                 Items = items.Add
             };
 
-            validator.Validate(item, context);
+            var exception = Assert.Throws<ValidationException>(() => validator.Validate(item, context));
+            Assert.Equal(item, exception.Error.Instance);
+            Assert.Equal(typeof(Test1).GetProperty(nameof(Test1.Test)), exception.Error.Property);
 
             var single = Assert.Single(items);
             Assert.Same(item, single);
+
+
         }
 
         private class RegexAttribute : Attribute

@@ -6,27 +6,27 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net35' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;NO_CANCELLATION_TOKEN</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_REFEMIT</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_CUSTOMATTRIBUTE;FEATURE_IREADONLYCOLLECTION;FEATURE_REFEMIT</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_CUSTOMATTRIBUTE;FEATURE_IREADONLYCOLLECTION;FEATURE_REFEMIT</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_CUSTOMATTRIBUTE;FEATURE_IREADONLYCOLLECTION;FEATURE_TYPEINFO</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_TYPEINFO</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_CUSTOMATTRIBUTE;FEATURE_IREADONLYCOLLECTION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE</DefineConstants>
   </PropertyGroup>
 
 </Project>

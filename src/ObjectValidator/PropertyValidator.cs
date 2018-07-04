@@ -25,7 +25,7 @@ namespace ObjectValidator
             {
                 if (constraint.Validate(item, value) is ValidationError error)
                 {
-                    context.Errors?.Invoke(error);
+                    context.Errors.Invoke(error);
                 }
             }
 

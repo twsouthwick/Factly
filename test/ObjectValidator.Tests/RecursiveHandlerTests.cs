@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Xunit;
+﻿using Xunit;
 
 namespace ObjectValidator
 {
@@ -12,10 +11,11 @@ namespace ObjectValidator
             {
             };
 
-            var results = GetValidator().Validate(instance);
+            var context = new TestValidationContext();
+            GetValidator().Validate(instance, context.Context);
 
-            Assert.Empty(results.Errors);
-            Assert.Single(results.Items);
+            Assert.Empty(context.Errors);
+            Assert.Single(context.Items);
         }
 
         [Fact]
@@ -25,11 +25,12 @@ namespace ObjectValidator
             {
                 Value = new TestClass()
             };
+            var context = new TestValidationContext();
 
-            var results = GetValidator().Validate(instance);
+            GetValidator().Validate(instance, context.Context);
 
-            Assert.Empty(results.Errors);
-            Assert.Equal(2, results.Items.Count());
+            Assert.Empty(context.Errors);
+            Assert.Equal(2, context.Items.Count);
         }
 
         [Fact]
@@ -42,10 +43,11 @@ namespace ObjectValidator
             };
             instance1.Value = instance;
 
-            var results = GetValidator().Validate(instance);
+            var context = new TestValidationContext();
+            GetValidator().Validate(instance, context.Context);
 
-            Assert.Empty(results.Errors);
-            Assert.Equal(2, results.Items.Count());
+            Assert.Empty(context.Errors);
+            Assert.Equal(2, context.Items.Count);
         }
 
         [Fact]
@@ -62,10 +64,12 @@ namespace ObjectValidator
               .AddDescendantFilter<TestClass>()
               .AddKnownType<TestClass>()
               .Build();
-            var results = validator.Validate(instance);
+            var context = new TestValidationContext();
 
-            Assert.Empty(results.Errors);
-            Assert.Equal(2, results.Items.Count());
+            validator.Validate(instance, context.Context);
+
+            Assert.Empty(context.Errors);
+            Assert.Equal(2, context.Items.Count);
         }
 
         [Fact]
@@ -82,10 +86,12 @@ namespace ObjectValidator
                 .AddKnownType<TestClass>()
                 .AddDescendantFilter<TestClassBase>()
                 .Build();
-            var results = validator.Validate(instance);
+            var context = new TestValidationContext();
 
-            Assert.Empty(results.Errors);
-            Assert.Equal(2, results.Items.Count());
+            validator.Validate(instance, context.Context);
+
+            Assert.Empty(context.Errors);
+            Assert.Equal(2, context.Items.Count);
         }
 
         private Validator GetValidator()
