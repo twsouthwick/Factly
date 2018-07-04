@@ -126,6 +126,9 @@
   <data name="PatternRequiresStringProperty" xml:space="preserve">
     <value>Type of property must be a string if a pattern is specified</value>
   </data>
+  <data name="UnknownTypeEncountered" xml:space="preserve">
+    <value>Validation encountered an unknown type</value>
+  </data>
   <data name="ValidationStartedContextReadonly" xml:space="preserve">
     <value>Context has been marked as readonly as validation has already started</value>
   </data>

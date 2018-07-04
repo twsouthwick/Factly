@@ -11,7 +11,7 @@ namespace ObjectValidator
     public sealed class ValidationContext
     {
         private static readonly Action<ValidationError> DefaultErrorHandler = error => throw new ValidationException(error);
-        private static readonly Action<Type> DefaultUnknownTypeHandler = type => throw new ValidatorException("Unknown type", Errors.UnknownType, type, null);
+        private static readonly Action<Type> DefaultUnknownTypeHandler = type => throw new ValidatorException(SR.UnknownTypeEncountered, Errors.UnknownType, type, null);
         private static readonly Action<object> DefaultItemHandler = _ => { };
 
         private readonly bool _isReadonly;

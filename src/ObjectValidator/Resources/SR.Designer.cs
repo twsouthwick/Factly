@@ -89,6 +89,15 @@ namespace ObjectValidator {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Validation encountered an unknown type.
+        /// </summary>
+        internal static string UnknownTypeEncountered {
+            get {
+                return ResourceManager.GetString("UnknownTypeEncountered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Context has been marked as readonly as validation has already started.
         /// </summary>
         internal static string ValidationStartedContextReadonly {
