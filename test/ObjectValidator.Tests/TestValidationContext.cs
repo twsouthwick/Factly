@@ -12,9 +12,9 @@ namespace ObjectValidator
             UnknownTypes = new List<Type>();
             Context = new ValidationContext
             {
-                Errors = Errors.Add,
-                Items = Items.Add,
-                UnknownType = UnknownTypes.Add
+                OnError = Errors.Add,
+                OnItem = Items.Add,
+                OnUnknownType = UnknownTypes.Add
             };
         }
 

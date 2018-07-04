@@ -26,7 +26,7 @@ namespace ObjectValidator
                 .Build();
             var context = new ValidationContext
             {
-                UnknownType = type =>
+                OnUnknownType = type =>
                 {
                     Assert.Equal(typeof(string), type);
                     count++;

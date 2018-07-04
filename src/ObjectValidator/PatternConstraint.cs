@@ -30,7 +30,7 @@ namespace ObjectValidator
         {
             if (value == null)
             {
-                context.Errors(new PatternValidationError(instance, _property, _regex, value));
+                context.OnError(new PatternValidationError(instance, _property, _regex, value));
                 return;
             }
 
@@ -38,7 +38,7 @@ namespace ObjectValidator
 
             if (!_regex.IsMatch((string)value))
             {
-                context.Errors(new PatternValidationError(instance, _property, _regex, value));
+                context.OnError(new PatternValidationError(instance, _property, _regex, value));
             }
         }
     }

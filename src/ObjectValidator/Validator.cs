@@ -80,7 +80,7 @@ namespace ObjectValidator
 
                 if (visited.Add(current))
                 {
-                    context.Items.Invoke(current);
+                    context.OnItem.Invoke(current);
 
                     var currentType = current.GetType();
 
@@ -98,7 +98,7 @@ namespace ObjectValidator
                     }
                     else
                     {
-                        context.UnknownType(currentType);
+                        context.OnUnknownType(currentType);
                     }
                 }
             }

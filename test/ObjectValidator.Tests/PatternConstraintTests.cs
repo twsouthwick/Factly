@@ -25,7 +25,7 @@ namespace ObjectValidator
 
             var context = new ValidationContext
             {
-                Errors = error =>
+                OnError = error =>
                 {
                     var patternError = Assert.IsType<PatternValidationError>(error);
                     Assert.True(isError);
@@ -100,7 +100,7 @@ namespace ObjectValidator
             var items = new List<object>();
             var context = new ValidationContext
             {
-                Items = items.Add
+                OnItem = items.Add
             };
 
             var exception = Assert.Throws<ValidationException>(() => validator.Validate(item, context));

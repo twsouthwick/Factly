@@ -15,14 +15,14 @@ namespace ObjectValidator
             var unknownType = new List<Type>();
             var context = new ValidationContext
             {
-                Errors = errors.Add,
-                Items = items.Add,
-                UnknownType = unknownType.Add
+                OnError = errors.Add,
+                OnItem = items.Add,
+                OnUnknownType = unknownType.Add
             };
 
-            Assert.Equal(errors.Add, context.Errors);
-            Assert.Equal(items.Add, context.Items);
-            Assert.Equal(unknownType.Add, context.UnknownType);
+            Assert.Equal(errors.Add, context.OnError);
+            Assert.Equal(items.Add, context.OnItem);
+            Assert.Equal(unknownType.Add, context.OnUnknownType);
         }
 
         [Fact]
@@ -36,9 +36,9 @@ namespace ObjectValidator
                 .AddDescendantFilter<Test>()
                 .AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
                 {
-                    Assert.Throws<InvalidOperationException>(() => ctx.Errors = context.Errors.Add);
-                    Assert.Throws<InvalidOperationException>(() => ctx.Items = context.Items.Add);
-                    Assert.Throws<InvalidOperationException>(() => ctx.UnknownType = context.UnknownTypes.Add);
+                    Assert.Throws<InvalidOperationException>(() => ctx.OnError = context.Errors.Add);
+                    Assert.Throws<InvalidOperationException>(() => ctx.OnItem = context.Items.Add);
+                    Assert.Throws<InvalidOperationException>(() => ctx.OnUnknownType = context.UnknownTypes.Add);
                     count++;
                 }))
                 .Build();
@@ -48,9 +48,9 @@ namespace ObjectValidator
             Assert.Equal(1, count);
 
             // Does not throw
-            context.Context.Errors = context.Errors.Add;
-            context.Context.Items = context.Items.Add;
-            context.Context.UnknownType = context.UnknownTypes.Add;
+            context.Context.OnError = context.Errors.Add;
+            context.Context.OnItem = context.Items.Add;
+            context.Context.OnUnknownType = context.UnknownTypes.Add;
         }
 
         private class Test

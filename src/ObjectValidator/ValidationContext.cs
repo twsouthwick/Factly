@@ -5,7 +5,7 @@ namespace ObjectValidator
     public sealed class ValidationContext
     {
         private static Action<ValidationError> DefaultErrorHandler = error => throw new ValidationException(error);
-        private static Action<Type> DefaultUnknownTypeHandler = type => throw new ValidatorException("Unknown type", ObjectValidator.Errors.UnknownType, type, null);
+        private static Action<Type> DefaultUnknownTypeHandler = type => throw new ValidatorException("Unknown type", Errors.UnknownType, type, null);
         private static Action<object> DefaultItemHandler = _ => { };
 
         private readonly bool _isReadonly;
@@ -25,12 +25,12 @@ namespace ObjectValidator
 #endif
             _isReadonly = true;
 
-            _errors = context?.Errors ?? DefaultErrorHandler;
-            _items = context?.Items ?? DefaultItemHandler;
-            _unknownTypes = context?.UnknownType ?? DefaultUnknownTypeHandler;
+            _errors = context?.OnError ?? DefaultErrorHandler;
+            _items = context?.OnItem ?? DefaultItemHandler;
+            _unknownTypes = context?.OnUnknownType ?? DefaultUnknownTypeHandler;
         }
 
-        public Action<Type> UnknownType
+        public Action<Type> OnUnknownType
         {
             get => _unknownTypes;
             set
@@ -40,7 +40,7 @@ namespace ObjectValidator
             }
         }
 
-        public Action<ValidationError> Errors
+        public Action<ValidationError> OnError
         {
             get => _errors;
             set
@@ -50,7 +50,7 @@ namespace ObjectValidator
             }
         }
 
-        public Action<object> Items
+        public Action<object> OnItem
         {
             get => _items;
             set
