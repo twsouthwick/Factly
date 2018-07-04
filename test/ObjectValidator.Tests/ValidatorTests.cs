@@ -67,6 +67,26 @@ namespace ObjectValidator
         }
 
         [Fact]
+        public void VirtualPropertyDerived()
+        {
+            var count = 0;
+            var validator = ValidatorBuilder.Create()
+                .AddKnownType<TestWithVirtualPropertyDerived>()
+                .AddDescendantFilter<TestWithVirtualPropertyDerived>()
+                .AddConstraint(_ => new DelegateConstraint(instanceValue =>
+                {
+                    var value = Assert.IsType<string>(instanceValue);
+                    Assert.Equal(nameof(TestWithVirtualProperty), value);
+                    count++;
+                }))
+                .Build();
+
+            validator.Validate(new TestWithVirtualPropertyDerived());
+
+            Assert.Equal(1, count);
+        }
+
+        [Fact]
         public void ValidateCancelTest()
 #if NO_CANCELLATION_TOKEN
         {
@@ -74,8 +94,7 @@ namespace ObjectValidator
 
             Assert.False(context.Context.IsCancelled);
 
-            // Must test with a type with at least two fields so that the cancellation token is checked as it is checked at 
-            // the beginning of each constraint validation
+            // Must use a type with multiple types as cancellation is checked at the start of processing each type
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestClass1>()
                 .AddDescendantFilter<TestClass2>()
@@ -136,6 +155,10 @@ namespace ObjectValidator
         private class TestWithVirtualProperty
         {
             public virtual string Test { get; set; } = nameof(TestWithVirtualProperty);
+        }
+
+        private class TestWithVirtualPropertyDerived : TestWithVirtualProperty
+        {
         }
 
         private class TestWithDerivedVirtualProperty : TestWithVirtualProperty
