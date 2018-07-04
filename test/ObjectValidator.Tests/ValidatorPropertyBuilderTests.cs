@@ -34,9 +34,8 @@ namespace ObjectValidator
                 {
                     Assert.Same(test.Instance, instance);
                     Assert.Equal(Value, value);
+                    count++;
                 }
-
-                count++;
             }));
 
             var validator = builder.Build();
@@ -44,7 +43,7 @@ namespace ObjectValidator
 
             validator.Validate(test, context.Context);
 
-            Assert.Equal(2, count);
+            Assert.Equal(1, count);
         }
 
         private class Test1
