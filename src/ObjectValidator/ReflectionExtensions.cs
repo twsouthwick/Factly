@@ -33,23 +33,17 @@ namespace ObjectValidator
         }
 #else
         {
-#if FEATURE_PROPERTYINFO_GETGETMETHOD
-            var method = property.GetGetMethod(nonPublic: true);
-            var isValueType = property.DeclaringType.IsValueType;
-#else
             var method = property.GetMethod;
             var isValueType = property.DeclaringType.GetTypeInfo().IsValueType;
-#endif
             var instance = Expression.Parameter(typeof(object), "instance");
-            var instanceCast =
-                !isValueType ?
-                    Expression.TypeAs(instance, property.DeclaringType) :
-                    Expression.Convert(instance, property.DeclaringType);
+            var instanceCast = !isValueType ?
+                Expression.TypeAs(instance, property.DeclaringType) :
+                Expression.Convert(instance, property.DeclaringType);
             return Expression.Lambda<Func<object, object>>(
-                    Expression.TypeAs(
-                        Expression.Call(instanceCast, method),
-                        typeof(object)),
-                    instance)
+                Expression.TypeAs(
+                    Expression.Call(instanceCast, method),
+                    typeof(object)),
+                instance)
                 .Compile();
         }
 #endif

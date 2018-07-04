@@ -10,23 +10,23 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;FEATURE_CANCELLATION_TOKEN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_REFEMIT</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE;FEATURE_CANCELLATION_TOKEN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_CUSTOMATTRIBUTE;FEATURE_IREADONLYCOLLECTION;FEATURE_REFEMIT</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE;FEATURE_CANCELLATION_TOKEN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_CUSTOMATTRIBUTE;FEATURE_IREADONLYCOLLECTION;FEATURE_REFEMIT</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <DefineConstants>$(DefineConstants);FEATURE_TYPEINFO;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE;FEATURE_CANCELLATION_TOKEN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_CUSTOMATTRIBUTE;FEATURE_IREADONLYCOLLECTION;FEATURE_TYPEINFO</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_PROPERTYINFO_GETGETMETHOD;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE;FEATURE_CANCELLATION_TOKEN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATION_TOKEN;FEATURE_CUSTOMATTRIBUTE;FEATURE_IREADONLYCOLLECTION</DefineConstants>
   </PropertyGroup>
 
 </Project>
