@@ -71,7 +71,7 @@ namespace ObjectValidator
         }
 #endif
 
-#if MISSING_FEATURE_CUSTOMATTRIBUTE
+#if !FEATURE_CUSTOMATTRIBUTE
         public static T GetCustomAttribute<T>(this PropertyInfo property)
             where T : Attribute
         {

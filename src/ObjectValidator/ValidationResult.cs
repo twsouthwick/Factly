@@ -1,4 +1,4 @@
-﻿#if MISSING_FEATURE_IREADONLYCOLLECTION
+﻿#if !FEATURE_IREADONLYCOLLECTION
 using ValidationErrorCollection = System.Collections.Generic.IEnumerable<ObjectValidator.ValidationError>;
 using ObjectCollection = System.Collections.Generic.IEnumerable<object>;
 #else
