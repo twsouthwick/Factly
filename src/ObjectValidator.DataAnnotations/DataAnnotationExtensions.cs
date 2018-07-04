@@ -5,8 +5,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ObjectValidator
 {
+    /// <summary>
+    /// Extensions to add well known DataAnnotation constraints
+    /// </summary>
     public static class DataAnnotationExtensions
     {
+        /// <summary>
+        /// Add a regular expression constraint using <see cref="RegularExpressionAttribute"/>
+        /// </summary>
+        /// <param name="builder">The current <see cref="ValidatorBuilder"/></param>
+        /// <returns><paramref name="builder"/></returns>
         public static ValidatorBuilder AddRegexConstraint(this ValidatorBuilder builder)
         {
             return builder

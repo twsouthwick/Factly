@@ -5,6 +5,9 @@ using System;
 
 namespace ObjectValidator
 {
+    /// <summary>
+    /// Contains context information for validation that is passed through for validation
+    /// </summary>
     public sealed class ValidationContext
     {
         private static readonly Action<ValidationError> DefaultErrorHandler = error => throw new ValidationException(error);
@@ -16,6 +19,9 @@ namespace ObjectValidator
         private Action<Type> _unknownTypes;
         private Action<object> _items;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidationContext"/> class.
+        /// </summary>
         public ValidationContext()
         {
             _isReadonly = false;
@@ -33,6 +39,9 @@ namespace ObjectValidator
             _unknownTypes = context?.OnUnknownType ?? DefaultUnknownTypeHandler;
         }
 
+        /// <summary>
+        /// Gets or sets the handler called when an unknown type is encountered
+        /// </summary>
         public Action<Type> OnUnknownType
         {
             get => _unknownTypes;
@@ -43,6 +52,9 @@ namespace ObjectValidator
             }
         }
 
+        /// <summary>
+        /// Gets or sets the handler called when an error occurs
+        /// </summary>
         public Action<ValidationError> OnError
         {
             get => _errors;
@@ -53,6 +65,9 @@ namespace ObjectValidator
             }
         }
 
+        /// <summary>
+        /// Gets or sets the handler called when an item is processed
+        /// </summary>
         public Action<object> OnItem
         {
             get => _items;
@@ -76,8 +91,14 @@ namespace ObjectValidator
         private readonly ValidationContext _other;
         private bool _isCancelled = false;
 
+        /// <summary>
+        /// Gets a value indicating whether the validation has been cancelled
+        /// </summary>
         public bool IsCancelled => _isCancelled || _other?.IsCancelled == true;
 
+        /// <summary>
+        /// Cancels the validation
+        /// </summary>
         public void Cancel() => _isCancelled = true;
 #endif
 #pragma warning restore SA1201 // Elements should appear in the correct order

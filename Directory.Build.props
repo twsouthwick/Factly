@@ -3,11 +3,23 @@
 
   <PropertyGroup>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\ObjectValidator.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup>
     <!-- Used to test for .NET 3.5 scenarios -->
     <!--<DefineConstants>$(DefineConstants);NO_CANCELLATION_TOKEN</DefineConstants>-->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputFullPath>$(MSBuildThisFileDirectory)</OutputFullPath>
+    <OutputDrop Condition=" '$(OutputDrop)' == '' ">$(OutputFullPath)bin\$(Configuration)\</OutputDrop>
+    <OutputPath>$(OutputDrop)\$(MSBuildProjectName)\</OutputPath>
+    <BaseIntermediateOutputPath>$(OutputFullPath)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
 </Project>

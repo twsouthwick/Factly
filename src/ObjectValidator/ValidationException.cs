@@ -5,6 +5,9 @@ using System;
 
 namespace ObjectValidator
 {
+    /// <summary>
+    /// Exception thrown when an error is encountered while validating
+    /// </summary>
     public class ValidationException : Exception
     {
         internal ValidationException(ValidationError error)
@@ -12,6 +15,9 @@ namespace ObjectValidator
             Error = error;
         }
 
+        /// <summary>
+        /// Gets the error that caused the exception
+        /// </summary>
         public ValidationError Error { get; }
     }
 }

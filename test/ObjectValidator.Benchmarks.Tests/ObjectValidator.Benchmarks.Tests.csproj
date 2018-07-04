@@ -6,6 +6,7 @@
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject />
+    <NoWarn>$(NoWarn);CA1822;SA0001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
