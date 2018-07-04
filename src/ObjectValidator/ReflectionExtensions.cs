@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 
 #if FEATURE_REFEMIT
 using System.Reflection.Emit;
-#elif FEATURE_PROPERTYINFO_GETGETMETHOD
-using System.Collections.Generic;
-using System.Linq.Expressions;
 #else
 using System.Collections.Generic;
+using System.Linq.Expressions;
 #endif
 
 namespace ObjectValidator
@@ -34,23 +31,26 @@ namespace ObjectValidator
 
             return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
         }
-#elif FEATURE_PROPERTYINFO_GETGETMETHOD
+#else
         {
+#if FEATURE_PROPERTYINFO_GETGETMETHOD
+            var method = property.GetGetMethod(nonPublic: true);
+            var isValueType = property.DeclaringType.IsValueType;
+#else
+            var method = property.GetMethod;
+            var isValueType = property.DeclaringType.GetTypeInfo().IsValueType;
+#endif
             var instance = Expression.Parameter(typeof(object), "instance");
             var instanceCast =
-                !property.DeclaringType.IsValueType ?
+                !isValueType ?
                     Expression.TypeAs(instance, property.DeclaringType) :
                     Expression.Convert(instance, property.DeclaringType);
             return Expression.Lambda<Func<object, object>>(
                     Expression.TypeAs(
-                        Expression.Call(instanceCast, property.GetGetMethod(nonPublic: true)),
+                        Expression.Call(instanceCast, method),
                         typeof(object)),
                     instance)
                 .Compile();
-        }
-#else
-        {
-            return property.GetValue;
         }
 #endif
 
