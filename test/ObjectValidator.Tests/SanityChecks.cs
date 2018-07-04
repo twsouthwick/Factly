@@ -16,5 +16,26 @@ namespace ObjectValidator
             Assert.Equal(Errors.UnknownType, exception.Id);
             Assert.Null(exception.Property);
         }
+
+        [Fact]
+        public void OverrideThrowsOnUnknown()
+        {
+            var count = 0;
+            var validator = ValidatorBuilder.Create()
+                .AddKnownType<int>()
+                .Build();
+            var context = new ValidationContext
+            {
+                UnknownType = type =>
+                {
+                    Assert.Equal(typeof(string), type);
+                    count++;
+                }
+            };
+
+            validator.Validate(string.Empty, context);
+
+            Assert.Equal(1, count);
+        }
     }
 }

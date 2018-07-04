@@ -5,10 +5,12 @@ namespace ObjectValidator
     public sealed class ValidationContext
     {
         private static Action<ValidationError> DefaultErrorHandler = error => throw new ValidationException(error);
+        private static Action<Type> DefaultUnknownTypeHandler = type => throw new ValidatorException("Unknown type", ObjectValidator.Errors.UnknownType, type, null);
         private static Action<object> DefaultItemHandler = _ => { };
 
         private readonly bool _isReadonly;
         private Action<ValidationError> _errors;
+        private Action<Type> _unknownTypes;
         private Action<object> _items;
 
         public ValidationContext()
@@ -25,6 +27,17 @@ namespace ObjectValidator
 
             _errors = context?.Errors ?? DefaultErrorHandler;
             _items = context?.Items ?? DefaultItemHandler;
+            _unknownTypes = context?.UnknownType ?? DefaultUnknownTypeHandler;
+        }
+
+        public Action<Type> UnknownType
+        {
+            get => _unknownTypes;
+            set
+            {
+                CheckIfReadonly();
+                _unknownTypes = value;
+            }
         }
 
         public Action<ValidationError> Errors

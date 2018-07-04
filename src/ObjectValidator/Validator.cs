@@ -82,7 +82,9 @@ namespace ObjectValidator
                 {
                     context.Items.Invoke(current);
 
-                    if (_typeValidators.TryGetValue(current.GetType(), out var type))
+                    var currentType = current.GetType();
+
+                    if (_typeValidators.TryGetValue(currentType, out var type))
                     {
                         foreach (var property in type.Properties)
                         {
@@ -96,7 +98,7 @@ namespace ObjectValidator
                     }
                     else
                     {
-                        throw new ValidatorException("Unknown type", Errors.UnknownType, current.GetType(), null);
+                        context.UnknownType(currentType);
                     }
                 }
             }

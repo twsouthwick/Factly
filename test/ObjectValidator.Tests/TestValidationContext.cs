@@ -1,24 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ObjectValidator
 {
     public class TestValidationContext
+    {
+        public TestValidationContext()
         {
-            public TestValidationContext()
+            Errors = new List<ValidationError>();
+            Items = new List<object>();
+            UnknownTypes = new List<Type>();
+            Context = new ValidationContext
             {
-                Errors = new List<ValidationError>();
-                Items = new List<object>();
-                Context = new ValidationContext
-                {
-                    Errors = Errors.Add,
-                    Items = Items.Add
-                };
-            }
-
-            public List<ValidationError> Errors { get; }
-
-            public List<object> Items { get; }
-
-            public ValidationContext Context { get; }
+                Errors = Errors.Add,
+                Items = Items.Add,
+                UnknownType = UnknownTypes.Add
+            };
         }
+
+        public List<ValidationError> Errors { get; }
+
+        public List<object> Items { get; }
+
+        public List<Type> UnknownTypes { get; }
+
+        public ValidationContext Context { get; }
+    }
 }
