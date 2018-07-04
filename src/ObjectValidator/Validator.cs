@@ -1,5 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+
+#if FEATURE_CANCELLATION_TOKEN
+using CancellationToken = System.Threading.CancellationToken;
+#else
+using CancellationToken = ObjectValidator.Validator.InternalCancellationToken;
+#endif
 
 namespace ObjectValidator
 {
@@ -12,7 +19,37 @@ namespace ObjectValidator
             _typeValidators = typeValidators;
         }
 
+#if FEATURE_CANCELLATION_TOKEN
+        public void Validate(object item, ValidationContext context, CancellationToken token = default)
+        {
+            ValidateInternal(item, context, token);
+        }
+#else
+        internal readonly struct InternalCancellationToken
+        {
+            private readonly ValidationContext _context;
+
+            public InternalCancellationToken(ValidationContext context)
+            {
+                _context = context;
+            }
+
+            public void ThrowIfCancellationRequested()
+            {
+                if (_context.IsCancelled)
+                {
+                    throw new OperationCanceledException();
+                }
+            }
+        }
+
         public void Validate(object item, ValidationContext context)
+        {
+            ValidateInternal(item, context, new InternalCancellationToken(context));
+        }
+#endif
+
+        private void ValidateInternal(object item, ValidationContext context, CancellationToken token)
         {
             if (context == null)
             {
@@ -30,6 +67,8 @@ namespace ObjectValidator
 
             while (items.Count > 0)
             {
+                token.ThrowIfCancellationRequested();
+
                 var current = items.Dequeue();
 
                 if (visited.Add(current))

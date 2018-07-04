@@ -6,27 +6,27 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net35' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;FEATURE_CANCELLATION_TOKEN</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE;FEATURE_CANCELLATION_TOKEN</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE;FEATURE_CANCELLATION_TOKEN</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <DefineConstants>$(DefineConstants);FEATURE_TYPEINFO;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_TYPEINFO;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE;FEATURE_CANCELLATION_TOKEN</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_PROPERTYINFO_GETGETMETHOD;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_PROPERTYINFO_GETGETMETHOD;FEATURE_IREADONLYCOLLECTION;FEATURE_CUSTOMATTRIBUTE;FEATURE_CANCELLATION_TOKEN</DefineConstants>
   </PropertyGroup>
 
 </Project>
