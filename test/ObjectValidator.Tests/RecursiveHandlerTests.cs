@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Linq;
+using Xunit;
 
 namespace ObjectValidator
 {
@@ -28,7 +29,7 @@ namespace ObjectValidator
             var results = GetValidator().Validate(instance);
 
             Assert.Empty(results.Errors);
-            Assert.Equal(2, results.Items.Count);
+            Assert.Equal(2, results.Items.Count());
         }
 
         [Fact]
@@ -44,7 +45,7 @@ namespace ObjectValidator
             var results = GetValidator().Validate(instance);
 
             Assert.Empty(results.Errors);
-            Assert.Equal(2, results.Items.Count);
+            Assert.Equal(2, results.Items.Count());
         }
 
         [Fact]
@@ -64,7 +65,7 @@ namespace ObjectValidator
             var results = validator.Validate(instance);
 
             Assert.Empty(results.Errors);
-            Assert.Equal(2, results.Items.Count);
+            Assert.Equal(2, results.Items.Count());
         }
 
         [Fact]
@@ -84,7 +85,7 @@ namespace ObjectValidator
             var results = validator.Validate(instance);
 
             Assert.Empty(results.Errors);
-            Assert.Equal(2, results.Items.Count);
+            Assert.Equal(2, results.Items.Count());
         }
 
         private Validator GetValidator()
