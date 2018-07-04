@@ -63,9 +63,9 @@ namespace ObjectValidator
             public int Test { get; set; }
         }
 
-#if NO_CANCELLATION_TOKEN
         [Fact]
-        public void ValidateCancelTest35()
+        public void ValidateCancelTest()
+#if NO_CANCELLATION_TOKEN
         {
             var context = new TestValidationContext();
 
@@ -74,39 +74,56 @@ namespace ObjectValidator
             // Must test with a type with at least two fields so that the cancellation token is checked as it is checked at 
             // the beginning of each constraint validation
             var validator = ValidatorBuilder.Create()
-                .AddKnownType<Test2Fields>()
+                .AddKnownType<TestClass1>()
+                .AddDescendantFilter<TestClass2>()
                 .AddConstraint(_ => new DelegateConstraint(() =>
                 {
                     context.Context.Cancel();
                 }))
                 .Build();
 
-            Assert.Throws<OperationCanceledException>(() => validator.Validate(new Test2Fields(), context.Context));
+            var instance = new TestClass1
+            {
+                Instance = new TestClass2()
+            };
 
+            Assert.Throws<OperationCanceledException>(() => validator.Validate(instance, context.Context));
             Assert.True(context.Context.IsCancelled);
         }
 #else
-        [Fact]
-        public void ValidateCancelTest()
         {
             var cts = new CancellationTokenSource();
             var context = new TestValidationContext();
 
-            // Must test with a type with at least two fields so that the cancellation token is checked as it is checked at 
-            // the beginning of each constraint validation
+            // Must use a type with multiple types as cancellation is checked at the start of processing each type
             var validator = ValidatorBuilder.Create()
-                .AddKnownType<Test2Fields>()
+                .AddKnownType<TestClass1>()
+                .AddDescendantFilter<TestClass2>()
                 .AddConstraint(_ => new DelegateConstraint(() =>
                 {
                     cts.Cancel();
                 }))
                 .Build();
 
-            Assert.Throws<OperationCanceledException>(() => validator.Validate(new Test2Fields(), context.Context, cts.Token));
+            var instance = new TestClass1
+            {
+                Instance = new TestClass2()
+            };
+
+            Assert.Throws<OperationCanceledException>(() => validator.Validate(instance, context.Context, cts.Token));
         }
 #endif
 
-        private class Test2Fields
+        private class TestClass1
+        {
+            public TestClass2 Instance { get; set; }
+
+            public string Test1 { get; set; }
+
+            public string Test2 { get; set; }
+        }
+
+        private class TestClass2
         {
             public string Test1 { get; set; }
 

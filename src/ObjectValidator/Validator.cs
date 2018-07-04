@@ -74,6 +74,8 @@ namespace ObjectValidator
 
             while (items.Count > 0)
             {
+                token.ThrowIfCancellationRequested();
+
                 var current = items.Dequeue();
 
                 if (visited.Add(current))
@@ -84,8 +86,6 @@ namespace ObjectValidator
                     {
                         foreach (var property in type.Properties)
                         {
-                            token.ThrowIfCancellationRequested();
-
                             var value = property.Validate(current, context);
 
                             if (value != null && property.ShouldDescend)
