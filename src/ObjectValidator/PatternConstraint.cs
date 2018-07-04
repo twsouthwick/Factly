@@ -26,21 +26,20 @@ namespace ObjectValidator
             _property = property;
         }
 
-        public ValidationError Validate(object instance, object value)
+        public void Validate(object instance, object value, ValidationContext context)
         {
             if (value == null)
             {
-                return new PatternValidationError(instance, _property, _regex, value);
+                context.Errors(new PatternValidationError(instance, _property, _regex, value));
+                return;
             }
 
             Debug.Assert(value is string);
 
-            if (_regex.IsMatch((string)value))
+            if (!_regex.IsMatch((string)value))
             {
-                return null;
+                context.Errors(new PatternValidationError(instance, _property, _regex, value));
             }
-
-            return new PatternValidationError(instance, _property, _regex, value);
         }
     }
 }

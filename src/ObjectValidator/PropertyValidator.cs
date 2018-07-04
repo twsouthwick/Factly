@@ -23,10 +23,7 @@ namespace ObjectValidator
 
             foreach (var constraint in _constraints)
             {
-                if (constraint.Validate(item, value) is ValidationError error)
-                {
-                    context.Errors.Invoke(error);
-                }
+                constraint.Validate(item, value, context);
             }
 
             return value;

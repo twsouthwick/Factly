@@ -25,7 +25,7 @@ namespace ObjectValidator
             Assert.Equal(unknownType.Add, context.UnknownType);
         }
 
-        [Fact(Skip = "Context is copied so test doesn't work")]
+        [Fact]
         public void SetToReadonly()
         {
             var count = 0;
@@ -34,11 +34,11 @@ namespace ObjectValidator
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<Test>()
                 .AddDescendantFilter<Test>()
-                .AddConstraint(_ => new ActionConstraint(() =>
+                .AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
                 {
-                    Assert.Throws<InvalidOperationException>(() => context.Context.Errors = context.Errors.Add);
-                    Assert.Throws<InvalidOperationException>(() => context.Context.Items = context.Items.Add);
-                    Assert.Throws<InvalidOperationException>(() => context.Context.UnknownType = context.UnknownTypes.Add);
+                    Assert.Throws<InvalidOperationException>(() => ctx.Errors = context.Errors.Add);
+                    Assert.Throws<InvalidOperationException>(() => ctx.Items = context.Items.Add);
+                    Assert.Throws<InvalidOperationException>(() => ctx.UnknownType = context.UnknownTypes.Add);
                     count++;
                 }))
                 .Build();

@@ -2,6 +2,6 @@
 {
     public interface IConstraint
     {
-        ValidationError Validate(object instance, object value);
+        void Validate(object instance, object value, ValidationContext context);
     }
 }

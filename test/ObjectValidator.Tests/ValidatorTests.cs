@@ -13,7 +13,7 @@ namespace ObjectValidator
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<CustomStruct>()
                 .AddDescendantFilter(_ => true)
-                .AddConstraint(_ => new ActionConstraint(() => count++))
+                .AddConstraint(_ => new DelegateConstraint(() => count++))
                 .Build();
 
             validator.Validate(new CustomStruct());
@@ -33,7 +33,7 @@ namespace ObjectValidator
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestWithDerivedVirtualProperty>()
                 .AddDescendantFilter<TestWithDerivedVirtualProperty>()
-                .AddConstraint(_ => new DelegateConstraint(instanceValue =>
+                .AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
                 {
                     var value = Assert.IsType<string>(instanceValue);
                     Assert.Equal(nameof(TestWithDerivedVirtualProperty), value);
@@ -53,7 +53,7 @@ namespace ObjectValidator
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestWithDerivedVirtualPropertyNew>()
                 .AddDescendantFilter<TestWithDerivedVirtualPropertyNew>()
-                .AddConstraint(_ => new DelegateConstraint(instanceValue =>
+                .AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
                 {
                     var value = Assert.IsType<string>(instanceValue);
                     Assert.Equal(nameof(TestWithDerivedVirtualPropertyNew), value);
@@ -73,7 +73,7 @@ namespace ObjectValidator
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestWithVirtualPropertyDerived>()
                 .AddDescendantFilter<TestWithVirtualPropertyDerived>()
-                .AddConstraint(_ => new DelegateConstraint(instanceValue =>
+                .AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
                 {
                     var value = Assert.IsType<string>(instanceValue);
                     Assert.Equal(nameof(TestWithVirtualProperty), value);
@@ -121,7 +121,7 @@ namespace ObjectValidator
             var validator = ValidatorBuilder.Create()
                 .AddKnownType<TestClass1>()
                 .AddDescendantFilter<TestClass2>()
-                .AddConstraint(_ => new ActionConstraint(() =>
+                .AddConstraint(_ => new DelegateConstraint(() =>
                 {
                     cts.Cancel();
                 }))
