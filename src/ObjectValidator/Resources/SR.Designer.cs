@@ -62,6 +62,15 @@ namespace ObjectValidator {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A property is required for the expression statement.
+        /// </summary>
+        internal static string ExpressionPropertyRequired {
+            get {
+                return ResourceManager.GetString("ExpressionPropertyRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Must declare types for compilation.
         /// </summary>
         internal static string MustDeclareTypes {

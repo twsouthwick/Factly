@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace ObjectValidator
@@ -13,6 +14,8 @@ namespace ObjectValidator
                 return typeof(T).IsAssignableFrom(propertyInfo.PropertyType);
             });
         }
+
+        public static ValidatorPropertyBuilder<TType> ForType<TType>(this ValidatorBuilder validatorBuilder) => new ValidatorPropertyBuilder<TType>(validatorBuilder);
 
         public static ValidatorBuilder AddKnownTypes(this ValidatorBuilder builder, Assembly assembly, Func<Type, bool> selector)
         {
