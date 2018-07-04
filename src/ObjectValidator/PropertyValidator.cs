@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -15,18 +18,6 @@ namespace ObjectValidator
             _constraints = constraints;
             Type = property.PropertyType;
             ShouldFollow = shouldFollow;
-        }
-
-        public object Validate(object item, ValidationContext context)
-        {
-            var value = _getter(item);
-
-            foreach (var constraint in _constraints)
-            {
-                constraint.Validate(item, value, context);
-            }
-
-            return value;
         }
 
         public Type Type { get; }
@@ -47,6 +38,18 @@ namespace ObjectValidator
             }
 
             return new PropertyValidator(property, shouldFollow, constraints);
+        }
+
+        public object Validate(object item, ValidationContext context)
+        {
+            var value = _getter(item);
+
+            foreach (var constraint in _constraints)
+            {
+                constraint.Validate(item, value, context);
+            }
+
+            return value;
         }
     }
 }

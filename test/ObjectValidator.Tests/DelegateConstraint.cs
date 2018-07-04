@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 
 namespace ObjectValidator
 {
@@ -7,7 +10,7 @@ namespace ObjectValidator
         private readonly Action<object, object, ValidationContext> _action;
 
         public DelegateConstraint(Action action)
-            : this((_, __, ___) => action())
+            : this((instance, value, ctx) => action())
         {
         }
 

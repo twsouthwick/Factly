@@ -1,3 +1,6 @@
+// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -34,7 +37,7 @@ namespace ObjectValidator
                     Assert.Same(item, patternError.Instance);
 
                     issueRaised++;
-                }
+                },
             };
 
             validator.Validate(item, context);
@@ -42,7 +45,6 @@ namespace ObjectValidator
 
             Assert.Equal(expectedCount, issueRaised);
         }
-
 
         [Fact]
         public void NoPattern()
@@ -100,7 +102,7 @@ namespace ObjectValidator
             var items = new List<object>();
             var context = new ValidationContext
             {
-                OnItem = items.Add
+                OnItem = items.Add,
             };
 
             var exception = Assert.Throws<ValidationException>(() => validator.Validate(item, context));
@@ -109,10 +111,9 @@ namespace ObjectValidator
 
             var single = Assert.Single(items);
             Assert.Same(item, single);
-
-
         }
 
+        [AttributeUsage(AttributeTargets.Property)]
         private class RegexAttribute : Attribute
         {
             public RegexAttribute(string pattern)

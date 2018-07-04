@@ -1,4 +1,7 @@
-﻿using Xunit;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Xunit;
 
 namespace ObjectValidator
 {
@@ -30,7 +33,7 @@ namespace ObjectValidator
                 {
                     Assert.Equal(typeof(string), type);
                     count++;
-                }
+                },
             };
 
             validator.Validate(string.Empty, context);

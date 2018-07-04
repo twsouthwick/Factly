@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -27,6 +30,7 @@ namespace ObjectValidator
 
         public void Validate(object item, CancellationToken token = default) => Validate(item, null, token);
 #else
+#pragma warning disable SA1201 // Elements should appear in the correct order
         internal readonly struct InternalCancellationToken
         {
             private readonly ValidationContext _context;
@@ -53,8 +57,8 @@ namespace ObjectValidator
         }
 
         public void Validate(object item) => Validate(item, null);
+#pragma warning restore SA1201 // Elements should appear in the correct order
 #endif
-
 
         private void ValidateInternal(object item, ValidationContext context, CancellationToken token)
         {

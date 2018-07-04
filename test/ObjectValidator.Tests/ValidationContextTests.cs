@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Xunit;
@@ -17,7 +20,7 @@ namespace ObjectValidator
             {
                 OnError = errors.Add,
                 OnItem = items.Add,
-                OnUnknownType = unknownType.Add
+                OnUnknownType = unknownType.Add,
             };
 
             Assert.Equal(errors.Add, context.OnError);

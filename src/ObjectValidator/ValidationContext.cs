@@ -1,12 +1,15 @@
-﻿using System;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 
 namespace ObjectValidator
 {
     public sealed class ValidationContext
     {
-        private static Action<ValidationError> DefaultErrorHandler = error => throw new ValidationException(error);
-        private static Action<Type> DefaultUnknownTypeHandler = type => throw new ValidatorException("Unknown type", Errors.UnknownType, type, null);
-        private static Action<object> DefaultItemHandler = _ => { };
+        private static readonly Action<ValidationError> DefaultErrorHandler = error => throw new ValidationException(error);
+        private static readonly Action<Type> DefaultUnknownTypeHandler = type => throw new ValidatorException("Unknown type", Errors.UnknownType, type, null);
+        private static readonly Action<object> DefaultItemHandler = _ => { };
 
         private readonly bool _isReadonly;
         private Action<ValidationError> _errors;
@@ -68,6 +71,7 @@ namespace ObjectValidator
             }
         }
 
+#pragma warning disable SA1201 // Elements should appear in the correct order
 #if NO_CANCELLATION_TOKEN
         private readonly ValidationContext _other;
         private bool _isCancelled = false;
@@ -76,5 +80,6 @@ namespace ObjectValidator
 
         public void Cancel() => _isCancelled = true;
 #endif
+#pragma warning restore SA1201 // Elements should appear in the correct order
     }
 }

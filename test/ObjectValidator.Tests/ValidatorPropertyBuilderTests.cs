@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,8 +27,8 @@ namespace ObjectValidator
             {
                 Instance = new Test2
                 {
-                    Member = Value
-                }
+                    Member = Value,
+                },
             };
 
             builder.AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>

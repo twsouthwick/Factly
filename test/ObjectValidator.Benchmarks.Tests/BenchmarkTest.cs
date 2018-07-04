@@ -1,4 +1,7 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
 using System;
 
@@ -39,7 +42,7 @@ namespace ObjectValidator.Benchmarks.Tests
         {
             var instance = new TestClass
             {
-                Value = "somethin"
+                Value = "somethin",
             };
 
             _validator.Validate(instance, _context);
@@ -50,19 +53,20 @@ namespace ObjectValidator.Benchmarks.Tests
         {
             var instance = new TestClass
             {
-                Value = "somethin"
+                Value = "somethin",
             };
 
             _validator.Validate(instance);
         }
 
-        public class TestClass
+        private class TestClass
         {
             [Regex("hello")]
             public string Value { get; set; }
         }
 
-        public class RegexAttribute : Attribute
+        [AttributeUsage(AttributeTargets.Property)]
+        private class RegexAttribute : Attribute
         {
             public RegexAttribute(string pattern)
             {

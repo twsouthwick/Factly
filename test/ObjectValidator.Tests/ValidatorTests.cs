@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Threading;
 using Xunit;
 
@@ -16,14 +19,9 @@ namespace ObjectValidator
                 .AddConstraint(_ => new DelegateConstraint(() => count++))
                 .Build();
 
-            validator.Validate(new CustomStruct());
+            validator.Validate(default(CustomStruct));
 
             Assert.Equal(1, count);
-        }
-
-        private struct CustomStruct
-        {
-            public int Test { get; set; }
         }
 
         [Fact]
@@ -129,12 +127,17 @@ namespace ObjectValidator
 
             var instance = new TestClass1
             {
-                Instance = new TestClass2()
+                Instance = new TestClass2(),
             };
 
             Assert.Throws<OperationCanceledException>(() => validator.Validate(instance, context.Context, cts.Token));
         }
 #endif
+
+        private struct CustomStruct
+        {
+            public int Test { get; set; }
+        }
 
         private class TestClass1
         {

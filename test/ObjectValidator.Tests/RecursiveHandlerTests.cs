@@ -1,4 +1,7 @@
-﻿using Xunit;
+﻿// Copyright (c) Taylor Southwick. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Xunit;
 
 namespace ObjectValidator
 {
@@ -23,7 +26,7 @@ namespace ObjectValidator
         {
             var instance = new TestClass
             {
-                Value = new TestClass()
+                Value = new TestClass(),
             };
             var context = new TestValidationContext();
 
@@ -39,7 +42,7 @@ namespace ObjectValidator
             var instance1 = new TestClass();
             var instance = new TestClass
             {
-                Value = instance1
+                Value = instance1,
             };
             instance1.Value = instance;
 
@@ -56,7 +59,7 @@ namespace ObjectValidator
             var instance1 = new TestClass();
             var instance = new TestClass
             {
-                Value = instance1
+                Value = instance1,
             };
             instance1.Value = instance;
 
@@ -78,7 +81,7 @@ namespace ObjectValidator
             var instance1 = new TestClass();
             var instance = new TestClass
             {
-                Value = instance1
+                Value = instance1,
             };
             instance1.Value = instance;
 
