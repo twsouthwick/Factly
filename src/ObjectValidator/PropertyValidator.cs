@@ -57,7 +57,9 @@ namespace ObjectValidator
             return value;
         }
 
+#pragma warning disable CA1812
         internal class PropertyValidatorDebuggerProxy
+#pragma warning restore CA1812
         {
             public PropertyValidatorDebuggerProxy(PropertyValidator validator)
             {

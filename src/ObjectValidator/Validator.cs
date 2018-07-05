@@ -133,7 +133,9 @@ namespace ObjectValidator
             }
         }
 
+#pragma warning disable CA1812
         internal class ValidatorDebugProxy
+#pragma warning restore CA1812
         {
             private readonly Validator _validator;
 
