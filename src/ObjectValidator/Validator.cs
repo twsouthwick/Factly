@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 #if !NO_CANCELLATION_TOKEN
@@ -16,6 +17,7 @@ namespace ObjectValidator
     /// <summary>
     /// A class that contains information to validate objects as defined via <see cref="ValidatorBuilder"/>
     /// </summary>
+    [DebuggerTypeProxy(typeof(ValidatorDebugProxy))]
     public sealed class Validator
     {
         private readonly Dictionary<Type, TypeValidator> _typeValidators;
@@ -129,6 +131,19 @@ namespace ObjectValidator
                     }
                 }
             }
+        }
+
+        internal class ValidatorDebugProxy
+        {
+            private readonly Validator _validator;
+
+            public ValidatorDebugProxy(Validator validator)
+            {
+                _validator = validator;
+            }
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public ICollection<TypeValidator> Validators => _validator._typeValidators.Values;
         }
     }
 }

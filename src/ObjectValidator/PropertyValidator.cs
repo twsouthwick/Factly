@@ -2,11 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
 namespace ObjectValidator
 {
+    [DebuggerDisplay("{Type.FullName,nq} {Property.Name,nq}")]
+    [DebuggerTypeProxy(typeof(PropertyValidatorDebuggerProxy))]
     internal readonly struct PropertyValidator
     {
         private readonly Func<object, object> _getter;
@@ -14,13 +17,15 @@ namespace ObjectValidator
 
         private PropertyValidator(PropertyInfo property, bool shouldFollow, IConstraint[] constraints)
         {
+            Property = property;
             _getter = property.GetPropertyDelegate();
             _constraints = constraints;
-            Type = property.PropertyType;
             ShouldFollow = shouldFollow;
         }
 
-        public Type Type { get; }
+        public PropertyInfo Property { get; }
+
+        public Type Type => Property.PropertyType;
 
         public bool ShouldFollow { get; }
 
@@ -50,6 +55,17 @@ namespace ObjectValidator
             }
 
             return value;
+        }
+
+        internal class PropertyValidatorDebuggerProxy
+        {
+            public PropertyValidatorDebuggerProxy(PropertyValidator validator)
+            {
+                Constraints = validator._constraints;
+            }
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public IConstraint[] Constraints { get; }
         }
     }
 }
