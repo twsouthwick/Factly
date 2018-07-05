@@ -6,7 +6,7 @@ using System;
 namespace ObjectValidator
 {
     /// <summary>
-    /// Contains context information for validation that is passed through for validation
+    /// Contains context information for validation that is passed through for validation.
     /// </summary>
     public sealed class ValidationContext
     {
@@ -40,7 +40,7 @@ namespace ObjectValidator
         }
 
         /// <summary>
-        /// Gets or sets the handler called when an unknown type is encountered
+        /// Gets or sets the handler called when an unknown type is encountered.
         /// </summary>
         public Action<Type> OnUnknownType
         {
@@ -53,7 +53,7 @@ namespace ObjectValidator
         }
 
         /// <summary>
-        /// Gets or sets the handler called when an error occurs
+        /// Gets or sets the handler called when an error occurs.
         /// </summary>
         public Action<ValidationError> OnError
         {
@@ -66,7 +66,7 @@ namespace ObjectValidator
         }
 
         /// <summary>
-        /// Gets or sets the handler called when an item is processed
+        /// Gets or sets the handler called when an item is processed.
         /// </summary>
         public Action<object> OnItem
         {
@@ -92,12 +92,12 @@ namespace ObjectValidator
         private bool _isCancelled = false;
 
         /// <summary>
-        /// Gets a value indicating whether the validation has been cancelled
+        /// Gets a value indicating whether the validation has been cancelled.
         /// </summary>
         public bool IsCancelled => _isCancelled || _other?.IsCancelled == true;
 
         /// <summary>
-        /// Cancels the validation
+        /// Cancels the validation.
         /// </summary>
         public void Cancel() => _isCancelled = true;
 #endif

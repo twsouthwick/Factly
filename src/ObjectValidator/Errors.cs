@@ -4,22 +4,22 @@
 namespace ObjectValidator
 {
     /// <summary>
-    /// A collection of known errors
+    /// A collection of known errors.
     /// </summary>
     public static class Errors
     {
         /// <summary>
-        /// Attempted to build validator without specifying types
+        /// Attempted to build validator without specifying types.
         /// </summary>
         public const string NoTypes = "E0001";
 
         /// <summary>
-        /// An unknown type was encountered
+        /// An unknown type was encountered.
         /// </summary>
         public const string UnknownType = "E0002";
 
         /// <summary>
-        /// Pattern expected but on a non-string type
+        /// Pattern expected but on a non-string type.
         /// </summary>
         public const string PatternAppliedToNonString = "E0003";
     }

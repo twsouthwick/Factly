@@ -16,10 +16,10 @@ namespace ObjectValidator
     internal static class ReflectionExtensions
     {
         /// <summary>
-        /// Retrieves a delegate to access the value of the property. Some platforms allow for more efficient implementations than others
+        /// Retrieves a delegate to access the value of the property. Some platforms allow for more efficient implementations than others.
         /// </summary>
-        /// <param name="property">Property to retrieve getter</param>
-        /// <returns>A delegate to access the value of the property</returns>
+        /// <param name="property">Property to retrieve getter.</param>
+        /// <returns>A delegate to access the value of the property.</returns>
         public static Func<object, object> GetPropertyDelegate(this PropertyInfo property)
 #if FEATURE_REFEMIT
         {

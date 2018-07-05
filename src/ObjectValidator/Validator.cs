@@ -15,7 +15,7 @@ using CancellationToken = ObjectValidator.Validator.InternalCancellationToken;
 namespace ObjectValidator
 {
     /// <summary>
-    /// A class that contains information to validate objects as defined via <see cref="ValidatorBuilder"/>
+    /// A class that contains information to validate objects as defined via <see cref="ValidatorBuilder"/>.
     /// </summary>
     [DebuggerTypeProxy(typeof(ValidatorDebugProxy))]
     public sealed class Validator
@@ -29,21 +29,21 @@ namespace ObjectValidator
 
 #if !NO_CANCELLATION_TOKEN
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>
+        /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>.
         /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <param name="context"><see cref="ValidationContext"/> to pass through</param>
-        /// <param name="token">An optional <see cref="CancellationToken"/></param>
+        /// <param name="item">Item to validate.</param>
+        /// <param name="context"><see cref="ValidationContext"/> to pass through.</param>
+        /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
         public void Validate(object item, ValidationContext context, CancellationToken token = default)
         {
             ValidateInternal(item, new ValidationContext(context), token);
         }
 
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/>
+        /// Validates an item and its object graph according to that defined in <see cref="Validator"/>.
         /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <param name="token">An optional <see cref="CancellationToken"/></param>
+        /// <param name="item">Item to validate.</param>
+        /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
         public void Validate(object item, CancellationToken token = default) => Validate(item, null, token);
 #else
 #pragma warning disable SA1201 // Elements should appear in the correct order
@@ -66,10 +66,10 @@ namespace ObjectValidator
         }
 
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>
+        /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>.
         /// </summary>
-        /// <param name="item">Item to validate</param>
-        /// <param name="context"><see cref="ValidationContext"/> to pass through</param>
+        /// <param name="item">Item to validate.</param>
+        /// <param name="context"><see cref="ValidationContext"/> to pass through.</param>
         public void Validate(object item, ValidationContext context)
         {
             var wrappedContext = new ValidationContext(context);
@@ -78,9 +78,9 @@ namespace ObjectValidator
         }
 
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/>
+        /// Validates an item and its object graph according to that defined in <see cref="Validator"/>.
         /// </summary>
-        /// <param name="item">Item to validate</param>
+        /// <param name="item">Item to validate.</param>
         public void Validate(object item) => Validate(item, null);
 #pragma warning restore SA1201 // Elements should appear in the correct order
 #endif

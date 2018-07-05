@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace ObjectValidator
 {
     /// <summary>
-    /// An error that occurs when a pattern is encountered that doesn't match
+    /// An error that occurs when a pattern is encountered that doesn't match.
     /// </summary>
     public class PatternValidationError : ValidationError
     {
@@ -19,12 +19,12 @@ namespace ObjectValidator
         }
 
         /// <summary>
-        /// Gets the value of the instance
+        /// Gets the value of the instance.
         /// </summary>
         public object Value { get; }
 
         /// <summary>
-        /// Gets the expected pattern
+        /// Gets the expected pattern.
         /// </summary>
         public Regex Pattern { get; }
     }
