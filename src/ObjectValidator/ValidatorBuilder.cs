@@ -17,9 +17,10 @@ namespace ObjectValidator
             Types = new HashSet<Type>();
             Constraints = new List<Func<PropertyInfo, IConstraint>>();
             PropertyFilters = new List<Func<PropertyInfo, bool>>();
+            State = new StateManager();
         }
 
-        internal PatternConstraint Pattern { get; private set; }
+        internal StateManager State { get; }
 
         internal List<Func<PropertyInfo, bool>> PropertyFilters { get; }
 

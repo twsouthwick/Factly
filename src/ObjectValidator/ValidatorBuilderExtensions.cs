@@ -88,7 +88,7 @@ namespace ObjectValidator
                     return null;
                 }
 
-                return new PatternConstraint(propertyInfo, stringSelector(attribute));
+                return new PatternConstraint(propertyInfo, builder, stringSelector(attribute));
             });
         }
     }

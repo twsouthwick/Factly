@@ -13,7 +13,7 @@ namespace ObjectValidator
         private readonly Regex _regex;
         private readonly PropertyInfo _property;
 
-        public PatternConstraint(PropertyInfo property, string pattern)
+        public PatternConstraint(PropertyInfo property, ValidatorBuilder builder, string pattern)
         {
             if (pattern == null)
             {
@@ -25,7 +25,7 @@ namespace ObjectValidator
                 throw new ValidatorException(SR.PatternRequiresStringProperty, Errors.PatternAppliedToNonString, property.DeclaringType, property);
             }
 
-            _regex = new Regex(pattern, RegexOptions.Compiled);
+            _regex = builder.State.AddOrGet(pattern, p => new Regex(pattern, RegexOptions.Compiled));
             _property = property;
         }
 
