@@ -68,8 +68,12 @@ namespace ObjectValidator
         {
             return assembly.ExportedTypes;
         }
+
+        public static bool HasGetMethod(this PropertyInfo propertyInfo) => propertyInfo.GetMethod != null;
 #else
         public static Type GetTypeInfo(this Type type) => type;
+
+        public static bool HasGetMethod(this PropertyInfo propertyInfo) => propertyInfo.GetGetMethod(true) != null;
 #endif
 
 #if !FEATURE_CUSTOMATTRIBUTE

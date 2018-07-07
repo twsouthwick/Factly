@@ -31,6 +31,11 @@ namespace ObjectValidator
 
         public static PropertyValidator Create(PropertyInfo property, ValidatorBuilder builder)
         {
+            if (!property.HasGetMethod())
+            {
+                return default;
+            }
+
             var constraints = builder.Constraints
                 .Select(factory => factory(property))
                 .Where(constraint => constraint != null)
