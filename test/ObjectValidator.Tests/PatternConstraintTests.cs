@@ -113,6 +113,30 @@ namespace ObjectValidator
             Assert.Same(item, single);
         }
 
+        [Fact]
+        public void SamePatternIsCached()
+        {
+            var builder = ValidatorBuilder.Create();
+
+            builder.AddRegexConstraint<RegexAttribute>(r => r.Pattern);
+            builder.ForType<DuplicatePattern>()
+                .AddProperty(p => p.Test1)
+                .AddProperty(p => p.Test2);
+
+            var validator = builder.Build();
+            var instance = new DuplicatePattern();
+            var context = new TestValidationContext();
+
+            validator.Validate(instance, context.Context);
+
+            Assert.Equal(2, context.Errors.Count);
+
+            var error1 = Assert.IsType<PatternValidationError>(context.Errors[0]);
+            var error2 = Assert.IsType<PatternValidationError>(context.Errors[1]);
+
+            Assert.Same(error1.Pattern, error2.Pattern);
+        }
+
         [AttributeUsage(AttributeTargets.Property)]
         private class RegexAttribute : Attribute
         {
@@ -122,6 +146,15 @@ namespace ObjectValidator
             }
 
             public string Pattern { get; }
+        }
+
+        private class DuplicatePattern
+        {
+            [Regex("hello")]
+            public string Test1 { get; set; }
+
+            [Regex("hello")]
+            public string Test2 { get; set; }
         }
 
         private class TestNoPattern
