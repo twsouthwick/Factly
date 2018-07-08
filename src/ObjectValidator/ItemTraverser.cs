@@ -12,12 +12,7 @@ namespace ObjectValidator
 {
     internal static class ItemTraverser
     {
-        public static void Traverse<TItem>(TItem item, Func<TItem, IEnumerable<TItem>> process, CancellationToken token)
-        {
-            Traverse(new[] { item }, process, token);
-        }
-
-        public static void Traverse<TItem>(IEnumerable<TItem> initialItems, Func<TItem, IEnumerable<TItem>> process, CancellationToken token)
+        public static void Traverse<TItem>(this IEnumerable<TItem> initialItems, Func<TItem, IEnumerable<TItem>> process, CancellationToken token)
         {
             var visited = new HashSet<TItem>();
             var items = new Queue<TItem>(initialItems);

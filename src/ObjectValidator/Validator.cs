@@ -97,7 +97,7 @@ namespace ObjectValidator
                 }
             }
 
-            ItemTraverser.Traverse(item, BuildItem, token);
+            SingletonList.Create(item).Traverse(BuildItem, token);
         }
 
 #pragma warning disable CA1812

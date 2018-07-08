@@ -124,7 +124,7 @@ namespace ObjectValidator
                 }
             }
 
-            ItemTraverser.Traverse(Types, AddItem, token);
+            Types.Traverse(AddItem, token);
 
             return new Validator(validators);
         }
