@@ -5,6 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
+#if !NO_CANCELLATION_TOKEN
+using System.Threading;
+#endif
+
 namespace ObjectValidator
 {
     /// <summary>
@@ -82,38 +86,45 @@ namespace ObjectValidator
             return this;
         }
 
+#if !NO_CANCELLATION_TOKEN
+        /// <summary>
+        /// Build the <see cref="Validator"/> from the current information in <see cref="ValidatorBuilder"/>.
+        /// </summary>
+        /// <param name="token">Optional cancellation token.</param>
+        /// <returns><see cref="Validator"/> built from <see cref="ValidatorBuilder"/>.</returns>
+        public Validator Build(CancellationToken token = default)
+        {
+#else
         /// <summary>
         /// Build the <see cref="Validator"/> from the current information in <see cref="ValidatorBuilder"/>.
         /// </summary>
         /// <returns><see cref="Validator"/> built from <see cref="ValidatorBuilder"/>.</returns>
         public Validator Build()
         {
+            var token = default(CancellationToken);
+#endif
             if (Types.Count == 0)
             {
                 throw new ValidatorException(SR.MustDeclareTypes, Errors.NoTypes, null, null);
             }
 
-            var visited = new HashSet<Type>();
-            var left = new Queue<Type>(Types);
             var validators = new Dictionary<Type, TypeValidator>();
 
-            while (left.Count > 0)
+            IEnumerable<Type> AddItem(Type type)
             {
-                var type = left.Dequeue();
-                if (visited.Add(type))
-                {
-                    var compiledType = new TypeValidator(type, this);
-                    validators.Add(type, compiledType);
+                var compiledType = new TypeValidator(type, this);
+                validators.Add(type, compiledType);
 
-                    foreach (var property in compiledType.Properties)
+                foreach (var property in compiledType.Properties)
+                {
+                    if (property.IncludeChildren)
                     {
-                        if (property.IncludeChildren)
-                        {
-                            left.Enqueue(property.Type);
-                        }
+                        yield return property.Type;
                     }
                 }
             }
+
+            ItemTraverser.Traverse(Types, AddItem, token);
 
             return new Validator(validators);
         }

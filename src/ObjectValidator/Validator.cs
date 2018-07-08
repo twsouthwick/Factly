@@ -4,12 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-
 #if !NO_CANCELLATION_TOKEN
-using CancellationToken = System.Threading.CancellationToken;
-#else
-using CancellationToken = ObjectValidator.Validator.InternalCancellationToken;
+using System.Threading;
 #endif
 
 namespace ObjectValidator
@@ -46,25 +42,6 @@ namespace ObjectValidator
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
         public void Validate(object item, CancellationToken token = default) => Validate(item, null, token);
 #else
-#pragma warning disable SA1201 // Elements should appear in the correct order
-        internal readonly struct InternalCancellationToken
-        {
-            private readonly ValidationContext _context;
-
-            public InternalCancellationToken(ValidationContext context)
-            {
-                _context = context;
-            }
-
-            public void ThrowIfCancellationRequested()
-            {
-                if (_context.IsCancelled)
-                {
-                    throw new OperationCanceledException();
-                }
-            }
-        }
-
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>.
         /// </summary>
@@ -82,7 +59,6 @@ namespace ObjectValidator
         /// </summary>
         /// <param name="item">Item to validate.</param>
         public void Validate(object item) => Validate(item, null);
-#pragma warning restore SA1201 // Elements should appear in the correct order
 #endif
 
         private void ValidateInternal(object item, ValidationContext context, CancellationToken token)
@@ -97,40 +73,31 @@ namespace ObjectValidator
                 throw new ArgumentNullException(nameof(item));
             }
 
-            var visited = new HashSet<object>();
-            var items = new Queue<object>();
-            items.Enqueue(item);
-
-            while (items.Count > 0)
+            IEnumerable<object> BuildItem(object current)
             {
-                token.ThrowIfCancellationRequested();
+                context.OnItem.Invoke(current);
 
-                var current = items.Dequeue();
+                var currentType = current.GetType();
 
-                if (visited.Add(current))
+                if (_typeValidators.TryGetValue(currentType, out var type))
                 {
-                    context.OnItem.Invoke(current);
-
-                    var currentType = current.GetType();
-
-                    if (_typeValidators.TryGetValue(currentType, out var type))
+                    foreach (var property in type.Properties)
                     {
-                        foreach (var property in type.Properties)
-                        {
-                            var value = property.Validate(current, context);
+                        var value = property.Validate(current, context);
 
-                            if (value != null && property.IncludeChildren)
-                            {
-                                items.Enqueue(value);
-                            }
+                        if (value != null && property.IncludeChildren)
+                        {
+                            yield return value;
                         }
                     }
-                    else
-                    {
-                        context.OnUnknownType(currentType);
-                    }
+                }
+                else
+                {
+                    context.OnUnknownType(currentType);
                 }
             }
+
+            ItemTraverser.Traverse(item, BuildItem, token);
         }
 
 #pragma warning disable CA1812
