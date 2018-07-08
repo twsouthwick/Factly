@@ -20,14 +20,14 @@ namespace ObjectValidator
             Property = property;
             _getter = property.GetPropertyDelegate();
             _constraints = constraints;
-            ShouldFollow = shouldFollow;
+            IncludeChildren = shouldFollow;
         }
 
         public PropertyInfo Property { get; }
 
         public Type Type => Property.PropertyType;
 
-        public bool ShouldFollow { get; }
+        public bool IncludeChildren { get; }
 
         public static PropertyValidator Create(PropertyInfo property, ValidatorBuilder builder)
         {

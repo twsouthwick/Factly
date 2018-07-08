@@ -107,7 +107,7 @@ namespace ObjectValidator
 
                     foreach (var property in compiledType.Properties)
                     {
-                        if (property.ShouldFollow)
+                        if (property.IncludeChildren)
                         {
                             left.Enqueue(property.Type);
                         }
