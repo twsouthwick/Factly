@@ -4,6 +4,7 @@
     <TargetFrameworks>net47;net452;netcoreapp2.0;netcoreapp1.1</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);CA1822;CA1812;SA0001</NoWarn>
+    <RootNamespace>ObjectValidator</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">

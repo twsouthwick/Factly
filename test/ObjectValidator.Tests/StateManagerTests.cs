@@ -4,7 +4,7 @@
 using System;
 using Xunit;
 
-namespace ObjectValidator.Tests
+namespace ObjectValidator
 {
     public class StateManagerTests
     {
