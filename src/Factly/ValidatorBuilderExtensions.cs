@@ -8,7 +8,7 @@ using System.Reflection;
 namespace Factly
 {
     /// <summary>
-    /// A collection of exten methods for helper functions for <see cref="ValidatorBuilder"/>.
+    /// A collection of extension methods for helper functions for <see cref="ValidatorBuilder"/>.
     /// </summary>
     public static class ValidatorBuilderExtensions
     {
@@ -79,16 +79,30 @@ namespace Factly
         public static ValidatorBuilder AddRegexConstraint<T>(this ValidatorBuilder builder, Func<T, string> stringSelector)
             where T : Attribute
         {
+            return builder.AddAttributeConstraint<T>((attribute, propertyInfo) =>
+                new PatternConstraint(propertyInfo, builder, stringSelector(attribute)));
+        }
+
+        /// <summary>
+        /// Adds constraints when the property is annotated with <typeparamref name="TAttribute"/>.
+        /// </summary>
+        /// <typeparam name="TAttribute">Type of attribute.</typeparam>
+        /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
+        /// <param name="factory">The factory to create a constraint given an attribute instance.</param>
+        /// <returns><paramref name="builder"/>.</returns>
+        public static ValidatorBuilder AddAttributeConstraint<TAttribute>(this ValidatorBuilder builder, Func<TAttribute, PropertyInfo, IConstraint> factory)
+            where TAttribute : Attribute
+        {
             return builder.AddConstraint(propertyInfo =>
             {
-                var attribute = propertyInfo.GetCustomAttribute<T>();
+                var attribute = propertyInfo.GetCustomAttribute<TAttribute>();
 
                 if (attribute == null)
                 {
                     return null;
                 }
 
-                return new PatternConstraint(propertyInfo, builder, stringSelector(attribute));
+                return factory(attribute, propertyInfo);
             });
         }
     }
