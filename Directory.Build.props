@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\ObjectValidator.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\Factly.ruleset</CodeAnalysisRuleSet>
     <LangVersion>7.3</LangVersion>
     <TestNet35 Condition=" '$(TestNet35)' == '' ">false</TestNet35>
   </PropertyGroup>
@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\ObjectValidator.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\Factly.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(TestNet35)">
