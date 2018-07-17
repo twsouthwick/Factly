@@ -34,20 +34,20 @@ namespace Factly
             var count = 0;
             var context = new TestValidationContext();
 
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<Test>()
-                .AddPropertyFilter<Test>()
-                .AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
-                {
-                    Assert.NotSame(context.Context, ctx);
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<Test>();
+            builder.AddPropertyFilter<Test>();
+            builder.AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
+            {
+                Assert.NotSame(context.Context, ctx);
 
-                    Assert.NotNull(ctx.OnError);
-                    Assert.NotNull(ctx.OnItem);
-                    Assert.NotNull(ctx.OnUnknownType);
+                Assert.NotNull(ctx.OnError);
+                Assert.NotNull(ctx.OnItem);
+                Assert.NotNull(ctx.OnUnknownType);
 
-                    count++;
-                }))
-                .Build();
+                count++;
+            }));
+            var validator = builder.Build();
 
             validator.Validate(new Test(), context.Context);
 
@@ -60,18 +60,18 @@ namespace Factly
             var count = 0;
             var context = new TestValidationContext();
 
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<Test>()
-                .AddPropertyFilter<Test>()
-                .AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
-                {
-                    Assert.NotSame(context.Context, ctx);
-                    Assert.Throws<InvalidOperationException>(() => ctx.OnError = context.Errors.Add);
-                    Assert.Throws<InvalidOperationException>(() => ctx.OnItem = context.Items.Add);
-                    Assert.Throws<InvalidOperationException>(() => ctx.OnUnknownType = context.UnknownTypes.Add);
-                    count++;
-                }))
-                .Build();
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<Test>();
+            builder.AddPropertyFilter<Test>();
+            builder.AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
+            {
+                Assert.NotSame(context.Context, ctx);
+                Assert.Throws<InvalidOperationException>(() => ctx.OnError = context.Errors.Add);
+                Assert.Throws<InvalidOperationException>(() => ctx.OnItem = context.Items.Add);
+                Assert.Throws<InvalidOperationException>(() => ctx.OnUnknownType = context.UnknownTypes.Add);
+                count++;
+            }));
+            var validator = builder.Build();
 
             validator.Validate(new Test(), context.Context);
 

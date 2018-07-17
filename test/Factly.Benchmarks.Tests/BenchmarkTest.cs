@@ -25,10 +25,10 @@ namespace Factly.Benchmarks.Tests
         [Benchmark]
         public ValidatorBuilder CreateValidatorBuilder()
         {
-            return ValidatorBuilder
-                .Create()
-                .AddKnownType<TestClass>()
-                .AddRegexConstraint<RegexAttribute>(a => a.Pattern);
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<TestClass>();
+            builder.AddRegexAttributeConstraint<RegexAttribute>(a => a.Pattern);
+            return builder;
         }
 
         [Benchmark]

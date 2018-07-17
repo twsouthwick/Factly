@@ -72,14 +72,14 @@ namespace Factly
         /// <summary>
         /// Adds a constraint for regular expressions based on a supplied attribute.
         /// </summary>
-        /// <typeparam name="T">Attribute that identifies a regular expression constraint.</typeparam>
+        /// <typeparam name="TAttribute">Attribute that identifies a regular expression constraint.</typeparam>
         /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
-        /// <param name="stringSelector">Selector to retrieve <see cref="string"/> from <typeparamref name="T"/>.</param>
+        /// <param name="stringSelector">Selector to retrieve <see cref="string"/> from <typeparamref name="TAttribute"/>.</param>
         /// <returns><paramref name="builder"/>.</returns>
-        public static ValidatorBuilder AddRegexConstraint<T>(this ValidatorBuilder builder, Func<T, string> stringSelector)
-            where T : Attribute
+        public static ValidatorBuilder AddRegexAttributeConstraint<TAttribute>(this ValidatorBuilder builder, Func<TAttribute, string> stringSelector)
+            where TAttribute : Attribute
         {
-            return builder.AddAttributeConstraint<T>((attribute, propertyInfo) =>
+            return builder.AddAttributeConstraint<TAttribute>((attribute, propertyInfo) =>
                 new PatternConstraint(propertyInfo, builder, stringSelector(attribute)));
         }
 

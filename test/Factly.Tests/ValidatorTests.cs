@@ -13,11 +13,11 @@ namespace Factly
         public void TestStruct()
         {
             var count = 0;
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<CustomStruct>()
-                .AddPropertyFilter(_ => true)
-                .AddConstraint(_ => new DelegateConstraint(() => count++))
-                .Build();
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<CustomStruct>();
+            builder.AddPropertyFilter(_ => true);
+            builder.AddConstraint(_ => new DelegateConstraint(() => count++));
+            var validator = builder.Build();
 
             validator.Validate(default(CustomStruct));
 
@@ -28,16 +28,16 @@ namespace Factly
         public void VirtualPropertyTest()
         {
             var count = 0;
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<TestWithDerivedVirtualProperty>()
-                .AddPropertyFilter<TestWithDerivedVirtualProperty>()
-                .AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
-                {
-                    var value = Assert.IsType<string>(instanceValue);
-                    Assert.Equal(nameof(TestWithDerivedVirtualProperty), value);
-                    count++;
-                }))
-                .Build();
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<TestWithDerivedVirtualProperty>();
+            builder.AddPropertyFilter<TestWithDerivedVirtualProperty>();
+            builder.AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
+            {
+                var value = Assert.IsType<string>(instanceValue);
+                Assert.Equal(nameof(TestWithDerivedVirtualProperty), value);
+                count++;
+            }));
+            var validator = builder.Build();
 
             validator.Validate(new TestWithDerivedVirtualProperty());
 
@@ -48,16 +48,16 @@ namespace Factly
         public void VirtualPropertyNewTest()
         {
             var count = 0;
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<TestWithDerivedVirtualPropertyNew>()
-                .AddPropertyFilter<TestWithDerivedVirtualPropertyNew>()
-                .AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
-                {
-                    var value = Assert.IsType<string>(instanceValue);
-                    Assert.Equal(nameof(TestWithDerivedVirtualPropertyNew), value);
-                    count++;
-                }))
-                .Build();
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<TestWithDerivedVirtualPropertyNew>();
+            builder.AddPropertyFilter<TestWithDerivedVirtualPropertyNew>();
+            builder.AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
+            {
+                var value = Assert.IsType<string>(instanceValue);
+                Assert.Equal(nameof(TestWithDerivedVirtualPropertyNew), value);
+                count++;
+            }));
+            var validator = builder.Build();
 
             validator.Validate(new TestWithDerivedVirtualPropertyNew());
 
@@ -68,16 +68,16 @@ namespace Factly
         public void VirtualPropertyDerived()
         {
             var count = 0;
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<TestWithVirtualPropertyDerived>()
-                .AddPropertyFilter<TestWithVirtualPropertyDerived>()
-                .AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
-                {
-                    var value = Assert.IsType<string>(instanceValue);
-                    Assert.Equal(nameof(TestWithVirtualProperty), value);
-                    count++;
-                }))
-                .Build();
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<TestWithVirtualPropertyDerived>();
+            builder.AddPropertyFilter<TestWithVirtualPropertyDerived>();
+            builder.AddConstraint(_ => new DelegateConstraint((instance, instanceValue, context) =>
+            {
+                var value = Assert.IsType<string>(instanceValue);
+                Assert.Equal(nameof(TestWithVirtualProperty), value);
+                count++;
+            }));
+            var validator = builder.Build();
 
             validator.Validate(new TestWithVirtualPropertyDerived());
 
@@ -116,14 +116,14 @@ namespace Factly
             var context = new TestValidationContext();
 
             // Must use a type with multiple types as cancellation is checked at the start of processing each type
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<TestClass1>()
-                .AddPropertyFilter<TestClass2>()
-                .AddConstraint(_ => new DelegateConstraint(() =>
-                {
-                    cts.Cancel();
-                }))
-                .Build();
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<TestClass1>();
+            builder.AddPropertyFilter<TestClass2>();
+            builder.AddConstraint(_ => new DelegateConstraint(() =>
+            {
+                cts.Cancel();
+            }));
+            var validator = builder.Build();
 
             var instance = new TestClass1
             {

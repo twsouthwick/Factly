@@ -18,10 +18,12 @@ namespace Factly
         [InlineData("Hello", true)]
         public void SimplePatternTests(string testValue, bool isError)
         {
-            var validator = ValidatorBuilder.Create()
-                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
-                .AddKnownType(typeof(Test1))
-                .Build();
+            var builder = ValidatorBuilder.Create();
+
+            builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
+            builder.AddKnownType<Test1>();
+
+            var validator = builder.Build();
 
             var item = new Test1 { Test = testValue };
             var issueRaised = 0;
@@ -49,10 +51,12 @@ namespace Factly
         [Fact]
         public void NoPattern()
         {
-            var validator = ValidatorBuilder.Create()
-                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
-                .AddKnownType<TestNoPattern>()
-                .Build();
+            var builder = ValidatorBuilder.Create();
+
+            builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
+            builder.AddKnownType<TestNoPattern>();
+
+            var validator = builder.Build();
             var context = new TestValidationContext();
 
             var item = new TestNoPattern { Test = "hello" };
@@ -65,9 +69,9 @@ namespace Factly
         [Fact]
         public void PatternNotString()
         {
-            var builder = ValidatorBuilder.Create()
-                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
-                .AddKnownType<TestNotString>();
+            var builder = ValidatorBuilder.Create();
+            builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
+            builder.AddKnownType<TestNotString>();
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
@@ -79,9 +83,9 @@ namespace Factly
         [Fact]
         public void PatternNoObserverNotString()
         {
-            var builder = ValidatorBuilder.Create()
-                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
-                .AddKnownType<TestNotString>();
+            var builder = ValidatorBuilder.Create();
+            builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
+            builder.AddKnownType<TestNotString>();
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
@@ -93,10 +97,10 @@ namespace Factly
         [Fact]
         public void PatternNoObserver()
         {
-            var validator = ValidatorBuilder.Create()
-                .AddRegexConstraint<RegexAttribute>(r => r.Pattern)
-                .AddKnownType<Test1>()
-                .Build();
+            var builder = ValidatorBuilder.Create();
+            builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
+            builder.AddKnownType<Test1>();
+            var validator = builder.Build();
 
             var item = new Test1();
             var items = new List<object>();
@@ -118,7 +122,7 @@ namespace Factly
         {
             var builder = ValidatorBuilder.Create();
 
-            builder.AddRegexConstraint<RegexAttribute>(r => r.Pattern);
+            builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
             builder.ForType<DuplicatePattern>()
                 .AddProperty(p => p.Test1)
                 .AddProperty(p => p.Test2);

@@ -15,10 +15,10 @@ namespace Factly
         /// </summary>
         /// <param name="builder">The current <see cref="ValidatorBuilder"/>.</param>
         /// <returns><paramref name="builder"/>.</returns>
-        public static ValidatorBuilder AddRegexConstraint(this ValidatorBuilder builder)
+        public static ValidatorBuilder AddRegexAttributeConstraint(this ValidatorBuilder builder)
         {
             return builder
-                .AddRegexConstraint<RegularExpressionAttribute>(pattern => pattern.Pattern);
+                .AddRegexAttributeConstraint<RegularExpressionAttribute>(pattern => pattern.Pattern);
         }
     }
 }
