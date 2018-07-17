@@ -20,11 +20,6 @@ namespace Factly
                 throw new ArgumentNullException(nameof(pattern));
             }
 
-            if (property.PropertyType != typeof(string))
-            {
-                throw new ValidatorException(SR.PatternRequiresStringProperty, Errors.PatternAppliedToNonString, property.DeclaringType, property);
-            }
-
             _regex = builder.State.AddOrGet(pattern, p => new Regex(pattern, RegexOptions.Compiled));
             _property = property;
         }

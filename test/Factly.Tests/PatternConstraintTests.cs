@@ -95,6 +95,38 @@ namespace Factly
         }
 
         [Fact]
+        public void PatternNoObserverNotStringWithMapper()
+        {
+            const string Value = "here";
+
+            var builder = ValidatorBuilder.Create();
+            builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern)
+                .AddTypeMapper<int>(i => Value);
+            builder.AddKnownType<TestNotString>();
+            var validator = builder.Build();
+
+            var item = new TestNotString();
+            var issueRaised = 0;
+
+            var context = new ValidationContext
+            {
+                OnError = error =>
+                {
+                    var patternError = Assert.IsType<PatternValidationError>(error);
+                    Assert.Equal("he.*lo", patternError.Pattern.ToString(), StringComparer.Ordinal);
+                    Assert.Equal(Value, (string)patternError.Value, StringComparer.Ordinal);
+                    Assert.Same(item, patternError.Instance);
+
+                    issueRaised++;
+                },
+            };
+
+            validator.Validate(item, context);
+
+            Assert.Equal(1, issueRaised);
+        }
+
+        [Fact]
         public void PatternNoObserver()
         {
             var builder = ValidatorBuilder.Create();

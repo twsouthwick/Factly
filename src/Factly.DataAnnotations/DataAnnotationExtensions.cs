@@ -14,8 +14,8 @@ namespace Factly
         /// Add a regular expression constraint using <see cref="RegularExpressionAttribute"/>.
         /// </summary>
         /// <param name="builder">The current <see cref="ValidatorBuilder"/>.</param>
-        /// <returns><paramref name="builder"/>.</returns>
-        public static ValidatorBuilder AddRegexAttributeConstraint(this ValidatorBuilder builder)
+        /// <returns>A constraint builder instance.</returns>
+        public static ConstraintBuilder<string> AddRegexAttributeConstraint(this ValidatorBuilder builder)
         {
             return builder
                 .AddRegexAttributeConstraint<RegularExpressionAttribute>(pattern => pattern.Pattern);

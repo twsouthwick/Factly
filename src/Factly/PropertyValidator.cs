@@ -37,7 +37,7 @@ namespace Factly
             }
 
             var constraints = builder.Constraints
-                .Select(factory => factory(property))
+                .Select(factory => factory.Create(property))
                 .Where(constraint => constraint != null)
                 .ToArray();
             var shouldFollow = builder.PropertyFilters.Any(t => t(property));
