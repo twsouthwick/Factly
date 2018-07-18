@@ -5,10 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-#if !NO_CANCELLATION_TOKEN
-using System.Threading;
-#endif
-
 namespace Factly
 {
     /// <summary>
