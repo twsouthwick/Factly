@@ -43,13 +43,19 @@ namespace Factly
 
         internal override IConstraint Create(PropertyInfo property)
         {
-            if (property.PropertyType == typeof(TValue))
+            var constraint = base.Create(property);
+
+            if (constraint is null)
             {
-                return base.Create(property);
+                return null;
+            }
+            else if (property.PropertyType == typeof(TValue))
+            {
+                return constraint;
             }
             else if (_mappers.TryGetValue(property.PropertyType, out var func))
             {
-                return new TypedConstraint(base.Create(property), func);
+                return new TypedConstraint(constraint, func);
             }
             else
             {
