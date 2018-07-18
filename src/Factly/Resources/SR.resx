@@ -123,6 +123,9 @@
   <data name="MustDeclareTypes" xml:space="preserve">
     <value>Must declare types for compilation</value>
   </data>
+  <data name="NoConstraints" xml:space="preserve">
+    <value>No constraints were created during building</value>
+  </data>
   <data name="PatternRequiresStringProperty" xml:space="preserve">
     <value>Type of property must be a string if a pattern is specified</value>
   </data>

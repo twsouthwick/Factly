@@ -10,10 +10,11 @@ namespace Factly
         [Fact]
         public void ThrowsOnUnknown()
         {
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<int>()
-                .Build();
-            var exception = Assert.Throws<ValidatorException>(() => validator.Validate(string.Empty));
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<int>();
+            builder.AddEmptyConstraint(true);
+            var validator = builder.Build();
+            var exception = Assert.Throws<ValidatorBuilderException>(() => validator.Validate(string.Empty));
 
             Assert.Equal(typeof(string), exception.Type);
             Assert.Equal(Errors.UnknownType, exception.Id);
@@ -24,9 +25,12 @@ namespace Factly
         public void OverrideThrowsOnUnknown()
         {
             var count = 0;
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<int>()
-                .Build();
+
+            var builder = ValidatorBuilder.Create();
+            builder.AddEmptyConstraint(true);
+            builder.AddKnownType<int>();
+            var validator = builder.Build();
+
             var context = new ValidationContext
             {
                 OnUnknownType = type =>

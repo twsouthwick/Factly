@@ -27,6 +27,8 @@ namespace Factly
 
         public Type Type => Property.PropertyType;
 
+        public bool HasConstraints => _constraints.Length > 0;
+
         public bool IncludeChildren { get; }
 
         public static PropertyValidator Create(PropertyInfo property, ValidatorBuilder builder)

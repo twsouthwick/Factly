@@ -80,6 +80,15 @@ namespace Factly {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No constraints were created during building.
+        /// </summary>
+        internal static string NoConstraints {
+            get {
+                return ResourceManager.GetString("NoConstraints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type of property must be a string if a pattern is specified.
         /// </summary>
         internal static string PatternRequiresStringProperty {

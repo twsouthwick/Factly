@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 #if !NO_CANCELLATION_TOKEN
@@ -119,10 +120,11 @@ namespace Factly
 #endif
             if (Types.Count == 0)
             {
-                throw new ValidatorException(SR.MustDeclareTypes, Errors.NoTypes, null, null);
+                throw new ValidatorBuilderException(SR.MustDeclareTypes, Errors.NoTypes, null, null);
             }
 
             var validators = new Dictionary<Type, TypeValidator>();
+            var hasConstraints = false;
 
             IEnumerable<Type> AddItem(Type type)
             {
@@ -131,6 +133,11 @@ namespace Factly
 
                 foreach (var property in compiledType.Properties)
                 {
+                    if (property.HasConstraints)
+                    {
+                        hasConstraints = true;
+                    }
+
                     if (property.IncludeChildren)
                     {
                         yield return property.Type;
@@ -139,6 +146,11 @@ namespace Factly
             }
 
             Types.Traverse(AddItem, token);
+
+            if (!hasConstraints)
+            {
+                throw new ValidatorBuilderException(SR.NoConstraints, Errors.NoConstraintsFound, null, null);
+            }
 
             return new Validator(validators);
         }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Taylor Southwick. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
+
 namespace Factly
 {
     /// <summary>
@@ -22,5 +24,10 @@ namespace Factly
         /// Unsupported type provided for a typed constraint.
         /// </summary>
         public const string UnsupportedTypeForConstraint = "E0003";
+
+        /// <summary>
+        /// No constraints were generated during build.
+        /// </summary>
+        public const string NoConstraintsFound = "E0004";
     }
 }
