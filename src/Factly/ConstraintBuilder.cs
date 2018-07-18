@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Factly
@@ -19,8 +18,6 @@ namespace Factly
             _factory = factory;
         }
 
-        internal IConstraint Create(PropertyInfo property) => CreateInternal(property);
-
-        private protected virtual IConstraint CreateInternal(PropertyInfo property) => _factory(property);
+        internal virtual IConstraint Create(PropertyInfo property) => _factory(property);
     }
 }

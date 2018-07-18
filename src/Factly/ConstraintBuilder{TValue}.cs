@@ -41,15 +41,15 @@ namespace Factly
             });
         }
 
-        private protected override IConstraint CreateInternal(PropertyInfo property)
+        internal override IConstraint Create(PropertyInfo property)
         {
             if (property.PropertyType == typeof(TValue))
             {
-                return base.CreateInternal(property);
+                return base.Create(property);
             }
             else if (_mappers.TryGetValue(property.PropertyType, out var func))
             {
-                return new TypedConstraint(base.CreateInternal(property), property, func);
+                return new TypedConstraint(base.Create(property), property, func);
             }
             else
             {
