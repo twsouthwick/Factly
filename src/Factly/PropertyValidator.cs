@@ -39,7 +39,7 @@ namespace Factly
             var constraints = builder.Constraints
                 .Select(factory => factory.Create(property))
                 .Where(constraint => constraint != null)
-                .ToArray();
+                .ToArray(true);
             var shouldFollow = builder.PropertyFilters.Any(t => t(property));
 
             if (constraints.Length == 0 && !shouldFollow)
