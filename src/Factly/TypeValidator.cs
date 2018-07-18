@@ -16,7 +16,7 @@ namespace Factly
             Properties = type.GetProperties()
                 .Select(p => PropertyValidator.Create(p, builder))
                 .Where(p => p.Property != null)
-                .ToArray();
+                .ToArray(true);
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
