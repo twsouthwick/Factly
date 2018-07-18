@@ -49,7 +49,7 @@ namespace Factly
             }
             else if (_mappers.TryGetValue(property.PropertyType, out var func))
             {
-                return new TypedConstraint(base.Create(property), property, func);
+                return new TypedConstraint(base.Create(property), func);
             }
             else
             {
@@ -60,13 +60,11 @@ namespace Factly
         private class TypedConstraint : IConstraint
         {
             private readonly IConstraint _constraint;
-            private readonly PropertyInfo _property;
             private readonly Func<object, TValue> _func;
 
-            public TypedConstraint(IConstraint constraint, PropertyInfo property, Func<object, TValue> func)
+            public TypedConstraint(IConstraint constraint, Func<object, TValue> func)
             {
                 _constraint = constraint;
-                _property = property;
                 _func = func;
             }
 
