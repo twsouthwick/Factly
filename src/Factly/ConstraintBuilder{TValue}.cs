@@ -53,7 +53,7 @@ namespace Factly
             }
             else
             {
-                throw new ValidatorException(Errors.UnsupportedTypeForConstraint, Errors.UnsupportedTypeForConstraint, property.DeclaringType, property);
+                throw new ValidatorException(SR.UnknownTypeEncountered, Errors.UnsupportedTypeForConstraint, property.DeclaringType, property);
             }
         }
 
