@@ -19,7 +19,7 @@ namespace Factly
         private ValidatorBuilder()
         {
             Types = new HashSet<Type>();
-            Constraints = new List<Func<PropertyInfo, IConstraint>>();
+            Constraints = new List<ConstraintBuilder>();
             PropertyFilters = new List<Func<PropertyInfo, bool>>();
             State = new StateManager();
         }
@@ -30,7 +30,7 @@ namespace Factly
 
         internal HashSet<Type> Types { get; }
 
-        internal List<Func<PropertyInfo, IConstraint>> Constraints { get; }
+        internal List<ConstraintBuilder> Constraints { get; }
 
         /// <summary>
         /// Creates an instance of <see cref="ValidatorBuilder"/>.
@@ -41,12 +41,26 @@ namespace Factly
         /// <summary>
         /// Adds a constraint generator that depends on an input <see cref="PropertyInfo"/>.
         /// </summary>
+        /// <typeparam name="T">Type of the constraint.</typeparam>
         /// <param name="constraintGenerator">The generator to create a <see cref="IConstraint"/>.</param>
-        /// <returns>The current <see cref="ValidatorBuilder"/>.</returns>
-        public ValidatorBuilder AddConstraint(Func<PropertyInfo, IConstraint> constraintGenerator)
+        /// <returns>A builder instance for the constraint.</returns>
+        public ConstraintBuilder<T> AddConstraint<T>(Func<PropertyInfo, IConstraint> constraintGenerator)
         {
-            Constraints.Add(constraintGenerator);
-            return this;
+            var builder = new ConstraintBuilder<T>(constraintGenerator);
+            Constraints.Add(builder);
+            return builder;
+        }
+
+        /// <summary>
+        /// Adds a constraint generator that depends on an input <see cref="PropertyInfo"/>.
+        /// </summary>
+        /// <param name="constraintGenerator">The generator to create a <see cref="IConstraint"/>.</param>
+        /// <returns>A builder instance for the constraint.</returns>
+        public ConstraintBuilder AddConstraint(Func<PropertyInfo, IConstraint> constraintGenerator)
+        {
+            var builder = new ConstraintBuilder(constraintGenerator);
+            Constraints.Add(builder);
+            return builder;
         }
 
         /// <summary>

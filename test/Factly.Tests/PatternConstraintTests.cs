@@ -75,7 +75,7 @@ namespace Factly
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
-            Assert.Equal(Errors.PatternAppliedToNonString, exp.Id);
+            Assert.Equal(Errors.UnsupportedTypeForConstraint, exp.Id);
             Assert.Equal(typeof(TestNotString), exp.Type);
             Assert.Equal(typeof(TestNotString).GetProperty(nameof(TestNotString.Other)), exp.Property);
         }
@@ -89,9 +89,41 @@ namespace Factly
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
-            Assert.Equal(Errors.PatternAppliedToNonString, exp.Id);
+            Assert.Equal(Errors.UnsupportedTypeForConstraint, exp.Id);
             Assert.Equal(typeof(TestNotString), exp.Type);
             Assert.Equal(typeof(TestNotString).GetProperty(nameof(TestNotString.Other)), exp.Property);
+        }
+
+        [Fact]
+        public void PatternNoObserverNotStringWithMapper()
+        {
+            const string Value = "here";
+
+            var builder = ValidatorBuilder.Create();
+            builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern)
+                .AddTypeMapper<int>(i => Value);
+            builder.AddKnownType<TestNotString>();
+            var validator = builder.Build();
+
+            var item = new TestNotString();
+            var issueRaised = 0;
+
+            var context = new ValidationContext
+            {
+                OnError = error =>
+                {
+                    var patternError = Assert.IsType<PatternValidationError>(error);
+                    Assert.Equal("he.*lo", patternError.Pattern.ToString(), StringComparer.Ordinal);
+                    Assert.Equal(Value, (string)patternError.Value, StringComparer.Ordinal);
+                    Assert.Same(item, patternError.Instance);
+
+                    issueRaised++;
+                },
+            };
+
+            validator.Validate(item, context);
+
+            Assert.Equal(1, issueRaised);
         }
 
         [Fact]
@@ -123,9 +155,7 @@ namespace Factly
             var builder = ValidatorBuilder.Create();
 
             builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
-            builder.ForType<DuplicatePattern>()
-                .AddProperty(p => p.Test1)
-                .AddProperty(p => p.Test2);
+            builder.AddKnownType<DuplicatePattern>();
 
             var validator = builder.Build();
             var instance = new DuplicatePattern();
@@ -174,7 +204,7 @@ namespace Factly
 
         private class TestNotString
         {
-            [Regex("hello")]
+            [Regex("he.*lo")]
             public int Other { get; set; }
         }
     }

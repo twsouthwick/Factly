@@ -76,10 +76,10 @@ namespace Factly
         /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
         /// <param name="stringSelector">Selector to retrieve <see cref="string"/> from <typeparamref name="TAttribute"/>.</param>
         /// <returns><paramref name="builder"/>.</returns>
-        public static ValidatorBuilder AddRegexAttributeConstraint<TAttribute>(this ValidatorBuilder builder, Func<TAttribute, string> stringSelector)
+        public static ConstraintBuilder<string> AddRegexAttributeConstraint<TAttribute>(this ValidatorBuilder builder, Func<TAttribute, string> stringSelector)
             where TAttribute : Attribute
         {
-            return builder.AddAttributeConstraint<TAttribute>((attribute, propertyInfo) =>
+            return builder.AddAttributeConstraint<TAttribute, string>((attribute, propertyInfo) =>
                 new PatternConstraint(propertyInfo, builder, stringSelector(attribute)));
         }
 
@@ -87,13 +87,14 @@ namespace Factly
         /// Adds constraints when the property is annotated with <typeparamref name="TAttribute"/>.
         /// </summary>
         /// <typeparam name="TAttribute">Type of attribute.</typeparam>
+        /// <typeparam name="TValue">Expected type of constraint.</typeparam>
         /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
         /// <param name="factory">The factory to create a constraint given an attribute instance.</param>
         /// <returns><paramref name="builder"/>.</returns>
-        public static ValidatorBuilder AddAttributeConstraint<TAttribute>(this ValidatorBuilder builder, Func<TAttribute, PropertyInfo, IConstraint> factory)
+        public static ConstraintBuilder<TValue> AddAttributeConstraint<TAttribute, TValue>(this ValidatorBuilder builder, Func<TAttribute, PropertyInfo, IConstraint> factory)
             where TAttribute : Attribute
         {
-            return builder.AddConstraint(propertyInfo =>
+            return builder.AddConstraint<TValue>(propertyInfo =>
             {
                 var attribute = propertyInfo.GetCustomAttribute<TAttribute>();
 
