@@ -5,13 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-#if !NO_CANCELLATION_TOKEN
-using System.Threading;
-#endif
-
 namespace Factly
 {
-
+    /// <summary>
+    /// A constraint builder for <typeparamref name="TValue"/>.
+    /// </summary>
+    /// <typeparam name="TValue">Type to build up constraints.</typeparam>
     public class ConstraintBuilder<TValue> : ConstraintBuilder
     {
         private readonly Dictionary<Type, Func<object, TValue>> _mappers;
@@ -22,9 +21,24 @@ namespace Factly
             _mappers = new Dictionary<Type, Func<object, TValue>>();
         }
 
-        public void AddTypeMapper<T>(Func<T, TValue> mapper)
+        /// <summary>
+        /// Add a mapping function between <typeparamref name="TFrom"/> and <typeparamref name="TValue"/>.
+        /// </summary>
+        /// <typeparam name="TFrom">The type to convert from.</typeparam>
+        /// <param name="mapper">The mapping function.</param>
+        public void AddTypeMapper<TFrom>(Func<TFrom, TValue> mapper)
         {
-            _mappers.Add(typeof(T), obj => mapper((T)obj));
+            _mappers.Add(typeof(TFrom), obj =>
+            {
+                if (obj is null)
+                {
+                    return mapper(default);
+                }
+                else
+                {
+                    return mapper((TFrom)obj);
+                }
+            });
         }
 
         private protected override IConstraint CreateInternal(PropertyInfo property)
@@ -33,37 +47,32 @@ namespace Factly
             {
                 return base.CreateInternal(property);
             }
+            else if (_mappers.TryGetValue(property.PropertyType, out var func))
+            {
+                return new TypedConstraint(base.CreateInternal(property), property, func);
+            }
             else
             {
-                return new ProxyConstraint(base.CreateInternal(property), property, _mappers);
+                throw new ValidatorException(Errors.PatternAppliedToNonString, Errors.PatternAppliedToNonString, property.DeclaringType, property);
             }
         }
 
-        private class ProxyConstraint : IConstraint
+        private class TypedConstraint : IConstraint
         {
             private readonly IConstraint _constraint;
             private readonly PropertyInfo _property;
-            private readonly Dictionary<Type, Func<object, TValue>> _mappers;
+            private readonly Func<object, TValue> _func;
 
-            public ProxyConstraint(IConstraint constraint, PropertyInfo property, Dictionary<Type, Func<object, TValue>> mappers)
+            public TypedConstraint(IConstraint constraint, PropertyInfo property, Func<object, TValue> func)
             {
                 _constraint = constraint;
                 _property = property;
-                _mappers = mappers;
+                _func = func;
             }
 
             public void Validate(object instance, object value, ValidationContext context)
             {
-                if (value is TValue)
-                {
-                    _constraint.Validate(instance, value, context);
-                }
-                else if (_mappers.TryGetValue(value.GetType(), out var map))
-                {
-                    _constraint.Validate(instance, map(value), context);
-                }
-
-                context.OnError(new ValidationError(instance, _property));
+                _constraint.Validate(instance, _func(value), context);
             }
         }
     }

@@ -155,9 +155,7 @@ namespace Factly
             var builder = ValidatorBuilder.Create();
 
             builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
-            builder.ForType<DuplicatePattern>()
-                .AddProperty(p => p.Test1)
-                .AddProperty(p => p.Test2);
+            builder.AddKnownType<DuplicatePattern>();
 
             var validator = builder.Build();
             var instance = new DuplicatePattern();
@@ -206,7 +204,7 @@ namespace Factly
 
         private class TestNotString
         {
-            [Regex("hello")]
+            [Regex("he.*lo")]
             public int Other { get; set; }
         }
     }
