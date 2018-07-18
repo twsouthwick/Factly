@@ -14,19 +14,19 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_TYPEINFO;FEATURE_CACHED</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_TYPEINFO;FEATURE_CACHED_ARRAY</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_SERIALIZABLE;FEATURE_CACHED</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

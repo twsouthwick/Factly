@@ -23,7 +23,7 @@ namespace Factly
 
         private static T[] Empty<T>()
         {
-#if FEATURE_CACHED
+#if FEATURE_CACHED_ARRAY
             return Array.Empty<T>();
 #else
             return EmptyCache<T>.Instance;
