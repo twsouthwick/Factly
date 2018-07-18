@@ -19,8 +19,8 @@ namespace Factly
         public const string UnknownType = "E0002";
 
         /// <summary>
-        /// Pattern expected but on a non-string type.
+        /// Unsupported type provided for a typed constraint.
         /// </summary>
-        public const string PatternAppliedToNonString = "E0003";
+        public const string UnsupportedTypeForConstraint = "E0003";
     }
 }

@@ -75,7 +75,7 @@ namespace Factly
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
-            Assert.Equal(Errors.PatternAppliedToNonString, exp.Id);
+            Assert.Equal(Errors.UnsupportedTypeForConstraint, exp.Id);
             Assert.Equal(typeof(TestNotString), exp.Type);
             Assert.Equal(typeof(TestNotString).GetProperty(nameof(TestNotString.Other)), exp.Property);
         }
@@ -89,7 +89,7 @@ namespace Factly
 
             var exp = Assert.Throws<ValidatorException>(() => builder.Build());
 
-            Assert.Equal(Errors.PatternAppliedToNonString, exp.Id);
+            Assert.Equal(Errors.UnsupportedTypeForConstraint, exp.Id);
             Assert.Equal(typeof(TestNotString), exp.Type);
             Assert.Equal(typeof(TestNotString).GetProperty(nameof(TestNotString.Other)), exp.Property);
         }
