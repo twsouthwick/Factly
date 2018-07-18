@@ -12,9 +12,9 @@ namespace Factly
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class ValidatorException : Exception
+    public class ValidatorBuilderException : Exception
     {
-        internal ValidatorException(string message, string id, Type type, PropertyInfo property)
+        internal ValidatorBuilderException(string message, string id, Type type, PropertyInfo property)
             : base(message)
         {
             Id = id;
@@ -24,11 +24,11 @@ namespace Factly
 
 #if FEATURE_SERIALIZABLE
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidatorException"/> class given serialization info.
+        /// Initializes a new instance of the <see cref="ValidatorBuilderException"/> class given serialization info.
         /// </summary>
         /// <param name="serializationInfo">Serialization info.</param>
         /// <param name="streamingContext">The serialization context.</param>
-        protected ValidatorException(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext)
+        protected ValidatorBuilderException(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
         {
         }

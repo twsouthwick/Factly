@@ -63,10 +63,11 @@ namespace Factly
             };
             instance1.Value = instance;
 
-            var validator = ValidatorBuilder.Create()
-              .AddPropertyFilter<TestClass>()
-              .AddKnownType<TestClass>()
-              .Build();
+            var builder = ValidatorBuilder.Create();
+            builder.AddPropertyFilter<TestClass>();
+            builder.AddKnownType<TestClass>();
+            builder.AddEmptyConstraint();
+            var validator = builder.Build();
             var context = new TestValidationContext();
 
             validator.Validate(instance, context.Context);
@@ -85,10 +86,11 @@ namespace Factly
             };
             instance1.Value = instance;
 
-            var validator = ValidatorBuilder.Create()
-                .AddKnownType<TestClass>()
-                .AddPropertyFilter<TestClassBase>()
-                .Build();
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<TestClass>();
+            builder.AddPropertyFilter<TestClassBase>();
+            builder.AddEmptyConstraint();
+            var validator = builder.Build();
             var context = new TestValidationContext();
 
             validator.Validate(instance, context.Context);
@@ -99,10 +101,13 @@ namespace Factly
 
         private Validator GetValidator()
         {
-            return ValidatorBuilder.Create()
-                .AddPropertyFilter(_ => true)
-                .AddKnownType<TestClass>()
-                .Build();
+            var builder = ValidatorBuilder.Create();
+
+            builder.AddPropertyFilter(_ => true);
+            builder.AddKnownType<TestClass>();
+            builder.AddEmptyConstraint();
+
+            return builder.Build();
         }
 
         private class TestClassBase

@@ -55,6 +55,7 @@ namespace Factly
 
             builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
             builder.AddKnownType<TestNoPattern>();
+            builder.AddEmptyConstraint();
 
             var validator = builder.Build();
             var context = new TestValidationContext();
@@ -73,7 +74,7 @@ namespace Factly
             builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
             builder.AddKnownType<TestNotString>();
 
-            var exp = Assert.Throws<ValidatorException>(() => builder.Build());
+            var exp = Assert.Throws<ValidatorBuilderException>(() => builder.Build());
 
             Assert.Equal(Errors.UnsupportedTypeForConstraint, exp.Id);
             Assert.Equal(typeof(TestNotString), exp.Type);
@@ -87,7 +88,7 @@ namespace Factly
             builder.AddRegexAttributeConstraint<RegexAttribute>(r => r.Pattern);
             builder.AddKnownType<TestNotString>();
 
-            var exp = Assert.Throws<ValidatorException>(() => builder.Build());
+            var exp = Assert.Throws<ValidatorBuilderException>(() => builder.Build());
 
             Assert.Equal(Errors.UnsupportedTypeForConstraint, exp.Id);
             Assert.Equal(typeof(TestNotString), exp.Type);
