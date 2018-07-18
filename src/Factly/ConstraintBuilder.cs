@@ -10,7 +10,7 @@ namespace Factly
     /// <summary>
     /// A non generic constraint.
     /// </summary>
-    public class ConstraintBuilder : IConstraintBuilder
+    public class ConstraintBuilder
     {
         private readonly Func<PropertyInfo, IConstraint> _factory;
 
@@ -19,7 +19,7 @@ namespace Factly
             _factory = factory;
         }
 
-        IConstraint IConstraintBuilder.Create(PropertyInfo property) => CreateInternal(property);
+        internal IConstraint Create(PropertyInfo property) => CreateInternal(property);
 
         private protected virtual IConstraint CreateInternal(PropertyInfo property) => _factory(property);
     }

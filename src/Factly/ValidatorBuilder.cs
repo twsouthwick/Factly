@@ -19,7 +19,7 @@ namespace Factly
         private ValidatorBuilder()
         {
             Types = new HashSet<Type>();
-            Constraints = new List<IConstraintBuilder>();
+            Constraints = new List<ConstraintBuilder>();
             PropertyFilters = new List<Func<PropertyInfo, bool>>();
             State = new StateManager();
         }
@@ -30,7 +30,7 @@ namespace Factly
 
         internal HashSet<Type> Types { get; }
 
-        internal List<IConstraintBuilder> Constraints { get; }
+        internal List<ConstraintBuilder> Constraints { get; }
 
         /// <summary>
         /// Creates an instance of <see cref="ValidatorBuilder"/>.
