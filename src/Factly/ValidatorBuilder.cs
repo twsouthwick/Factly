@@ -9,6 +9,10 @@ using System.Reflection;
 using System.Threading;
 #endif
 
+#if FEATURE_PARALLEL
+using System.Threading.Tasks;
+#endif
+
 namespace Factly
 {
     /// <summary>
@@ -100,6 +104,27 @@ namespace Factly
             return this;
         }
 
+#if FEATURE_PARALLEL
+        /// <summary>
+        /// Build the <see cref="Validator"/> from the current information in <see cref="ValidatorBuilder"/>.
+        /// </summary>
+        /// <param name="token">Optional cancellation token.</param>
+        /// <returns><see cref="Validator"/> built from <see cref="ValidatorBuilder"/>.</returns>
+        public async Task<Validator> BuildAsync(CancellationToken token = default)
+        {
+            if (Types.Count == 0)
+            {
+                throw new ValidatorBuilderException(SR.MustDeclareTypes, Errors.NoTypes, null, null);
+            }
+
+            var builder = new Builder(this, threadSafe: true);
+
+            await Types.TraverseAsync(builder.AddItem, Environment.ProcessorCount, token).ConfigureAwait(false);
+
+            return builder.Get();
+        }
+#endif
+
 #if !NO_CANCELLATION_TOKEN
         /// <summary>
         /// Build the <see cref="Validator"/> from the current information in <see cref="ValidatorBuilder"/>.
@@ -122,19 +147,43 @@ namespace Factly
                 throw new ValidatorBuilderException(SR.MustDeclareTypes, Errors.NoTypes, null, null);
             }
 
-            var validators = new Dictionary<Type, TypeValidator>();
-            var hasConstraints = false;
+            var builder = new Builder(this, threadSafe: false);
 
-            IEnumerable<Type> AddItem(Type type)
+            Types.Traverse(builder.AddItem, token);
+
+            return builder.Get();
+        }
+
+        private class Builder
+        {
+            private readonly ValidatorBuilder _builder;
+            private readonly Dictionary<Type, TypeValidator> _validators;
+            private readonly bool _threadSafe;
+            private int _hasConstraints;
+
+            public Builder(ValidatorBuilder builder, bool threadSafe)
             {
-                var compiledType = new TypeValidator(type, this);
-                validators.Add(type, compiledType);
+                _builder = builder;
+                _hasConstraints = 0;
+                _validators = new Dictionary<Type, TypeValidator>();
+                _threadSafe = threadSafe;
+            }
+
+            public IEnumerable<Type> AddItem(Type type)
+            {
+                var compiledType = new TypeValidator(type, _builder);
+
+                Add(type, compiledType);
 
                 foreach (var property in compiledType.Properties)
                 {
                     if (property.HasConstraints)
                     {
-                        hasConstraints = true;
+#if FEATURE_PARALLEL
+                        Interlocked.Exchange(ref _hasConstraints, 1);
+#else
+                        _hasConstraints = 1;
+#endif
                     }
 
                     if (property.IncludeChildren)
@@ -144,14 +193,30 @@ namespace Factly
                 }
             }
 
-            Types.Traverse(AddItem, token);
-
-            if (!hasConstraints)
+            public Validator Get()
             {
-                throw new ValidatorBuilderException(SR.NoConstraints, Errors.NoConstraintsFound, null, null);
+                if (_hasConstraints == 0)
+                {
+                    throw new ValidatorBuilderException(SR.NoConstraints, Errors.NoConstraintsFound, null, null);
+                }
+
+                return new Validator(_validators);
             }
 
-            return new Validator(validators);
+            private void Add(Type type, TypeValidator compiledType)
+            {
+                if (_threadSafe)
+                {
+                    lock (_validators)
+                    {
+                        _validators.Add(type, compiledType);
+                    }
+                }
+                else
+                {
+                    _validators.Add(type, compiledType);
+                }
+            }
         }
     }
 }
