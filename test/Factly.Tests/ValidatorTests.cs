@@ -93,6 +93,8 @@ namespace Factly
         [Fact]
         public async Task AsyncValidation()
         {
+            const int ParallelCount = 2;
+
             var list = new HashSet<int>();
             var cts = new CancellationTokenSource();
             var builder = ValidatorBuilder.Create();
@@ -100,9 +102,7 @@ namespace Factly
             builder.AddPropertyFilter<RecursiveClass>();
             builder.AddConstraint(_ => new DelegateConstraint((i, instanceValue, ctx) =>
             {
-                Assert.Equal(2, ctx.MaxDegreeOfParallelism);
-
-                Task.Delay(200).GetAwaiter().GetResult();
+                Assert.Equal(ParallelCount, ctx.MaxDegreeOfParallelism);
 
                 lock (list)
                 {
@@ -116,22 +116,31 @@ namespace Factly
 
             var instance = new RecursiveClass
             {
-                Entry = new RecursiveClass
+                Entry1 = new RecursiveClass
                 {
-                    Entry = new RecursiveClass
+                    Entry1 = new RecursiveClass
                     {
-                        Entry = new RecursiveClass
-                        {
-                        },
+                    },
+                    Entry2 = new RecursiveClass
+                    {
+                    },
+                },
+                Entry2 = new RecursiveClass
+                {
+                    Entry1 = new RecursiveClass
+                    {
+                    },
+                    Entry2 = new RecursiveClass
+                    {
                     },
                 },
             };
 
             var context = new TestValidationContext();
-            context.Context.MaxDegreeOfParallelism = 2;
+            context.Context.MaxDegreeOfParallelism = ParallelCount;
             await validator.ValidateAsync(instance, context.Context).ConfigureAwait(false);
 
-            Assert.Equal(2, list.Count);
+            Assert.Equal(ParallelCount, list.Count);
         }
 #endif
 
@@ -232,7 +241,9 @@ namespace Factly
 
         private class RecursiveClass
         {
-            public RecursiveClass Entry { get; set; }
+            public RecursiveClass Entry1 { get; set; }
+
+            public RecursiveClass Entry2 { get; set; }
         }
     }
 }
