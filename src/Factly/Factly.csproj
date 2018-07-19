@@ -14,19 +14,19 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL_VALIDATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL_VALIDATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_TYPEINFO;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL_VALIDATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_TYPEINFO;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL_VALIDATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,7 +49,7 @@
     <Compile Remove="CancellationToken.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="!$(DefineConstants.Contains(FEATURE_PARALLEL_VALIDATION))">
+  <ItemGroup Condition="!$(DefineConstants.Contains(FEATURE_PARALLEL))">
     <Compile Remove="ConcurrentHashSet{T}.cs" />
     <Compile Remove="TaskTracker.cs" />
     <Compile Remove="AsyncAutoResetEvent.cs" />

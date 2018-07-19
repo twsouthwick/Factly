@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading;
 #endif
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 #endif
@@ -38,7 +38,7 @@ namespace Factly
             }
         }
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
         public static async Task TraverseAsync<TItem>(this IEnumerable<TItem> initialItems, Func<TItem, IEnumerable<TItem>> process, int numThreads, CancellationToken token)
         {
             var visited = new ConcurrentHashSet<TItem>();

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Xunit;
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
 using System.Threading.Tasks;
 #endif
 
@@ -89,7 +89,7 @@ namespace Factly
             Assert.Equal(1, count);
         }
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
         [Fact]
         public async Task AsyncValidation()
         {

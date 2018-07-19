@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
 using System.Threading.Tasks;
 #endif
 
@@ -47,7 +47,7 @@ namespace Factly
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
         public void Validate(object item, CancellationToken token = default) => Validate(item, null, token);
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>.
         /// </summary>
@@ -98,7 +98,7 @@ namespace Factly
                 throw new ArgumentNullException(nameof(item));
             }
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
             if (context.MaxDegreeOfParallelism != 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(context), context.MaxDegreeOfParallelism, SR.ParallelThreadNumberMustBeOneForNonAsync);
@@ -108,7 +108,7 @@ namespace Factly
             SingletonList.Create(item).Traverse(current => BuildItem(context, current), token);
         }
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
         private Task ValidateInternalAsync(object item, ValidationContext context, CancellationToken token)
         {
             if (context == null)

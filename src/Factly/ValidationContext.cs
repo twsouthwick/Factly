@@ -10,7 +10,7 @@ namespace Factly
     /// </summary>
     public sealed class ValidationContext
     {
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
         private const int DefaultMaxDegreeOfParallelism = 1;
 #endif
 
@@ -24,7 +24,7 @@ namespace Factly
         private Action<Type> _unknownTypes;
         private Action<object> _items;
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
         private int _maxDegreeOfParallelism = DefaultMaxDegreeOfParallelism;
 #endif
 
@@ -47,7 +47,7 @@ namespace Factly
             _items = context?.OnItem ?? DefaultItemHandler;
             _unknownTypes = context?.OnUnknownType ?? DefaultUnknownTypeHandler;
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
             _maxDegreeOfParallelism = context?.MaxDegreeOfParallelism ?? MaxDegreeOfParallelism;
 #endif
         }
@@ -65,7 +65,7 @@ namespace Factly
             }
         }
 
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
         /// <summary>
         /// Gets or sets the number of threads when used for parallel validation.
         /// </summary>

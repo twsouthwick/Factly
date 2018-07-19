@@ -69,7 +69,7 @@ namespace Factly
                 Assert.Throws<InvalidOperationException>(() => ctx.OnError = context.Errors.Add);
                 Assert.Throws<InvalidOperationException>(() => ctx.OnItem = context.Items.Add);
                 Assert.Throws<InvalidOperationException>(() => ctx.OnUnknownType = context.UnknownTypes.Add);
-#if FEATURE_PARALLEL_VALIDATION
+#if FEATURE_PARALLEL
                 Assert.Throws<InvalidOperationException>(() => ctx.MaxDegreeOfParallelism = 6);
 #endif
                 count++;
