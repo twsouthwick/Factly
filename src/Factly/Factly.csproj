@@ -14,19 +14,19 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL_VALIDATION</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL_VALIDATION</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_TYPEINFO;FEATURE_CACHED_ARRAY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_TYPEINFO;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL_VALIDATION</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL_VALIDATION</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,6 +43,16 @@
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Factly</CustomToolNamespace>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(DefineConstants.Contains(NO_CANCELLATION_TOKEN))">
+    <Compile Remove="CancellationToken.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(DefineConstants.Contains(FEATURE_PARALLEL_VALIDATION))">
+    <Compile Remove="ConcurrentHashSet{T}.cs" />
+    <Compile Remove="TaskTracker.cs" />
+    <Compile Remove="AsyncAutoResetEvent.cs" />
   </ItemGroup>
 
 </Project>

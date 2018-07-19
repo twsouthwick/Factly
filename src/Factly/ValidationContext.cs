@@ -10,14 +10,23 @@ namespace Factly
     /// </summary>
     public sealed class ValidationContext
     {
+#if FEATURE_PARALLEL_VALIDATION
+        private const int DefaultMaxDegreeOfParallelism = 1;
+#endif
+
         private static readonly Action<ValidationError> DefaultErrorHandler = error => throw new ValidationException(error);
         private static readonly Action<Type> DefaultUnknownTypeHandler = type => throw new ValidatorBuilderException(SR.UnknownTypeEncountered, Errors.UnknownType, type, null);
         private static readonly Action<object> DefaultItemHandler = _ => { };
 
         private readonly bool _isReadonly;
+
         private Action<ValidationError> _errors;
         private Action<Type> _unknownTypes;
         private Action<object> _items;
+
+#if FEATURE_PARALLEL_VALIDATION
+        private int _maxDegreeOfParallelism = DefaultMaxDegreeOfParallelism;
+#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationContext"/> class.
@@ -37,6 +46,10 @@ namespace Factly
             _errors = context?.OnError ?? DefaultErrorHandler;
             _items = context?.OnItem ?? DefaultItemHandler;
             _unknownTypes = context?.OnUnknownType ?? DefaultUnknownTypeHandler;
+
+#if FEATURE_PARALLEL_VALIDATION
+            _maxDegreeOfParallelism = context?.MaxDegreeOfParallelism ?? MaxDegreeOfParallelism;
+#endif
         }
 
         /// <summary>
@@ -51,6 +64,21 @@ namespace Factly
                 _unknownTypes = value;
             }
         }
+
+#if FEATURE_PARALLEL_VALIDATION
+        /// <summary>
+        /// Gets or sets the number of threads when used for parallel validation.
+        /// </summary>
+        public int MaxDegreeOfParallelism
+        {
+            get => _maxDegreeOfParallelism;
+            set
+            {
+                CheckIfReadonly();
+                _maxDegreeOfParallelism = value;
+            }
+        }
+#endif
 
         /// <summary>
         /// Gets or sets the handler called when an error occurs.

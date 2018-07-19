@@ -126,6 +126,12 @@
   <data name="NoConstraints" xml:space="preserve">
     <value>No constraints were created during building</value>
   </data>
+  <data name="ParallelThreadNumberMustBeGreaterThan0" xml:space="preserve">
+    <value>Thread count must be a positive integer greater than 0</value>
+  </data>
+  <data name="ParallelThreadNumberMustBeOneForNonAsync" xml:space="preserve">
+    <value>Thread count must be equal to 1 for non-async validation</value>
+  </data>
   <data name="PatternRequiresStringProperty" xml:space="preserve">
     <value>Type of property must be a string if a pattern is specified</value>
   </data>

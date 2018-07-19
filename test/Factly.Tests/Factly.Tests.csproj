@@ -8,7 +8,15 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
-    <DefineConstants>$(DefineConstants);FEATURE_TYPEINFO</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_TYPEINFO;FEATURE_PARALLEL_VALIDATION</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <DefineConstants>$(DefineConstants);FEATURE_PARALLEL_VALIDATION</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net47' ">
+    <DefineConstants>$(DefineConstants);FEATURE_PARALLEL_VALIDATION</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

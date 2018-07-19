@@ -2,8 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Xunit;
+
+#if FEATURE_PARALLEL_VALIDATION
+using System.Threading.Tasks;
+#endif
 
 namespace Factly
 {
@@ -83,6 +88,61 @@ namespace Factly
 
             Assert.Equal(1, count);
         }
+
+#if FEATURE_PARALLEL_VALIDATION
+        [Fact]
+        public async Task AsyncValidation()
+        {
+            const int ParallelCount = 2;
+
+            var list = new HashSet<int>();
+            var cts = new CancellationTokenSource();
+            var builder = ValidatorBuilder.Create();
+            builder.AddKnownType<RecursiveClass>();
+            builder.AddPropertyFilter<RecursiveClass>();
+            builder.AddConstraint(_ => new DelegateConstraint((i, instanceValue, ctx) =>
+            {
+                Assert.Equal(ParallelCount, ctx.MaxDegreeOfParallelism);
+
+                lock (list)
+                {
+                    if (Task.CurrentId.HasValue)
+                    {
+                        list.Add(Task.CurrentId.Value);
+                    }
+                }
+            }));
+            var validator = builder.Build();
+
+            var instance = new RecursiveClass
+            {
+                Entry1 = new RecursiveClass
+                {
+                    Entry1 = new RecursiveClass
+                    {
+                    },
+                    Entry2 = new RecursiveClass
+                    {
+                    },
+                },
+                Entry2 = new RecursiveClass
+                {
+                    Entry1 = new RecursiveClass
+                    {
+                    },
+                    Entry2 = new RecursiveClass
+                    {
+                    },
+                },
+            };
+
+            var context = new TestValidationContext();
+            context.Context.MaxDegreeOfParallelism = ParallelCount;
+            await validator.ValidateAsync(instance, context.Context).ConfigureAwait(false);
+
+            Assert.Equal(ParallelCount, list.Count);
+        }
+#endif
 
         [Fact]
         public void ValidateCancelTest()
@@ -177,6 +237,13 @@ namespace Factly
         private class TestWithDerivedVirtualPropertyNew : TestWithVirtualPropertyNew
         {
             public new string Test { get; set; } = nameof(TestWithDerivedVirtualPropertyNew);
+        }
+
+        private class RecursiveClass
+        {
+            public RecursiveClass Entry1 { get; set; }
+
+            public RecursiveClass Entry2 { get; set; }
         }
     }
 }
