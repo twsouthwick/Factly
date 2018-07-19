@@ -63,6 +63,7 @@ namespace Factly
                                     foreach (var additional in process(item))
                                     {
                                         items.Enqueue(additional);
+                                        resetEvent.Set();
                                     }
                                 }
                             }

@@ -90,17 +90,19 @@ namespace Factly
         }
 
 #if FEATURE_PARALLEL_VALIDATION
-        [Fact(Skip = "Test not valid yet")]
+        [Fact]
         public async Task AsyncValidation()
         {
             var list = new HashSet<int>();
             var cts = new CancellationTokenSource();
             var builder = ValidatorBuilder.Create();
-            builder.AddKnownType<TestClass1>();
-            builder.AddPropertyFilter<TestClass2>();
+            builder.AddKnownType<RecursiveClass>();
+            builder.AddPropertyFilter<RecursiveClass>();
             builder.AddConstraint(_ => new DelegateConstraint((i, instanceValue, ctx) =>
             {
                 Assert.Equal(2, ctx.MaxDegreeOfParallelism);
+
+                Task.Delay(200).GetAwaiter().GetResult();
 
                 lock (list)
                 {
@@ -112,15 +114,17 @@ namespace Factly
             }));
             var validator = builder.Build();
 
-            var instance = new TestClass1
+            var instance = new RecursiveClass
             {
-                Instance = new TestClass2
+                Entry = new RecursiveClass
                 {
-                    Test1 = Guid.NewGuid().ToString(),
-                    Test2 = Guid.NewGuid().ToString(),
+                    Entry = new RecursiveClass
+                    {
+                        Entry = new RecursiveClass
+                        {
+                        },
+                    },
                 },
-                Test1 = Guid.NewGuid().ToString(),
-                Test2 = Guid.NewGuid().ToString(),
             };
 
             var context = new TestValidationContext();
@@ -224,6 +228,11 @@ namespace Factly
         private class TestWithDerivedVirtualPropertyNew : TestWithVirtualPropertyNew
         {
             public new string Test { get; set; } = nameof(TestWithDerivedVirtualPropertyNew);
+        }
+
+        private class RecursiveClass
+        {
+            public RecursiveClass Entry { get; set; }
         }
     }
 }
