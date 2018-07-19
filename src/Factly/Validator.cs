@@ -4,6 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+
+#if FEATURE_PARALLEL_VALIDATION
+using System.Threading.Tasks;
+#endif
+
 #if !NO_CANCELLATION_TOKEN
 using System.Threading;
 #endif
@@ -41,6 +46,26 @@ namespace Factly
         /// <param name="item">Item to validate.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
         public void Validate(object item, CancellationToken token = default) => Validate(item, null, token);
+
+#if FEATURE_PARALLEL_VALIDATION
+        /// <summary>
+        /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>.
+        /// </summary>
+        /// <param name="item">Item to validate.</param>
+        /// <param name="context"><see cref="ValidationContext"/> to pass through.</param>
+        /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
+        public Task ValidateAsync(object item, ValidationContext context, CancellationToken token = default)
+        {
+            return ValidateInternalAsync(item, new ValidationContext(context), token);
+        }
+
+        /// <summary>
+        /// Validates an item and its object graph according to that defined in <see cref="Validator"/>.
+        /// </summary>
+        /// <param name="item">Item to validate.</param>
+        /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
+        public Task ValidateAsync(object item, CancellationToken token = default) => ValidateAsync(item, null, token);
+#endif
 #else
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>.
@@ -73,31 +98,60 @@ namespace Factly
                 throw new ArgumentNullException(nameof(item));
             }
 
-            IEnumerable<object> BuildItem(object current)
+#if FEATURE_PARALLEL_VALIDATION
+            if (context.MaxDegreeOfParallelism != 1)
             {
-                context.OnItem.Invoke(current);
+                throw new ArgumentOutOfRangeException(nameof(context), context.MaxDegreeOfParallelism, SR.ParallelThreadNumberMustBeOneForNonAsync);
+            }
+#endif
 
-                var currentType = current.GetType();
+            SingletonList.Create(item).Traverse(current => BuildItem(context, current), token);
+        }
 
-                if (_typeValidators.TryGetValue(currentType, out var type))
-                {
-                    foreach (var property in type.Properties)
-                    {
-                        var value = property.Validate(current, context);
-
-                        if (value != null && property.IncludeChildren)
-                        {
-                            yield return value;
-                        }
-                    }
-                }
-                else
-                {
-                    context.OnUnknownType(currentType);
-                }
+#if FEATURE_PARALLEL_VALIDATION
+        private Task ValidateInternalAsync(object item, ValidationContext context, CancellationToken token)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
             }
 
-            SingletonList.Create(item).Traverse(BuildItem, token);
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            if (context.MaxDegreeOfParallelism < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(context), context.MaxDegreeOfParallelism, SR.ParallelThreadNumberMustBeGreaterThan0);
+            }
+
+            return SingletonList.Create(item).TraverseAsync(current => BuildItem(context, current), context.MaxDegreeOfParallelism, token);
+        }
+#endif
+
+        private IEnumerable<object> BuildItem(ValidationContext context, object current)
+        {
+            context.OnItem.Invoke(current);
+
+            var currentType = current.GetType();
+
+            if (_typeValidators.TryGetValue(currentType, out var type))
+            {
+                foreach (var property in type.Properties)
+                {
+                    var value = property.Validate(current, context);
+
+                    if (value != null && property.IncludeChildren)
+                    {
+                        yield return value;
+                    }
+                }
+            }
+            else
+            {
+                context.OnUnknownType(currentType);
+            }
         }
 
 #pragma warning disable CA1812

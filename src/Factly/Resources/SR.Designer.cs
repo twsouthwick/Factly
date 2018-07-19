@@ -89,6 +89,24 @@ namespace Factly {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Thread count must be a positive integer greater than 0.
+        /// </summary>
+        internal static string ParallelThreadNumberMustBeGreaterThan0 {
+            get {
+                return ResourceManager.GetString("ParallelThreadNumberMustBeGreaterThan0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thread count must be equal to 1 for non-async validation.
+        /// </summary>
+        internal static string ParallelThreadNumberMustBeOneForNonAsync {
+            get {
+                return ResourceManager.GetString("ParallelThreadNumberMustBeOneForNonAsync", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type of property must be a string if a pattern is specified.
         /// </summary>
         internal static string PatternRequiresStringProperty {
