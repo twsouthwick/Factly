@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Taylor Southwick. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Factly.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,9 +22,9 @@ namespace Factly
     [DebuggerTypeProxy(typeof(ValidatorDebugProxy))]
     public sealed class Validator
     {
-        private readonly Dictionary<Type, TypeValidator> _typeValidators;
+        private readonly TypeDictionary<TypeValidator> _typeValidators;
 
-        internal Validator(Dictionary<Type, TypeValidator> typeValidators)
+        internal Validator(TypeDictionary<TypeValidator> typeValidators)
         {
             _typeValidators = typeValidators;
         }
