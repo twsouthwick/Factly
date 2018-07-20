@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Factly
+namespace Factly.Collections
 {
     internal struct ArrayBuilder<T>
     {
