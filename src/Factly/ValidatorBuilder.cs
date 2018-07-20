@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Taylor Southwick. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Factly.Collections;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -157,7 +158,7 @@ namespace Factly
         private class Builder
         {
             private readonly ValidatorBuilder _builder;
-            private readonly Dictionary<Type, TypeValidator> _validators;
+            private readonly TypeDictionary<TypeValidator> _validators;
             private readonly bool _threadSafe;
             private int _hasConstraints;
 
@@ -165,7 +166,7 @@ namespace Factly
             {
                 _builder = builder;
                 _hasConstraints = 0;
-                _validators = new Dictionary<Type, TypeValidator>();
+                _validators = new TypeDictionary<TypeValidator>(builder.Types.Count);
                 _threadSafe = threadSafe;
             }
 
