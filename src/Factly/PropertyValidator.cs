@@ -14,13 +14,13 @@ namespace Factly
     [DebuggerTypeProxy(typeof(PropertyValidatorDebuggerProxy))]
     internal readonly struct PropertyValidator
     {
-        private readonly Func<object, object> _getter;
+        private readonly LazyProperty _getter;
         private readonly IConstraint[] _constraints;
 
         private PropertyValidator(PropertyInfo property, bool shouldFollow, IConstraint[] constraints)
         {
             Property = property;
-            _getter = property.GetPropertyDelegate();
+            _getter = new LazyProperty(property);
             _constraints = constraints;
             IncludeChildren = shouldFollow;
         }
@@ -53,7 +53,7 @@ namespace Factly
 
         public object Validate(object item, ValidationContext context)
         {
-            var value = _getter(item);
+            var value = _getter.Value(item);
 
             foreach (var constraint in _constraints)
             {
@@ -104,6 +104,36 @@ namespace Factly
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public IConstraint[] Constraints { get; }
+        }
+
+        private class LazyProperty
+        {
+            private readonly PropertyInfo _property;
+            private Func<object, object> _value;
+
+            public LazyProperty(PropertyInfo property)
+            {
+                _property = property;
+            }
+
+            public Func<object, object> Value
+            {
+                get
+                {
+                    if (_value == null)
+                    {
+                        lock (this)
+                        {
+                            if (_value == null)
+                            {
+                                _value = _property.GetPropertyDelegate();
+                            }
+                        }
+                    }
+
+                    return _value;
+                }
+            }
         }
     }
 }
