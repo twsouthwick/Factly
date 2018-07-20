@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Taylor Southwick. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Factly.Collections;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -38,11 +40,8 @@ namespace Factly
                 return default;
             }
 
-            var constraints = builder.Constraints
-                .Select(factory => factory.Create(property))
-                .Where(constraint => constraint != null)
-                .ToArray(true);
-            var shouldFollow = builder.PropertyFilters.Any(t => t(property));
+            var constraints = GetConstraints(property, builder.Constraints);
+            var shouldFollow = ShouldFollow(property, builder.PropertyFilters);
 
             if (constraints.Length == 0 && !shouldFollow)
             {
@@ -62,6 +61,36 @@ namespace Factly
             }
 
             return value;
+        }
+
+        private static bool ShouldFollow(PropertyInfo property, List<Func<PropertyInfo, bool>> selectors)
+        {
+            foreach (var selector in selectors)
+            {
+                if (selector(property))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static IConstraint[] GetConstraints(PropertyInfo property, List<ConstraintBuilder> builders)
+        {
+            var array = default(ArrayBuilder<IConstraint>);
+
+            foreach (var builder in builders)
+            {
+                var constraint = builder.Create(property);
+
+                if (constraint != null)
+                {
+                    array.Add(constraint);
+                }
+            }
+
+            return array.ToArray();
         }
 
 #pragma warning disable CA1812

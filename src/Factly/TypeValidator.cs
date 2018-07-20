@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Taylor Southwick. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Factly.Collections;
 using System;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Factly
 {
@@ -13,10 +13,7 @@ namespace Factly
         public TypeValidator(Type type, ValidatorBuilder builder)
         {
             Type = type;
-            Properties = type.GetProperties()
-                .Select(p => PropertyValidator.Create(p, builder))
-                .Where(p => p.Property != null)
-                .ToArray(true);
+            Properties = GetPropertyValidators(type, builder);
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -24,5 +21,22 @@ namespace Factly
 
         [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
         public PropertyValidator[] Properties { get; }
+
+        private static PropertyValidator[] GetPropertyValidators(Type type, ValidatorBuilder builder)
+        {
+            var array = default(ArrayBuilder<PropertyValidator>);
+
+            foreach (var property in type.GetProperties())
+            {
+                var validator = PropertyValidator.Create(property, builder);
+
+                if (validator.Property != null)
+                {
+                    array.Add(validator);
+                }
+            }
+
+            return array.ToArray();
+        }
     }
 }
