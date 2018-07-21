@@ -30,7 +30,7 @@ namespace Factly
             {
                 var validator = PropertyValidator.Create(property, builder);
 
-                if (validator.Property != null)
+                if (validator != null)
                 {
                     array.Add(validator);
                 }
