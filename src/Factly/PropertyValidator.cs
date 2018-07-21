@@ -5,22 +5,21 @@ using Factly.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 
 namespace Factly
 {
     [DebuggerDisplay("{Type.FullName,nq} {Property.Name,nq}")]
     [DebuggerTypeProxy(typeof(PropertyValidatorDebuggerProxy))]
-    internal readonly struct PropertyValidator
+    internal class PropertyValidator
     {
-        private readonly Func<object, object> _getter;
         private readonly IConstraint[] _constraints;
+
+        private Func<object, object> _getter;
 
         private PropertyValidator(PropertyInfo property, bool shouldFollow, IConstraint[] constraints)
         {
             Property = property;
-            _getter = property.GetPropertyDelegate();
             _constraints = constraints;
             IncludeChildren = shouldFollow;
         }
@@ -32,6 +31,25 @@ namespace Factly
         public bool HasConstraints => _constraints.Length > 0;
 
         public bool IncludeChildren { get; }
+
+        private Func<object, object> Getter
+        {
+            get
+            {
+                if (_getter == null)
+                {
+                    lock (this)
+                    {
+                        if (_getter == null)
+                        {
+                            _getter = Property.GetPropertyDelegate();
+                        }
+                    }
+                }
+
+                return _getter;
+            }
+        }
 
         public static PropertyValidator Create(PropertyInfo property, ValidatorBuilder builder)
         {
@@ -53,7 +71,7 @@ namespace Factly
 
         public object Validate(object item, ValidationContext context)
         {
-            var value = _getter(item);
+            var value = Getter(item);
 
             foreach (var constraint in _constraints)
             {
