@@ -15,7 +15,7 @@ namespace Factly
     {
         private readonly Dictionary<Type, Func<object, TValue>> _mappers;
 
-        internal ConstraintBuilder(Func<PropertyInfo, IConstraint> factory)
+        internal ConstraintBuilder(Func<PropertyInfo, BuilderContext, IConstraint> factory)
             : base(factory)
         {
             _mappers = new Dictionary<Type, Func<object, TValue>>();
@@ -41,9 +41,9 @@ namespace Factly
             });
         }
 
-        internal override IConstraint Create(PropertyInfo property)
+        internal override IConstraint Create(PropertyInfo property, BuilderContext context)
         {
-            var constraint = base.Create(property);
+            var constraint = base.Create(property, context);
 
             if (constraint is null)
             {

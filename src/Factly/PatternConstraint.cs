@@ -13,14 +13,14 @@ namespace Factly
         private readonly Regex _regex;
         private readonly PropertyInfo _property;
 
-        public PatternConstraint(PropertyInfo property, ValidatorBuilder builder, string pattern)
+        public PatternConstraint(PropertyInfo property, BuilderContext context, string pattern)
         {
             if (pattern == null)
             {
                 throw new ArgumentNullException(nameof(pattern));
             }
 
-            _regex = builder.State.AddOrGet(pattern, p => new Regex(pattern, RegexOptions.Compiled));
+            _regex = context.State.AddOrGet(pattern, p => new Regex(pattern, RegexOptions.Compiled));
             _property = property;
         }
 

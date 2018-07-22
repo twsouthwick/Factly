@@ -79,8 +79,8 @@ namespace Factly
         public static ConstraintBuilder<string> AddRegexAttributeConstraint<TAttribute>(this ValidatorBuilder builder, Func<TAttribute, string> stringSelector)
             where TAttribute : Attribute
         {
-            return builder.AddAttributeConstraint<TAttribute, string>((attribute, propertyInfo) =>
-                new PatternConstraint(propertyInfo, builder, stringSelector(attribute)));
+            return builder.AddAttributeConstraint<TAttribute, string>((attribute, propertyInfo, ctx) =>
+                new PatternConstraint(propertyInfo, ctx, stringSelector(attribute)));
         }
 
         /// <summary>
@@ -90,11 +90,11 @@ namespace Factly
         /// <typeparam name="TValue">Expected type of constraint.</typeparam>
         /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
         /// <param name="factory">The factory to create a constraint given an attribute instance.</param>
-        /// <returns><paramref name="builder"/>.</returns>
-        public static ConstraintBuilder<TValue> AddAttributeConstraint<TAttribute, TValue>(this ValidatorBuilder builder, Func<TAttribute, PropertyInfo, IConstraint> factory)
+        /// <returns>A <see cref="ConstraintBuilder{TValue}"/> instance.</returns>
+        public static ConstraintBuilder<TValue> AddAttributeConstraint<TAttribute, TValue>(this ValidatorBuilder builder, Func<TAttribute, PropertyInfo, BuilderContext, IConstraint> factory)
             where TAttribute : Attribute
         {
-            return builder.AddConstraint<TValue>(propertyInfo =>
+            return builder.AddConstraint<TValue>((propertyInfo, ctx) =>
             {
                 var attribute = propertyInfo.GetCustomAttribute<TAttribute>();
 
@@ -103,8 +103,19 @@ namespace Factly
                     return null;
                 }
 
-                return factory(attribute, propertyInfo);
+                return factory(attribute, propertyInfo, ctx);
             });
+        }
+
+        /// <summary>
+        /// Adds a constraint generator that depends on a <see cref="PropertyInfo"/>.
+        /// </summary>
+        /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
+        /// <param name="factory">The factory to create a constraint given an attribute instance.</param>
+        /// <returns>A <see cref="ConstraintBuilder{TValue}"/> instance.</returns>
+        public static ConstraintBuilder AddConstraint(this ValidatorBuilder builder, Func<PropertyInfo, IConstraint> factory)
+        {
+            return builder.AddConstraint((property, _) => factory(property));
         }
     }
 }
