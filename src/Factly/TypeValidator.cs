@@ -10,10 +10,10 @@ namespace Factly
     [DebuggerDisplay("{Type.FullName,nq}")]
     internal readonly struct TypeValidator
     {
-        public TypeValidator(Type type, ValidatorBuilder builder)
+        public TypeValidator(Type type, BuilderContext context)
         {
             Type = type;
-            Properties = GetPropertyValidators(type, builder);
+            Properties = GetPropertyValidators(type, context);
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -22,13 +22,13 @@ namespace Factly
         [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
         public PropertyValidator[] Properties { get; }
 
-        private static PropertyValidator[] GetPropertyValidators(Type type, ValidatorBuilder builder)
+        private static PropertyValidator[] GetPropertyValidators(Type type, BuilderContext context)
         {
             var array = default(ArrayBuilder<PropertyValidator>);
 
             foreach (var property in type.GetProperties())
             {
-                var validator = PropertyValidator.Create(property, builder);
+                var validator = PropertyValidator.Create(property, context);
 
                 if (validator != null)
                 {

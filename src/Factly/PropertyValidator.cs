@@ -51,15 +51,15 @@ namespace Factly
             }
         }
 
-        public static PropertyValidator Create(PropertyInfo property, ValidatorBuilder builder)
+        public static PropertyValidator Create(PropertyInfo property, BuilderContext context)
         {
             if (!property.HasGetMethod())
             {
                 return default;
             }
 
-            var constraints = GetConstraints(property, builder.Constraints);
-            var shouldFollow = ShouldFollow(property, builder.PropertyFilters);
+            var constraints = GetConstraints(property, context.Builder.Constraints, context);
+            var shouldFollow = ShouldFollow(property, context.Builder.PropertyFilters);
 
             if (constraints.Length == 0 && !shouldFollow)
             {
@@ -94,13 +94,13 @@ namespace Factly
             return false;
         }
 
-        private static IConstraint[] GetConstraints(PropertyInfo property, List<ConstraintBuilder> builders)
+        private static IConstraint[] GetConstraints(PropertyInfo property, List<ConstraintBuilder> builders, BuilderContext context)
         {
             var array = default(ArrayBuilder<IConstraint>);
 
             foreach (var builder in builders)
             {
-                var constraint = builder.Create(property);
+                var constraint = builder.Create(property, context);
 
                 if (constraint != null)
                 {
