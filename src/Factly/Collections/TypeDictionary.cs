@@ -10,17 +10,14 @@ namespace Factly.Collections
     {
         private readonly Dictionary<TypeKey, TValue> _dictionary;
 
-        public TypeDictionary(int size)
+        private TypeDictionary(Dictionary<TypeKey, TValue> dictionary)
         {
-            _dictionary = new Dictionary<TypeKey, TValue>(size);
+            _dictionary = dictionary;
         }
 
         public ICollection<TValue> Values => _dictionary.Values;
 
-        public void Add(Type type, TValue value)
-        {
-            _dictionary.Add(type, value);
-        }
+        public static Builder Create(int size) => new Builder(size);
 
         public bool TryGetValue(Type currentType, out TValue value)
         {
@@ -59,6 +56,26 @@ namespace Factly.Collections
             }
 
             public override int GetHashCode() => Type.GetHashCode();
+        }
+
+        public class Builder
+        {
+            private readonly Dictionary<TypeKey, TValue> _dictionary;
+
+            internal Builder(int size)
+            {
+                _dictionary = new Dictionary<TypeKey, TValue>(size);
+            }
+
+            public void Add(Type type, TValue value)
+            {
+                lock (_dictionary)
+                {
+                    _dictionary.Add(type, value);
+                }
+            }
+
+            public TypeDictionary<TValue> ToImmutable() => new TypeDictionary<TValue>(_dictionary);
         }
     }
 }

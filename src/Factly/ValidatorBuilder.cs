@@ -144,11 +144,12 @@ namespace Factly
                 throw new ValidatorBuilderException(SR.MustDeclareTypes, Errors.NoTypes, null, null);
             }
 
-            var builder = new BuilderContext(this, threadSafe: false);
+            using (var builder = new BuilderContext(this, threadSafe: false))
+            {
+                Types.Traverse(builder.AddItem, token);
 
-            Types.Traverse(builder.AddItem, token);
-
-            return builder.Get();
+                return builder.Get();
+            }
         }
     }
 }
