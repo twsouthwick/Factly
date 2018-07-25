@@ -32,11 +32,11 @@ namespace Factly
             {
                 OnError = error =>
                 {
-                    var patternError = Assert.IsType<PatternValidationError>(error);
                     Assert.True(isError);
-                    Assert.Equal("he.*lo", patternError.Pattern.ToString(), StringComparer.Ordinal);
-                    Assert.Equal(testValue, (string)patternError.Value, StringComparer.Ordinal);
-                    Assert.Same(item, patternError.Instance);
+                    Assert.IsType<Regex>(error.Context);
+                    Assert.Equal("he.*lo", error.Context.ToString(), StringComparer.Ordinal);
+                    Assert.Equal(testValue, (string)error.Value, StringComparer.Ordinal);
+                    Assert.Same(item, error.Instance);
 
                     issueRaised++;
                 },
@@ -113,10 +113,10 @@ namespace Factly
             {
                 OnError = error =>
                 {
-                    var patternError = Assert.IsType<PatternValidationError>(error);
-                    Assert.Equal("he.*lo", patternError.Pattern.ToString(), StringComparer.Ordinal);
-                    Assert.Equal(Value, (string)patternError.Value, StringComparer.Ordinal);
-                    Assert.Same(item, patternError.Instance);
+                    Assert.IsType<Regex>(error.Context);
+                    Assert.Equal("he.*lo", error.Context.ToString(), StringComparer.Ordinal);
+                    Assert.Equal(Value, (string)error.Value, StringComparer.Ordinal);
+                    Assert.Same(item, error.Instance);
 
                     issueRaised++;
                 },
@@ -166,10 +166,10 @@ namespace Factly
 
             Assert.Equal(2, context.Errors.Count);
 
-            var error1 = Assert.IsType<PatternValidationError>(context.Errors[0]);
-            var error2 = Assert.IsType<PatternValidationError>(context.Errors[1]);
+            var error1 = Assert.IsType<Regex>(context.Errors[0].Context);
+            var error2 = Assert.IsType<Regex>(context.Errors[1].Context);
 
-            Assert.Same(error1.Pattern, error2.Pattern);
+            Assert.Same(error1, error2);
         }
 
         [AttributeUsage(AttributeTargets.Property)]

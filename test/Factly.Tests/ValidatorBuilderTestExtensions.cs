@@ -5,7 +5,7 @@ namespace Factly
 {
     internal static class ValidatorBuilderTestExtensions
     {
-        private static readonly IConstraint _constraint = new DelegateConstraint(() => { });
+        private static readonly IConstraint _constraint = new DelegateConstraint(() => true);
 
         public static void AddEmptyClass(this ValidatorBuilder builder)
         {

@@ -8,18 +8,39 @@ namespace Factly
     /// <summary>
     /// A class that contains basic validation error information.
     /// </summary>
-    public class ValidationError
+    public sealed class ValidationError
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationError"/> class.
         /// </summary>
-        /// <param name="instance">The instance that raised the error.</param>
+        /// <param name="value">The value that raised the error.</param>
+        /// <param name="instance">The instance that contains the value.</param>
         /// <param name="property">The property that raised the error.</param>
-        public ValidationError(object instance, PropertyInfo property)
+        /// <param name="constraint">The constraint that generated the error.</param>
+        internal ValidationError(object value, object instance, PropertyInfo property, IConstraint constraint)
         {
+            Value = value;
             Instance = instance;
             Property = property;
+
+            Id = constraint.Id;
+            Context = constraint.Context;
         }
+
+        /// <summary>
+        /// Gets the ID of the constraint that raised the error.
+        /// </summary>
+        public string Id { get; }
+
+        /// <summary>
+        /// Gets the context of the constraint.
+        /// </summary>
+        public object Context { get; }
+
+        /// <summary>
+        /// Gets the value that raised the error.
+        /// </summary>
+        public object Value { get; }
 
         /// <summary>
         /// Gets the instance that raised the error.
