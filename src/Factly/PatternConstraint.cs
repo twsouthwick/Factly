@@ -8,36 +8,32 @@ using System.Text.RegularExpressions;
 
 namespace Factly
 {
-    internal class PatternConstraint : IConstraint
+    /// <summary>
+    /// An <see cref="IConstraint"/> that validates against a regular expression.
+    /// </summary>
+    public class PatternConstraint : IConstraint
     {
         private readonly Regex _regex;
-        private readonly PropertyInfo _property;
 
-        public PatternConstraint(PropertyInfo property, BuilderContext context, string pattern)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PatternConstraint"/> class.
+        /// </summary>
+        /// <param name="regex">The regular expression of the pattern.</param>
+        public PatternConstraint(Regex regex)
         {
-            if (pattern == null)
-            {
-                throw new ArgumentNullException(nameof(pattern));
-            }
-
-            _regex = context.State.AddOrGet(pattern, p => new Regex(pattern, RegexOptions.Compiled));
-            _property = property;
+            _regex = regex ?? throw new ArgumentNullException(nameof(regex));
         }
 
-        public void Validate(object instance, object value, ValidationContext context)
+        /// <inheritdoc/>
+        public string Id => "Pattern";
+
+        /// <inheritdoc/>
+        public object Context => _regex;
+
+        /// <inheritdoc/>
+        public virtual bool Validate(object value)
         {
-            if (value == null)
-            {
-                context.OnError(new PatternValidationError(instance, _property, _regex, value));
-                return;
-            }
-
-            Debug.Assert(value is string, "This is checked in the constructor so all values supplied here should be a string");
-
-            if (!_regex.IsMatch((string)value))
-            {
-                context.OnError(new PatternValidationError(instance, _property, _regex, value));
-            }
+            return value is string str && _regex.IsMatch(str);
         }
     }
 }

@@ -7,18 +7,22 @@ namespace Factly
 {
     internal class DelegateConstraint : IConstraint
     {
-        private readonly Action<object, object, ValidationContext> _action;
+        private readonly Func<object, bool> _func;
 
-        public DelegateConstraint(Action action)
-            : this((instance, value, ctx) => action())
+        public DelegateConstraint(Func<bool> func)
+            : this(_ => func())
         {
         }
 
-        public DelegateConstraint(Action<object, object, ValidationContext> func)
+        public DelegateConstraint(Func<object, bool> func)
         {
-            _action = func;
+            _func = func;
         }
 
-        public void Validate(object instance, object value, ValidationContext context) => _action(instance, value, context);
+        public string Id => nameof(DelegateConstraint);
+
+        public object Context => null;
+
+        public bool Validate(object value) => _func(value);
     }
 }

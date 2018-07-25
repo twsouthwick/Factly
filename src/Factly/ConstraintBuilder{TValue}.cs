@@ -63,7 +63,7 @@ namespace Factly
             }
         }
 
-        private class TypedConstraint : IConstraint
+        private class TypedConstraint : IConstraint, ITypedConstraint
         {
             private readonly IConstraint _constraint;
             private readonly Func<object, TValue> _func;
@@ -74,10 +74,13 @@ namespace Factly
                 _func = func;
             }
 
-            public void Validate(object instance, object value, ValidationContext context)
-            {
-                _constraint.Validate(instance, _func(value), context);
-            }
+            public string Id => _constraint.Id;
+
+            public object Context => _constraint.Context;
+
+            public object Convert(object value) => _func(value);
+
+            public bool Validate(object value) => _constraint.Validate(value);
         }
     }
 }

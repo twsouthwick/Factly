@@ -31,14 +31,15 @@ namespace Factly
                 },
             };
 
-            builder.AddConstraint(_ => new DelegateConstraint((instance, value, ctx) =>
+            builder.AddConstraint(_ => new DelegateConstraint(value =>
             {
                 if (value is string)
                 {
-                    Assert.Same(test.Instance, instance);
                     Assert.Equal(Value, value);
                     count++;
                 }
+
+                return true;
             }));
 
             var validator = builder.Build();

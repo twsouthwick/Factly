@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Factly
 {
@@ -80,7 +81,12 @@ namespace Factly
             where TAttribute : Attribute
         {
             return builder.AddAttributeConstraint<TAttribute, string>((attribute, propertyInfo, ctx) =>
-                new PatternConstraint(propertyInfo, ctx, stringSelector(attribute)));
+            {
+                var pattern = stringSelector(attribute);
+                var regex = ctx.State.AddOrGet(pattern, p => new Regex(pattern, RegexOptions.Compiled));
+
+                return new PatternConstraint(regex);
+            });
         }
 
         /// <summary>

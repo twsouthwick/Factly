@@ -9,11 +9,20 @@ namespace Factly
     public interface IConstraint
     {
         /// <summary>
+        /// Gets the ID of the constraint.
+        /// </summary>
+        string Id { get; }
+
+        /// <summary>
+        /// Gets any constraint specific context.
+        /// </summary>
+        object Context { get; }
+
+        /// <summary>
         /// Called to validate a property value.
         /// </summary>
-        /// <param name="instance">Instance the property is on.</param>
         /// <param name="value">The value of the property.</param>
-        /// <param name="context">A <see cref="ValidationContext"/> instance.</param>
-        void Validate(object instance, object value, ValidationContext context);
+        /// <returns>Whether validation was successful or not.</returns>
+        bool Validate(object value);
     }
 }

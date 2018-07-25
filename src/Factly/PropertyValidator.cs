@@ -75,7 +75,13 @@ namespace Factly
 
             foreach (var constraint in _constraints)
             {
-                constraint.Validate(item, value, context);
+                var updated = constraint is ITypedConstraint typed ? typed.Convert(value) : value;
+
+                if (!constraint.Validate(updated))
+                {
+                    var error = new ValidationError(updated, item, Property, constraint);
+                    context.OnError(error);
+                }
             }
 
             return value;
