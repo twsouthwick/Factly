@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace Factly
 {
     /// <summary>
-    /// An <see cref="IConstraint"/> that validates agains a regular expression.
+    /// An <see cref="IConstraint"/> that validates against a regular expression.
     /// </summary>
     public class PatternConstraint : IConstraint
     {
