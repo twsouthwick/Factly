@@ -3,11 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Factly
 {
-    internal class StateManager
+    internal sealed class StateManager : IDisposable
     {
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+
         private Dictionary<StateKey, object> _state;
 
         private Dictionary<StateKey, object> State
@@ -25,16 +28,39 @@ namespace Factly
 
         public TValue AddOrGet<TKey, TValue>(TKey key, Func<TKey, TValue> addFunc)
         {
-            var dictionary = GetCache<TKey, TValue>();
+            _lock.EnterUpgradeableReadLock();
 
-            if (dictionary.TryGetValue(key, out var result))
+            try
             {
-                return result;
-            }
+                var dictionary = GetCache<TKey, TValue>();
 
-            var newItem = addFunc(key);
-            dictionary[key] = newItem;
-            return newItem;
+                if (dictionary.TryGetValue(key, out var result))
+                {
+                    return result;
+                }
+
+                var newItem = addFunc(key);
+
+                _lock.EnterWriteLock();
+                try
+                {
+                    dictionary[key] = newItem;
+                    return newItem;
+                }
+                finally
+                {
+                    _lock.ExitWriteLock();
+                }
+            }
+            finally
+            {
+                _lock.ExitUpgradeableReadLock();
+            }
+        }
+
+        public void Dispose()
+        {
+            _lock.Dispose();
         }
 
         private Dictionary<TKey, TValue> GetCache<TKey, TValue>()

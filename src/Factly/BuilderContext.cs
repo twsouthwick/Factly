@@ -14,16 +14,16 @@ namespace Factly
     /// <summary>
     /// Context used during the building phase of a <see cref="Validator"/>.
     /// </summary>
-    public sealed class BuilderContext
+    public sealed class BuilderContext : IDisposable
     {
-        private readonly TypeDictionary<TypeValidator> _validators;
+        private readonly TypeDictionary<TypeValidator>.Builder _validators;
         private readonly bool _threadSafe;
         private int _hasConstraints;
 
         internal BuilderContext(ValidatorBuilder builder, bool threadSafe)
         {
             _hasConstraints = 0;
-            _validators = new TypeDictionary<TypeValidator>(builder.Types.Count);
+            _validators = TypeDictionary<TypeValidator>.Create(builder.Types.Count);
             _threadSafe = threadSafe;
 
             Builder = builder;
@@ -33,6 +33,12 @@ namespace Factly
         internal StateManager State { get; }
 
         internal ValidatorBuilder Builder { get; }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            State.Dispose();
+        }
 
         internal IEnumerable<Type> AddItem(Type type)
         {
@@ -65,7 +71,7 @@ namespace Factly
                 throw new ValidatorBuilderException(SR.NoConstraints, Errors.NoConstraintsFound, null, null);
             }
 
-            return new Validator(_validators);
+            return new Validator(_validators.ToImmutable());
         }
 
         private void Add(Type type, TypeValidator compiledType)
