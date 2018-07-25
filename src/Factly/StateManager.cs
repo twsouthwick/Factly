@@ -39,7 +39,6 @@ namespace Factly
                     return result;
                 }
 
-
                 var newItem = addFunc(key);
 
                 _lock.EnterWriteLock();
