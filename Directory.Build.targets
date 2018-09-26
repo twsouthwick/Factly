@@ -5,17 +5,17 @@
       <Visible>false</Visible>
     </AdditionalFiles>
 
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta008">
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta009">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.1">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
 
     <!-- GitVersionTask is not compiled against .NET Core, so importing the targets will
          result in a failure because it will try to resolve Microsoft.Build.Utilities v4.0 -->
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0012" Condition=" '$(MSBuildRuntimeType)' != 'Core' ">
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0014" Condition=" '$(MSBuildRuntimeType)' != 'Core' ">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
 
