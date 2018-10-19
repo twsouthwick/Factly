@@ -1,32 +1,36 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSBuild.Sdk.Extras/1.6.55">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard2.0;net35;net40;net46;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;net35;net40;net46;netcoreapp2.0;uap10.0</TargetFrameworks>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net35' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;NO_CANCELLATION_TOKEN;FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_JIT;FEATURE_REFEMIT;NO_CANCELLATION_TOKEN;FEATURE_SERIALIZABLE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <DefineConstants>$(DefineConstants);FEATURE_REFEMIT;FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_JIT;FEATURE_REFEMIT;FEATURE_SERIALIZABLE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_JIT;FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_JIT;FEATURE_CUSTOMATTRIBUTE;FEATURE_REFEMIT;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <DefineConstants>$(DefineConstants);FEATURE_JIT;FEATURE_CUSTOMATTRIBUTE;FEATURE_TYPEINFO;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'uap10.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_TYPEINFO;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CUSTOMATTRIBUTE;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_JIT;FEATURE_CUSTOMATTRIBUTE;FEATURE_SERIALIZABLE;FEATURE_CACHED_ARRAY;FEATURE_PARALLEL</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
