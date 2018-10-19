@@ -6,9 +6,12 @@ using System.Reflection;
 
 #if FEATURE_REFEMIT
 using System.Reflection.Emit;
-#else
-using System.Collections.Generic;
+#elif FEATURE_JIT
 using System.Linq.Expressions;
+#endif
+
+#if FEATURE_TYPEINFO
+using System.Collections.Generic;
 #endif
 
 namespace Factly
@@ -36,7 +39,7 @@ namespace Factly
 
             return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
         }
-#else
+#elif FEATURE_JIT
         {
             var method = property.GetMethod;
             var isValueType = property.DeclaringType.GetTypeInfo().IsValueType;
@@ -50,6 +53,10 @@ namespace Factly
                     typeof(object)),
                 instance)
                 .Compile();
+        }
+#else
+        {
+            return property.GetPropertyDelegate();
         }
 #endif
 
