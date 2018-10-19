@@ -13,11 +13,11 @@ namespace Factly
     [DebuggerTypeProxy(typeof(PropertyValidatorDebuggerProxy))]
     internal class PropertyValidator
     {
-        private readonly IConstraint[] _constraints;
+        private readonly ReadonlyArray<IConstraint> _constraints;
 
         private Func<object, object> _getter;
 
-        private PropertyValidator(PropertyInfo property, bool shouldFollow, IConstraint[] constraints)
+        private PropertyValidator(PropertyInfo property, bool shouldFollow, ReadonlyArray<IConstraint> constraints)
         {
             Property = property;
             _constraints = constraints;
@@ -100,9 +100,9 @@ namespace Factly
             return false;
         }
 
-        private static IConstraint[] GetConstraints(PropertyInfo property, List<ConstraintBuilder> builders, BuilderContext context)
+        private static ReadonlyArray<IConstraint> GetConstraints(PropertyInfo property, List<ConstraintBuilder> builders, BuilderContext context)
         {
-            var array = default(ArrayBuilder<IConstraint>);
+            var array = new ArrayBuilder<IConstraint>(builders.Count);
 
             foreach (var builder in builders)
             {
@@ -114,7 +114,7 @@ namespace Factly
                 }
             }
 
-            return array.ToArray();
+            return array.Build();
         }
 
 #pragma warning disable CA1812
@@ -127,7 +127,7 @@ namespace Factly
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public IConstraint[] Constraints { get; }
+            public ReadonlyArray<IConstraint> Constraints { get; }
         }
     }
 }

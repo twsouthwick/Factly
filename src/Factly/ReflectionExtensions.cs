@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 
 #if FEATURE_TYPEINFO
 using System.Collections.Generic;
+using System.Linq;
 #endif
 
 namespace Factly
@@ -61,9 +62,16 @@ namespace Factly
 #endif
 
 #if FEATURE_TYPEINFO
-        public static IEnumerable<PropertyInfo> GetProperties(this Type type)
+        public static PropertyInfo[] GetProperties(this Type type)
         {
-            return type.GetTypeInfo().DeclaredProperties;
+            var properties = type.GetTypeInfo().DeclaredProperties;
+
+            if (properties is PropertyInfo[] array)
+            {
+                return array;
+            }
+
+            return properties.ToArray();
         }
 
         public static bool IsAssignableFrom(this Type type, Type other)
