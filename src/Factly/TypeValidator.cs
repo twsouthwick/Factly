@@ -20,13 +20,14 @@ namespace Factly
         public Type Type { get; }
 
         [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-        public PropertyValidator[] Properties { get; }
+        public ReadonlyArray<PropertyValidator> Properties { get; }
 
-        private static PropertyValidator[] GetPropertyValidators(Type type, BuilderContext context)
+        private static ReadonlyArray<PropertyValidator> GetPropertyValidators(Type type, BuilderContext context)
         {
-            var array = default(ArrayBuilder<PropertyValidator>);
+            var properties = type.GetProperties();
+            var array = new ArrayBuilder<PropertyValidator>(properties.Length);
 
-            foreach (var property in type.GetProperties())
+            foreach (var property in properties)
             {
                 var validator = PropertyValidator.Create(property, context);
 
@@ -36,7 +37,7 @@ namespace Factly
                 }
             }
 
-            return array.ToArray();
+            return array.Build();
         }
     }
 }

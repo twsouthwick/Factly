@@ -1,45 +1,40 @@
 ﻿// Copyright (c) Taylor Southwick. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-
 namespace Factly.Collections
 {
     internal struct ArrayBuilder<T>
     {
-#if !FEATURE_CACHED_ARRAY
-        private static readonly T[] Instance = new T[0];
-#endif
-        private List<T> _list;
+        private readonly int _maxLength;
+
+        private int _index;
+        private T[] _array;
+
+        public ArrayBuilder(int maxLength)
+        {
+            _maxLength = maxLength;
+            _index = 0;
+            _array = null;
+        }
 
         public void Add(T item)
         {
-            if (_list == null)
+            if (_array == null)
             {
-                _list = new List<T>();
+                _array = new T[_maxLength];
             }
 
-            _list.Add(item);
+            _array[_index++] = item;
         }
 
-        public T[] ToArray()
+        public ReadonlyArray<T> Build()
         {
-            if (_list == null)
+            if (_array == null)
             {
-                return Empty();
+                return default;
             }
 
-            return _list.ToArray();
-        }
-
-        private static T[] Empty()
-        {
-#if FEATURE_CACHED_ARRAY
-            return Array.Empty<T>();
-#else
-            return Instance;
-#endif
+            return new ReadonlyArray<T>(_array, _index);
         }
     }
 }
