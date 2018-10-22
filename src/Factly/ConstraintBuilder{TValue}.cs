@@ -13,12 +13,16 @@ namespace Factly
     /// <typeparam name="TValue">Type to build up constraints.</typeparam>
     public class ConstraintBuilder<TValue> : ConstraintBuilder
     {
-        private readonly Dictionary<Type, Func<object, TValue>> _mappers;
+        private readonly Dictionary<Type, Func<object, TValue>> _mappers = new Dictionary<Type, Func<object, TValue>>();
 
         internal ConstraintBuilder(Func<PropertyInfo, BuilderContext, IConstraint> factory)
             : base(factory)
         {
-            _mappers = new Dictionary<Type, Func<object, TValue>>();
+        }
+
+        internal ConstraintBuilder(Func<Type, BuilderContext, IConstraint> factory)
+            : base(factory)
+        {
         }
 
         /// <summary>

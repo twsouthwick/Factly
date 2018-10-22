@@ -11,13 +11,21 @@ namespace Factly
     /// </summary>
     public class ConstraintBuilder
     {
-        private readonly Func<PropertyInfo, BuilderContext, IConstraint> _factory;
+        private readonly Func<PropertyInfo, BuilderContext, IConstraint> _propertyConstraintfactory;
+        private readonly Func<Type, BuilderContext, IConstraint> _typeConstraintFactory;
 
         internal ConstraintBuilder(Func<PropertyInfo, BuilderContext, IConstraint> factory)
         {
-            _factory = factory;
+            _propertyConstraintfactory = factory;
         }
 
-        internal virtual IConstraint Create(PropertyInfo property, BuilderContext context) => _factory(property, context);
+        internal ConstraintBuilder(Func<Type, BuilderContext, IConstraint> factory)
+        {
+            _typeConstraintFactory = factory;
+        }
+
+        internal virtual IConstraint Create(PropertyInfo property, BuilderContext context) => _propertyConstraintfactory?.Invoke(property, context);
+
+        internal virtual IConstraint Create(Type type, BuilderContext context) => _typeConstraintFactory?.Invoke(type, context);
     }
 }

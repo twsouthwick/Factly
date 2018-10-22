@@ -14,13 +14,14 @@ namespace Factly
         {
             Type = type;
             Properties = GetPropertyValidators(type, context);
+            Constraints = GetConstraints(type, context);
         }
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public Type Type { get; }
 
-        [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
         public ReadonlyArray<PropertyValidator> Properties { get; }
+
+        public ReadonlyArray<IConstraint> Constraints { get; }
 
         private static ReadonlyArray<PropertyValidator> GetPropertyValidators(Type type, BuilderContext context)
         {
@@ -29,11 +30,24 @@ namespace Factly
 
             foreach (var property in properties)
             {
-                var validator = PropertyValidator.Create(property, context);
-
-                if (validator != null)
+                if (PropertyValidator.Create(property, context) is PropertyValidator validator)
                 {
                     array.Add(validator);
+                }
+            }
+
+            return array.Build();
+        }
+
+        private static ReadonlyArray<IConstraint> GetConstraints(Type type, BuilderContext context)
+        {
+            var array = new ArrayBuilder<IConstraint>(context.Builder.Constraints.Count);
+
+            foreach (var builder in context.Builder.Constraints)
+            {
+                if (builder.Create(type, context) is IConstraint constraint)
+                {
+                    array.Add(constraint);
                 }
             }
 

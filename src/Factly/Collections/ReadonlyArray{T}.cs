@@ -29,6 +29,8 @@ namespace Factly.Collections
 
         public int Length { get; }
 
+        public bool Any() => Length > 0;
+
         public Enumerator GetEnumerator() => new Enumerator(this);
 
         private static bool IsValidLength(T[] array, int length)
