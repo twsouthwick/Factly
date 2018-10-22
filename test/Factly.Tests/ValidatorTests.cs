@@ -102,8 +102,9 @@ namespace Factly
         public void TypeConstraint(bool input)
         {
             var builder = ValidatorBuilder.Create();
+            var constraintId = Guid.NewGuid().ToString();
 
-            builder.AddConstraint<SimpleBoolean>(c => c.IsTrue);
+            builder.AddConstraint<SimpleBoolean>(c => c.IsTrue, constraintId);
 
             var validator = builder.Build();
 
@@ -116,7 +117,9 @@ namespace Factly
             }
             else
             {
-                Assert.Single(context.Errors);
+                var error = Assert.Single(context.Errors);
+
+                Assert.Equal(constraintId, error.Id);
             }
         }
 

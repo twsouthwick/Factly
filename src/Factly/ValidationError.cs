@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Taylor Southwick. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Reflection;
 
 namespace Factly
@@ -19,10 +20,14 @@ namespace Factly
         /// <param name="constraint">The constraint that generated the error.</param>
         internal ValidationError(object value, object instance, PropertyInfo property, IConstraint constraint)
         {
+            if (constraint == null)
+            {
+                throw new ArgumentNullException(nameof(constraint));
+            }
+
             Value = value;
             Instance = instance;
             Property = property;
-
             Id = constraint.Id;
             Context = constraint.Context;
         }

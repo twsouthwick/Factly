@@ -55,10 +55,11 @@ namespace Factly
         /// </summary>
         /// <typeparam name="T">Type of the input object to constrain.</typeparam>
         /// <param name="constraint">The constraint function.</param>
+        /// <param name="constraintId">The id for the constraint.</param>
         /// <returns>A builder instance for the constraint.</returns>
-        public ConstraintBuilder<T> AddConstraint<T>(Func<T, bool> constraint)
+        public ConstraintBuilder<T> AddConstraint<T>(Func<T, bool> constraint, string constraintId)
         {
-            var delegateConstraint = new DelegateConstraint<T>(constraint);
+            var delegateConstraint = new DelegateConstraint<T>(constraint, constraintId);
 
             IConstraint Generator(Type type, BuilderContext ctx)
             {
