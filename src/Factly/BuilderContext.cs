@@ -46,15 +46,16 @@ namespace Factly
 
             Add(type, compiledType);
 
+            if (compiledType.Constraints.Any())
+            {
+                SetConstraints();
+            }
+
             foreach (var property in compiledType.Properties)
             {
                 if (property.HasConstraints)
                 {
-#if FEATURE_PARALLEL
-                    Interlocked.Exchange(ref _hasConstraints, 1);
-#else
-                    _hasConstraints = 1;
-#endif
+                    SetConstraints();
                 }
 
                 if (property.IncludeChildren)
@@ -72,6 +73,15 @@ namespace Factly
             }
 
             return new Validator(_validators.ToImmutable());
+        }
+
+        private void SetConstraints()
+        {
+#if FEATURE_PARALLEL
+            Interlocked.Exchange(ref _hasConstraints, 1);
+#else
+            _hasConstraints = 1;
+#endif
         }
 
         private void Add(Type type, TypeValidator compiledType)

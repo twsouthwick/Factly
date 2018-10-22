@@ -96,6 +96,30 @@ namespace Factly
             Assert.Equal(1, count);
         }
 
+        [InlineData(true)]
+        [InlineData(false)]
+        [Theory]
+        public void TypeConstraint(bool input)
+        {
+            var builder = ValidatorBuilder.Create();
+
+            builder.AddConstraint<SimpleBoolean>(c => c.IsTrue);
+
+            var validator = builder.Build();
+
+            var context = new TestValidationContext();
+            validator.Validate(new SimpleBoolean { IsTrue = input }, context.Context);
+
+            if (input)
+            {
+                Assert.Empty(context.Errors);
+            }
+            else
+            {
+                Assert.Single(context.Errors);
+            }
+        }
+
 #if FEATURE_PARALLEL
         [Fact(Skip = "Non deterministic failures")]
         public async Task AsyncValidation()
@@ -205,6 +229,11 @@ namespace Factly
         private struct CustomStruct
         {
             public int Test { get; set; }
+        }
+
+        private class SimpleBoolean
+        {
+            public bool IsTrue { get; set; }
         }
 
         private class TestClass1

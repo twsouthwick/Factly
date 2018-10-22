@@ -139,6 +139,15 @@ namespace Factly
 
             if (_typeValidators.TryGetValue(currentType, out var type))
             {
+                foreach (var constraint in type.Constraints)
+                {
+                    if (!constraint.Validate(current))
+                    {
+                        var error = new ValidationError(current, current, null, constraint);
+                        context.OnError(error);
+                    }
+                }
+
                 foreach (var property in type.Properties)
                 {
                     var value = property.Validate(current, context);
