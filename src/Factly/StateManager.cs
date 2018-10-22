@@ -2,88 +2,36 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
-using System.Threading;
+using System.Collections.Concurrent;
 
 namespace Factly
 {
-    internal sealed class StateManager : IDisposable
+    /// <summary>
+    /// A class to store state during the build context.
+    /// </summary>
+    internal sealed class StateManager
     {
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+        private readonly ConcurrentDictionary<StateKey, object> _state = new ConcurrentDictionary<StateKey, object>();
 
-        private Dictionary<StateKey, object> _state;
-
-        private Dictionary<StateKey, object> State
+        /// <summary>
+        /// Add or gets a value from the cache.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="key">The key for the cache.</param>
+        /// <param name="generator">The generator function.</param>
+        /// <returns>The retrieved or generated value.</returns>
+        public TValue AddOrGet<TKey, TValue>(TKey key, Func<TKey, TValue> generator)
         {
-            get
-            {
-                if (_state == null)
-                {
-                    _state = new Dictionary<StateKey, object>();
-                }
-
-                return _state;
-            }
+            return GetCache<TKey, TValue>().GetOrAdd(key, generator);
         }
 
-        public TValue AddOrGet<TKey, TValue>(TKey key, Func<TKey, TValue> addFunc)
+        private ConcurrentDictionary<TKey, TValue> GetCache<TKey, TValue>()
         {
-            _lock.EnterUpgradeableReadLock();
-
-            try
+            return (ConcurrentDictionary<TKey, TValue>)_state.GetOrAdd(StateKey.Create<TKey, TValue>(), k =>
             {
-                var dictionary = GetCache<TKey, TValue>();
-
-                if (dictionary.TryGetValue(key, out var result))
-                {
-                    return result;
-                }
-
-                var newItem = addFunc(key);
-
-                _lock.EnterWriteLock();
-                try
-                {
-                    dictionary[key] = newItem;
-                    return newItem;
-                }
-                finally
-                {
-                    _lock.ExitWriteLock();
-                }
-            }
-            finally
-            {
-                _lock.ExitUpgradeableReadLock();
-            }
-        }
-
-        public void Dispose()
-        {
-            _lock.Dispose();
-        }
-
-        private Dictionary<TKey, TValue> GetCache<TKey, TValue>()
-        {
-            var key = StateKey.Create<TKey, TValue>();
-
-            if (State.TryGetValue(key, out var result))
-            {
-                if (result is Dictionary<TKey, TValue> dictionary)
-                {
-                    return dictionary;
-                }
-                else
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-            else
-            {
-                var dictionary = new Dictionary<TKey, TValue>();
-                State.Add(key, dictionary);
-                return dictionary;
-            }
+                return new ConcurrentDictionary<TKey, TValue>();
+            });
         }
 
         private readonly struct StateKey

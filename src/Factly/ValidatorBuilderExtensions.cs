@@ -83,7 +83,7 @@ namespace Factly
             return builder.AddAttributeConstraint<TAttribute, string>((attribute, propertyInfo, ctx) =>
             {
                 var pattern = stringSelector(attribute);
-                var regex = ctx.State.AddOrGet(pattern, p => new Regex(pattern, RegexOptions.Compiled));
+                var regex = ctx.GetOrSetState(pattern, p => new Regex(pattern, RegexOptions.Compiled));
 
                 return new PatternConstraint(regex);
             });

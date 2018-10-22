@@ -14,9 +14,10 @@ namespace Factly
     /// <summary>
     /// Context used during the building phase of a <see cref="Validator"/>.
     /// </summary>
-    public sealed class BuilderContext : IDisposable
+    public sealed class BuilderContext
     {
         private readonly TypeDictionary<TypeValidator>.Builder _validators;
+        private readonly StateManager _state;
         private readonly bool _threadSafe;
         private int _hasConstraints;
 
@@ -25,20 +26,22 @@ namespace Factly
             _hasConstraints = 0;
             _validators = TypeDictionary<TypeValidator>.Create(builder.Types.Count);
             _threadSafe = threadSafe;
+            _state = new StateManager();
 
             Builder = builder;
-            State = new StateManager();
         }
-
-        internal StateManager State { get; }
 
         internal ValidatorBuilder Builder { get; }
 
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            State.Dispose();
-        }
+        /// <summary>
+        /// Gets or sets a value in a context specific data store.
+        /// </summary>
+        /// <typeparam name="TKey">The type for the key.</typeparam>
+        /// <typeparam name="TValue">The type for the value.</typeparam>
+        /// <param name="key">The key used to identify the value.</param>
+        /// <param name="generator">A generator to generate the value if it is not already present in the store.</param>
+        /// <returns>The stored value if exists, otherwise the generated value.</returns>
+        public TValue GetOrSetState<TKey, TValue>(TKey key, Func<TKey, TValue> generator) => _state.AddOrGet(key, generator);
 
         internal IEnumerable<Type> AddItem(Type type)
         {
