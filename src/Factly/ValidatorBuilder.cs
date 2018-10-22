@@ -47,9 +47,33 @@ namespace Factly
         /// <returns>A builder instance for the constraint.</returns>
         public ConstraintBuilder<T> AddConstraint<T>(Func<PropertyInfo, BuilderContext, IConstraint> constraintGenerator)
         {
-            var builder = new ConstraintBuilder<T>(constraintGenerator);
-            Constraints.Add(builder);
-            return builder;
+            return AddConstraint(new ConstraintBuilder<T>(constraintGenerator));
+        }
+
+        /// <summary>
+        /// Adds a constraint generator for an input <see cref="Type"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the input object to constrain.</typeparam>
+        /// <param name="constraint">The constraint function.</param>
+        /// <param name="constraintId">The id for the constraint.</param>
+        /// <returns>A builder instance for the constraint.</returns>
+        public ConstraintBuilder<T> AddConstraint<T>(Func<T, bool> constraint, string constraintId)
+        {
+            var delegateConstraint = new DelegateConstraint<T>(constraint, constraintId);
+
+            IConstraint Generator(Type type, BuilderContext ctx)
+            {
+                if (type == typeof(T))
+                {
+                    return delegateConstraint;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return AddConstraint(new ConstraintBuilder<T>(Generator));
         }
 
         /// <summary>
@@ -149,6 +173,13 @@ namespace Factly
             Types.Traverse(builder.AddItem, token);
 
             return builder.Get();
+        }
+
+        private ConstraintBuilder<T> AddConstraint<T>(ConstraintBuilder<T> builder)
+        {
+            AddKnownType(typeof(T));
+            Constraints.Add(builder);
+            return builder;
         }
     }
 }

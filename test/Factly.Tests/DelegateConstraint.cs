@@ -5,24 +5,16 @@ using System;
 
 namespace Factly
 {
-    internal class DelegateConstraint : IConstraint
+    internal class DelegateConstraint : DelegateConstraint<object>
     {
-        private readonly Func<object, bool> _func;
-
         public DelegateConstraint(Func<bool> func)
             : this(_ => func())
         {
         }
 
         public DelegateConstraint(Func<object, bool> func)
+            : base(func, Guid.NewGuid().ToString())
         {
-            _func = func;
         }
-
-        public string Id => nameof(DelegateConstraint);
-
-        public object Context => null;
-
-        public bool Validate(object value) => _func(value);
     }
 }
