@@ -138,11 +138,12 @@ namespace Factly
                 throw new ValidatorBuilderException(SR.MustDeclareTypes, Errors.NoTypes, null, null);
             }
 
-            var builder = new BuilderContext(this, threadSafe: true);
+            using (var builder = new BuilderContext(this, threadSafe: true))
+            {
+                await Types.TraverseAsync(builder.AddItem, Environment.ProcessorCount, token).ConfigureAwait(false);
 
-            await Types.TraverseAsync(builder.AddItem, Environment.ProcessorCount, token).ConfigureAwait(false);
-
-            return builder.Get();
+                return builder.Get();
+            }
         }
 #endif
 

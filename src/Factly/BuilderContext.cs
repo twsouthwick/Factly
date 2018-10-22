@@ -17,27 +17,45 @@ namespace Factly
     public sealed class BuilderContext : IDisposable
     {
         private readonly TypeDictionary<TypeValidator>.Builder _validators;
+        private readonly StateManager _state;
         private readonly bool _threadSafe;
+
         private int _hasConstraints;
+        private bool _isDisposed;
 
         internal BuilderContext(ValidatorBuilder builder, bool threadSafe)
         {
             _hasConstraints = 0;
             _validators = TypeDictionary<TypeValidator>.Create(builder.Types.Count);
             _threadSafe = threadSafe;
+            _state = new StateManager();
 
             Builder = builder;
-            State = new StateManager();
         }
-
-        internal StateManager State { get; }
 
         internal ValidatorBuilder Builder { get; }
 
-        /// <inheritdoc />
-        public void Dispose()
+        /// <summary>
+        /// Gets or sets a value in a context specific data store.
+        /// </summary>
+        /// <typeparam name="TKey">The type for the key.</typeparam>
+        /// <typeparam name="TValue">The type for the value.</typeparam>
+        /// <param name="key">The key used to identify the value.</param>
+        /// <param name="generator">A generator to generate the value if it is not already present in the store.</param>
+        /// <returns>The stored value if exists, otherwise the generated value.</returns>
+        public TValue GetOrSetState<TKey, TValue>(TKey key, Func<TKey, TValue> generator)
         {
-            State.Dispose();
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(BuilderContext));
+            }
+
+            return _state.AddOrGet(key, generator);
+        }
+
+        void IDisposable.Dispose()
+        {
+            _isDisposed = true;
         }
 
         internal IEnumerable<Type> AddItem(Type type)
