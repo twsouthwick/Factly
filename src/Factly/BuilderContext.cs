@@ -14,12 +14,14 @@ namespace Factly
     /// <summary>
     /// Context used during the building phase of a <see cref="Validator"/>.
     /// </summary>
-    public sealed class BuilderContext
+    public sealed class BuilderContext : IDisposable
     {
         private readonly TypeDictionary<TypeValidator>.Builder _validators;
         private readonly StateManager _state;
         private readonly bool _threadSafe;
+
         private int _hasConstraints;
+        private bool _isDisposed;
 
         internal BuilderContext(ValidatorBuilder builder, bool threadSafe)
         {
@@ -41,7 +43,20 @@ namespace Factly
         /// <param name="key">The key used to identify the value.</param>
         /// <param name="generator">A generator to generate the value if it is not already present in the store.</param>
         /// <returns>The stored value if exists, otherwise the generated value.</returns>
-        public TValue GetOrSetState<TKey, TValue>(TKey key, Func<TKey, TValue> generator) => _state.AddOrGet(key, generator);
+        public TValue GetOrSetState<TKey, TValue>(TKey key, Func<TKey, TValue> generator)
+        {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(BuilderContext));
+            }
+
+            return _state.AddOrGet(key, generator);
+        }
+
+        void IDisposable.Dispose()
+        {
+            _isDisposed = true;
+        }
 
         internal IEnumerable<Type> AddItem(Type type)
         {
