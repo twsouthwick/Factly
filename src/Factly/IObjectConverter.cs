@@ -4,9 +4,9 @@
 namespace Factly
 {
     /// <summary>
-    /// An abstraction of an <see cref="IConstraint"/> that can convert values.
+    /// An abstraction that converts from one object to another
     /// </summary>
-    internal interface ITypedConstraint : IConstraint
+    internal interface IObjectConverter
     {
         /// <summary>
         /// Converts values to an expected type.
