@@ -51,7 +51,7 @@ namespace Factly
             _errors = context?.OnError ?? DefaultErrorHandler;
             _items = context?.OnItem ?? DefaultItemHandler;
             _unknownTypes = context?.OnUnknownType ?? DefaultUnknownTypeHandler;
-            State = context.State;
+            State = context == null ? default : context.State;
 
 #if FEATURE_PARALLEL
             _maxDegreeOfParallelism = context?.MaxDegreeOfParallelism ?? MaxDegreeOfParallelism;
