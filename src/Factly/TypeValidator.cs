@@ -8,9 +8,9 @@ using System.Diagnostics;
 namespace Factly
 {
     [DebuggerDisplay("{Type.FullName,nq}")]
-    internal readonly struct TypeValidator
+    internal readonly struct TypeValidator<TState>
     {
-        public TypeValidator(Type type, BuilderContext context)
+        public TypeValidator(Type type, BuilderContext<TState> context)
         {
             Type = type;
             Properties = GetPropertyValidators(type, context);
@@ -19,18 +19,18 @@ namespace Factly
 
         public Type Type { get; }
 
-        public ReadonlyArray<PropertyValidator> Properties { get; }
+        public ReadonlyArray<PropertyValidator<TState>> Properties { get; }
 
-        public ReadonlyArray<IConstraint> Constraints { get; }
+        public ReadonlyArray<IConstraint<TState>> Constraints { get; }
 
-        private static ReadonlyArray<PropertyValidator> GetPropertyValidators(Type type, BuilderContext context)
+        private static ReadonlyArray<PropertyValidator<TState>> GetPropertyValidators(Type type, BuilderContext<TState> context)
         {
             var properties = type.GetProperties();
-            var array = new ArrayBuilder<PropertyValidator>(properties.Length);
+            var array = new ArrayBuilder<PropertyValidator<TState>>(properties.Length);
 
             foreach (var property in properties)
             {
-                if (PropertyValidator.Create(property, context) is PropertyValidator validator)
+                if (PropertyValidator<TState>.Create(property, context) is PropertyValidator<TState> validator)
                 {
                     array.Add(validator);
                 }
@@ -39,13 +39,13 @@ namespace Factly
             return array.Build();
         }
 
-        private static ReadonlyArray<IConstraint> GetConstraints(Type type, BuilderContext context)
+        private static ReadonlyArray<IConstraint<TState>> GetConstraints(Type type, BuilderContext<TState> context)
         {
-            var array = new ArrayBuilder<IConstraint>(context.Builder.Constraints.Count);
+            var array = new ArrayBuilder<IConstraint<TState>>(context.Builder.Constraints.Count);
 
             foreach (var builder in context.Builder.Constraints)
             {
-                if (builder.Create(type, context) is IConstraint constraint)
+                if (builder.Create(type, context) is IConstraint<TState> constraint)
                 {
                     array.Add(constraint);
                 }

@@ -13,9 +13,10 @@ namespace Factly
         /// <summary>
         /// Add a regular expression constraint using <see cref="RegularExpressionAttribute"/>.
         /// </summary>
-        /// <param name="builder">The current <see cref="ValidatorBuilder"/>.</param>
+        /// <param name="builder">The current <see cref="ValidatorBuilder{TState}"/>.</param>
+        /// <typeparam name="TState">Custom type supplied for the validation.</typeparam>
         /// <returns>A constraint builder instance.</returns>
-        public static ConstraintBuilder<string> AddRegexAttributeConstraint(this ValidatorBuilder builder)
+        public static ConstraintBuilder<TState, string> AddRegexAttributeConstraint<TState>(this ValidatorBuilder<TState> builder)
         {
             return builder
                 .AddRegexAttributeConstraint<RegularExpressionAttribute>(pattern => pattern.Pattern);

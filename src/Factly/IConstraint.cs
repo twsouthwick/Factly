@@ -6,7 +6,8 @@ namespace Factly
     /// <summary>
     /// Defines a property constraint for use in validating.
     /// </summary>
-    public interface IConstraint
+    /// <typeparam name="TState">Custom type supplied for the validation.</typeparam>
+    public interface IConstraint<TState>
     {
         /// <summary>
         /// Gets the ID of the constraint.
@@ -22,7 +23,8 @@ namespace Factly
         /// Called to validate a property value.
         /// </summary>
         /// <param name="value">The value of the property.</param>
+        /// <param name="context">Validation context.</param>
         /// <returns>Whether validation was successful or not.</returns>
-        bool Validate(object value);
+        bool Validate(object value, TState context);
     }
 }

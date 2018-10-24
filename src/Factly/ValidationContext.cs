@@ -8,7 +8,11 @@ namespace Factly
     /// <summary>
     /// Contains context information for validation that is passed through for validation.
     /// </summary>
-    public sealed class ValidationContext
+#if NO_CANCELLATION_TOKEN
+    public sealed class ValidationContext<TState> : ICancellable
+#else
+    public sealed class ValidationContext<TState>
+#endif
     {
 #if FEATURE_PARALLEL
         private const int DefaultMaxDegreeOfParallelism = 1;
@@ -29,14 +33,15 @@ namespace Factly
 #endif
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationContext"/> class.
+        /// Initializes a new instance of the <see cref="ValidationContext{TState}"/> class.
         /// </summary>
-        public ValidationContext()
+        public ValidationContext(TState state = default)
         {
             _isReadonly = false;
+            State = state;
         }
 
-        internal ValidationContext(ValidationContext context)
+        internal ValidationContext(ValidationContext<TState> context)
         {
 #if NO_CANCELLATION_TOKEN
             _other = context;
@@ -46,11 +51,17 @@ namespace Factly
             _errors = context?.OnError ?? DefaultErrorHandler;
             _items = context?.OnItem ?? DefaultItemHandler;
             _unknownTypes = context?.OnUnknownType ?? DefaultUnknownTypeHandler;
+            State = context == null ? default : context.State;
 
 #if FEATURE_PARALLEL
             _maxDegreeOfParallelism = context?.MaxDegreeOfParallelism ?? MaxDegreeOfParallelism;
 #endif
         }
+
+        /// <summary>
+        /// Gets the state associated with this validation context.
+        /// </summary>
+        public TState State { get; }
 
         /// <summary>
         /// Gets or sets the handler called when an unknown type is encountered.
@@ -116,7 +127,7 @@ namespace Factly
 
 #pragma warning disable SA1201 // Elements should appear in the correct order
 #if NO_CANCELLATION_TOKEN
-        private readonly ValidationContext _other;
+        private readonly ValidationContext<TState> _other;
         private bool _isCancelled = false;
 
         /// <summary>

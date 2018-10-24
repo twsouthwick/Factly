@@ -4,6 +4,7 @@
 using Factly.Collections;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 #if !NO_CANCELLATION_TOKEN
 using System.Threading;
@@ -12,28 +13,28 @@ using System.Threading;
 namespace Factly
 {
     /// <summary>
-    /// Context used during the building phase of a <see cref="Validator"/>.
+    /// Context used during the building phase of a <see cref="Validator{TState}"/>.
     /// </summary>
-    public sealed class BuilderContext : IDisposable
+    public sealed class BuilderContext<TState> : IDisposable
     {
-        private readonly TypeDictionary<TypeValidator>.Builder _validators;
+        private readonly TypeDictionary<TypeValidator<TState>>.Builder _validators;
         private readonly StateManager _state;
         private readonly bool _threadSafe;
 
         private int _hasConstraints;
         private bool _isDisposed;
 
-        internal BuilderContext(ValidatorBuilder builder, bool threadSafe)
+        internal BuilderContext(ValidatorBuilder<TState> builder, bool threadSafe)
         {
             _hasConstraints = 0;
-            _validators = TypeDictionary<TypeValidator>.Create(builder.Types.Count);
+            _validators = TypeDictionary<TypeValidator<TState>>.Create(builder.Types.Count);
             _threadSafe = threadSafe;
             _state = new StateManager();
 
             Builder = builder;
         }
 
-        internal ValidatorBuilder Builder { get; }
+        internal ValidatorBuilder<TState> Builder { get; }
 
         /// <summary>
         /// Gets or sets a value in a context specific data store.
@@ -47,7 +48,7 @@ namespace Factly
         {
             if (_isDisposed)
             {
-                throw new ObjectDisposedException(nameof(BuilderContext));
+                throw new ObjectDisposedException(nameof(BuilderContext<TState>));
             }
 
             return _state.AddOrGet(key, generator);
@@ -60,7 +61,7 @@ namespace Factly
 
         internal IEnumerable<Type> AddItem(Type type)
         {
-            var compiledType = new TypeValidator(type, this);
+            var compiledType = new TypeValidator<TState>(type, this);
 
             Add(type, compiledType);
 
@@ -83,14 +84,14 @@ namespace Factly
             }
         }
 
-        internal Validator Get()
+        internal Validator<TState> Get()
         {
             if (_hasConstraints == 0)
             {
                 throw new ValidatorBuilderException(SR.NoConstraints, Errors.NoConstraintsFound, null, null);
             }
 
-            return new Validator(_validators.ToImmutable());
+            return new Validator<TState>(_validators.ToImmutable());
         }
 
         private void SetConstraints()
@@ -102,7 +103,7 @@ namespace Factly
 #endif
         }
 
-        private void Add(Type type, TypeValidator compiledType)
+        private void Add(Type type, TypeValidator<TState> compiledType)
         {
             if (_threadSafe)
             {

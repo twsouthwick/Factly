@@ -10,17 +10,18 @@ namespace Factly
     /// <summary>
     /// A constraint builder for <typeparamref name="TValue"/>.
     /// </summary>
+    /// <typeparam name="TState">Custom type supplied for the validation.</typeparam>
     /// <typeparam name="TValue">Type to build up constraints.</typeparam>
-    public class ConstraintBuilder<TValue> : ConstraintBuilder
+    public class ConstraintBuilder<TState, TValue> : ConstraintBuilder<TState>
     {
         private readonly Dictionary<Type, Func<object, TValue>> _mappers = new Dictionary<Type, Func<object, TValue>>();
 
-        internal ConstraintBuilder(Func<PropertyInfo, BuilderContext, IConstraint> factory)
+        internal ConstraintBuilder(Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> factory)
             : base(factory)
         {
         }
 
-        internal ConstraintBuilder(Func<Type, BuilderContext, IConstraint> factory)
+        internal ConstraintBuilder(Func<Type, BuilderContext<TState>, IConstraint<TState>> factory)
             : base(factory)
         {
         }
@@ -45,7 +46,7 @@ namespace Factly
             });
         }
 
-        internal override IConstraint Create(PropertyInfo property, BuilderContext context)
+        internal override IConstraint<TState> Create(PropertyInfo property, BuilderContext<TState> context)
         {
             var constraint = base.Create(property, context);
 
@@ -67,12 +68,12 @@ namespace Factly
             }
         }
 
-        private class TypedConstraint : IConstraint, IObjectConverter
+        private class TypedConstraint : IConstraint<TState>, IObjectConverter
         {
-            private readonly IConstraint _constraint;
+            private readonly IConstraint<TState> _constraint;
             private readonly Func<object, TValue> _func;
 
-            public TypedConstraint(IConstraint constraint, Func<object, TValue> func)
+            public TypedConstraint(IConstraint<TState> constraint, Func<object, TValue> func)
             {
                 _constraint = constraint;
                 _func = func;
@@ -84,7 +85,7 @@ namespace Factly
 
             public object Convert(object value) => _func(value);
 
-            public bool Validate(object value) => _constraint.Validate(value);
+            public bool Validate(object value, TState state) => _constraint.Validate(value, state);
         }
     }
 }

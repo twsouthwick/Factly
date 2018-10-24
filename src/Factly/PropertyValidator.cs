@@ -10,14 +10,13 @@ using System.Reflection;
 namespace Factly
 {
     [DebuggerDisplay("{Type.FullName,nq} {Property.Name,nq}")]
-    [DebuggerTypeProxy(typeof(PropertyValidatorDebuggerProxy))]
-    internal class PropertyValidator
+    internal class PropertyValidator<TState>
     {
-        private readonly ReadonlyArray<IConstraint> _constraints;
+        private readonly ReadonlyArray<IConstraint<TState>> _constraints;
 
         private Func<object, object> _getter;
 
-        private PropertyValidator(PropertyInfo property, bool shouldFollow, ReadonlyArray<IConstraint> constraints)
+        private PropertyValidator(PropertyInfo property, bool shouldFollow, ReadonlyArray<IConstraint<TState>> constraints)
         {
             Property = property;
             _constraints = constraints;
@@ -51,7 +50,7 @@ namespace Factly
             }
         }
 
-        public static PropertyValidator Create(PropertyInfo property, BuilderContext context)
+        public static PropertyValidator<TState> Create(PropertyInfo property, BuilderContext<TState> context)
         {
             if (!property.HasGetMethod())
             {
@@ -66,10 +65,10 @@ namespace Factly
                 return default;
             }
 
-            return new PropertyValidator(property, shouldFollow, constraints);
+            return new PropertyValidator<TState>(property, shouldFollow, constraints);
         }
 
-        public object Validate(object item, ValidationContext context)
+        public object Validate(object item, ValidationContext<TState> context)
         {
             var value = Getter(item);
 
@@ -77,9 +76,9 @@ namespace Factly
             {
                 var updated = constraint is IObjectConverter converter ? converter.Convert(value) : value;
 
-                if (!constraint.Validate(updated))
+                if (!constraint.Validate(updated, context.State))
                 {
-                    var error = new ValidationError(updated, item, Property, constraint);
+                    var error = new ValidationError(updated, item, Property, constraint.Id, constraint.Context);
                     context.OnError(error);
                 }
             }
@@ -100,9 +99,9 @@ namespace Factly
             return false;
         }
 
-        private static ReadonlyArray<IConstraint> GetConstraints(PropertyInfo property, List<ConstraintBuilder> builders, BuilderContext context)
+        private static ReadonlyArray<IConstraint<TState>> GetConstraints(PropertyInfo property, List<ConstraintBuilder<TState>> builders, BuilderContext<TState> context)
         {
-            var array = new ArrayBuilder<IConstraint>(builders.Count);
+            var array = new ArrayBuilder<IConstraint<TState>>(builders.Count);
 
             foreach (var builder in builders)
             {
@@ -115,19 +114,6 @@ namespace Factly
             }
 
             return array.Build();
-        }
-
-#pragma warning disable CA1812
-        internal class PropertyValidatorDebuggerProxy
-#pragma warning restore CA1812
-        {
-            public PropertyValidatorDebuggerProxy(PropertyValidator validator)
-            {
-                Constraints = validator._constraints;
-            }
-
-            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ReadonlyArray<IConstraint> Constraints { get; }
         }
     }
 }

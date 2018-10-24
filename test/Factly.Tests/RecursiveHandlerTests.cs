@@ -63,7 +63,7 @@ namespace Factly
             };
             instance1.Value = instance;
 
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             builder.AddPropertyFilter<TestClass>();
             builder.AddKnownType<TestClass>();
             builder.AddEmptyConstraint();
@@ -86,7 +86,7 @@ namespace Factly
             };
             instance1.Value = instance;
 
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             builder.AddKnownType<TestClass>();
             builder.AddPropertyFilter<TestClassBase>();
             builder.AddEmptyConstraint();
@@ -99,9 +99,9 @@ namespace Factly
             Assert.Equal(2, context.Items.Count);
         }
 
-        private Validator GetValidator()
+        private Validator<object> GetValidator()
         {
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
 
             builder.AddPropertyFilter(_ => true);
             builder.AddKnownType<TestClass>();

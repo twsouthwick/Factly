@@ -12,7 +12,7 @@ namespace Factly
         {
             const string Value = "hello!";
             var count = 0;
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
 
             builder
                 .ForType<Test1>()

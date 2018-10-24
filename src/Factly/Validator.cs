@@ -17,32 +17,31 @@ using System.Threading;
 namespace Factly
 {
     /// <summary>
-    /// A class that contains information to validate objects as defined via <see cref="ValidatorBuilder"/>.
+    /// A class that contains information to validate objects as defined via <see cref="ValidatorBuilder{TOptions}"/>.
     /// </summary>
-    [DebuggerTypeProxy(typeof(ValidatorDebugProxy))]
-    public sealed class Validator
+    public sealed class Validator<TState>
     {
-        private readonly TypeDictionary<TypeValidator> _typeValidators;
+        private readonly TypeDictionary<TypeValidator<TState>> _typeValidators;
 
-        internal Validator(TypeDictionary<TypeValidator> typeValidators)
+        internal Validator(TypeDictionary<TypeValidator<TState>> typeValidators)
         {
             _typeValidators = typeValidators;
         }
 
 #if !NO_CANCELLATION_TOKEN
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>.
+        /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/> and <paramref name="context"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
-        /// <param name="context"><see cref="ValidationContext"/> to pass through.</param>
+        /// <param name="context"><see cref="ValidationContext{TState}"/> to pass through.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
-        public void Validate(object item, ValidationContext context, CancellationToken token = default)
+        public void Validate(object item, ValidationContext<TState> context, CancellationToken token = default)
         {
-            ValidateInternal(item, new ValidationContext(context), token);
+            ValidateInternal(item, new ValidationContext<TState>(context), token);
         }
 
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/>.
+        /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
@@ -50,18 +49,18 @@ namespace Factly
 
 #if FEATURE_PARALLEL
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>.
+        /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/> and <paramref name="context"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
-        /// <param name="context"><see cref="ValidationContext"/> to pass through.</param>
+        /// <param name="context"><see cref="ValidationContext{TState}"/> to pass through.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
-        public Task ValidateAsync(object item, ValidationContext context, CancellationToken token = default)
+        public Task ValidateAsync(object item, ValidationContext<TState> context, CancellationToken token = default)
         {
-            return ValidateInternalAsync(item, new ValidationContext(context), token);
+            return ValidateInternalAsync(item, new ValidationContext<TState>(context), token);
         }
 
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/>.
+        /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
@@ -69,25 +68,25 @@ namespace Factly
 #endif
 #else
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/> and <paramref name="context"/>.
+        /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/> and <paramref name="context"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
-        /// <param name="context"><see cref="ValidationContext"/> to pass through.</param>
-        public void Validate(object item, ValidationContext context)
+        /// <param name="context"><see cref="ValidationContext{TState}"/> to pass through.</param>
+        public void Validate(object item, ValidationContext<TState> context)
         {
-            var wrappedContext = new ValidationContext(context);
+            var wrappedContext = new ValidationContext<TState>(context);
 
-            ValidateInternal(item, wrappedContext, new CancellationToken(new ValidationContext(wrappedContext)));
+            ValidateInternal(item, wrappedContext, new CancellationToken(wrappedContext));
         }
 
         /// <summary>
-        /// Validates an item and its object graph according to that defined in <see cref="Validator"/>.
+        /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
         public void Validate(object item) => Validate(item, null);
 #endif
 
-        private void ValidateInternal(object item, ValidationContext context, CancellationToken token)
+        private void ValidateInternal(object item, ValidationContext<TState> context, CancellationToken token)
         {
             if (context == null)
             {
@@ -110,7 +109,7 @@ namespace Factly
         }
 
 #if FEATURE_PARALLEL
-        private Task ValidateInternalAsync(object item, ValidationContext context, CancellationToken token)
+        private Task ValidateInternalAsync(object item, ValidationContext<TState> context, CancellationToken token)
         {
             if (context == null)
             {
@@ -131,7 +130,7 @@ namespace Factly
         }
 #endif
 
-        private IEnumerable<object> BuildItem(ValidationContext context, object current)
+        private IEnumerable<object> BuildItem(ValidationContext<TState> context, object current)
         {
             context.OnItem.Invoke(current);
 
@@ -141,9 +140,9 @@ namespace Factly
             {
                 foreach (var constraint in type.Constraints)
                 {
-                    if (!constraint.Validate(current))
+                    if (!constraint.Validate(current, context.State))
                     {
-                        var error = new ValidationError(current, current, null, constraint);
+                        var error = new ValidationError(current, current, null, constraint.Id, constraint.Context);
                         context.OnError(error);
                     }
                 }
@@ -162,21 +161,6 @@ namespace Factly
             {
                 context.OnUnknownType(currentType);
             }
-        }
-
-#pragma warning disable CA1812
-        internal class ValidatorDebugProxy
-#pragma warning restore CA1812
-        {
-            private readonly Validator _validator;
-
-            public ValidatorDebugProxy(Validator validator)
-            {
-                _validator = validator;
-            }
-
-            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public ICollection<TypeValidator> Validators => _validator._typeValidators.Values;
         }
     }
 }

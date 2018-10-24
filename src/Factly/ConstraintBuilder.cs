@@ -9,23 +9,23 @@ namespace Factly
     /// <summary>
     /// A non generic constraint.
     /// </summary>
-    public class ConstraintBuilder
+    public class ConstraintBuilder<TState>
     {
-        private readonly Func<PropertyInfo, BuilderContext, IConstraint> _propertyConstraintfactory;
-        private readonly Func<Type, BuilderContext, IConstraint> _typeConstraintFactory;
+        private readonly Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> _propertyConstraintfactory;
+        private readonly Func<Type, BuilderContext<TState>, IConstraint<TState>> _typeConstraintFactory;
 
-        internal ConstraintBuilder(Func<PropertyInfo, BuilderContext, IConstraint> factory)
+        internal ConstraintBuilder(Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> factory)
         {
             _propertyConstraintfactory = factory;
         }
 
-        internal ConstraintBuilder(Func<Type, BuilderContext, IConstraint> factory)
+        internal ConstraintBuilder(Func<Type, BuilderContext<TState>, IConstraint<TState>> factory)
         {
             _typeConstraintFactory = factory;
         }
 
-        internal virtual IConstraint Create(PropertyInfo property, BuilderContext context) => _propertyConstraintfactory?.Invoke(property, context);
+        internal virtual IConstraint<TState> Create(PropertyInfo property, BuilderContext<TState> context) => _propertyConstraintfactory?.Invoke(property, context);
 
-        internal virtual IConstraint Create(Type type, BuilderContext context) => _typeConstraintFactory?.Invoke(type, context);
+        internal virtual IConstraint<TState> Create(Type type, BuilderContext<TState> context) => _typeConstraintFactory?.Invoke(type, context);
     }
 }

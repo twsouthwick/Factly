@@ -11,7 +11,7 @@ namespace Factly
         [Fact]
         public void ThrowsIfNoConstraints()
         {
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
 
             builder.AddEmptyClass();
 
@@ -26,7 +26,7 @@ namespace Factly
         [Fact]
         public void DoesNotIncludeNoGetter()
         {
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
 
             builder.AddKnownType<NoGetter>();
             builder.AddEmptyConstraint(true);
@@ -46,8 +46,8 @@ namespace Factly
         [Fact]
         public void BuilderContextIsDisposed()
         {
-            var builder = ValidatorBuilder.Create();
-            var context = default(BuilderContext);
+            var builder = new ValidatorBuilder<object>();
+            var context = default(BuilderContext<object>);
 
             builder.AddEmptyConstraint(withType: true);
             builder.AddConstraint((property, ctx) =>

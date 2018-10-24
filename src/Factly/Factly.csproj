@@ -51,6 +51,7 @@
 
   <ItemGroup Condition="!$(DefineConstants.Contains(NO_CANCELLATION_TOKEN))">
     <Compile Remove="CancellationToken.cs" />
+    <Compile Remove="ICancellable.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="!$(DefineConstants.Contains(FEATURE_PARALLEL))">

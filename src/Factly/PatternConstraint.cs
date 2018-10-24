@@ -2,21 +2,19 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Diagnostics;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Factly
 {
     /// <summary>
-    /// An <see cref="IConstraint"/> that validates against a regular expression.
+    /// An <see cref="IConstraint{TState}"/> that validates against a regular expression.
     /// </summary>
-    public class PatternConstraint : IConstraint
+    public class PatternConstraint<TState> : IConstraint<TState>
     {
         private readonly Regex _regex;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PatternConstraint"/> class.
+        /// Initializes a new instance of the <see cref="PatternConstraint{TState}"/> class.
         /// </summary>
         /// <param name="regex">The regular expression of the pattern.</param>
         public PatternConstraint(Regex regex)
@@ -31,7 +29,7 @@ namespace Factly
         public object Context => _regex;
 
         /// <inheritdoc/>
-        public virtual bool Validate(object value)
+        public virtual bool Validate(object value, TState state)
         {
             return value is string str && _regex.IsMatch(str);
         }
