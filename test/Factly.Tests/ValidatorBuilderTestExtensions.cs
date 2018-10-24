@@ -5,14 +5,12 @@ namespace Factly
 {
     internal static class ValidatorBuilderTestExtensions
     {
-        private static readonly IConstraint _constraint = new DelegateConstraint(() => true);
-
-        public static void AddEmptyClass(this ValidatorBuilder builder)
+        public static void AddEmptyClass<TState>(this ValidatorBuilder<TState> builder)
         {
             builder.AddKnownType<SimpleWithConstraint>();
         }
 
-        public static void AddEmptyConstraint(this ValidatorBuilder builder, bool withType = false)
+        public static void AddEmptyConstraint<TState>(this ValidatorBuilder<TState> builder, bool withType = false)
         {
             if (withType)
             {
@@ -21,7 +19,7 @@ namespace Factly
                 {
                     if (p == typeof(SimpleWithConstraint).GetProperty(nameof(SimpleWithConstraint.Test)))
                     {
-                        return _constraint;
+                        return new DelegateConstraint<TState>(() => true);
                     }
 
                     return null;
@@ -29,7 +27,7 @@ namespace Factly
             }
             else
             {
-                builder.AddConstraint(_ => _constraint);
+                builder.AddConstraint(_ => new DelegateConstraint<TState>(() => true));
             }
         }
 

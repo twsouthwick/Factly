@@ -10,8 +10,8 @@ namespace Factly.Benchmarks.Tests
     [MemoryDiagnoser]
     public class BenchmarkTest
     {
-        private ValidatorBuilder _validatorBuilder;
-        private Validator _validator;
+        private ValidatorBuilder<object> _validatorBuilder;
+        private Validator<object> _validator;
         private ValidationContext _context = new ValidationContext();
 
         [GlobalSetup]
@@ -22,16 +22,16 @@ namespace Factly.Benchmarks.Tests
         }
 
         [Benchmark]
-        public ValidatorBuilder CreateValidatorBuilder()
+        public ValidatorBuilder<object> CreateValidatorBuilder()
         {
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             builder.AddKnownType<TestClass>();
             builder.AddRegexAttributeConstraint<RegexAttribute>(a => a.Pattern);
             return builder;
         }
 
         [Benchmark]
-        public Validator BuildValidator()
+        public Validator<object> BuildValidator()
         {
             return _validatorBuilder.Build();
         }
@@ -55,7 +55,7 @@ namespace Factly.Benchmarks.Tests
                 Value = "somethin",
             };
 
-            _validator.Validate(instance);
+            _validator.Validate(instance, null);
         }
 
         private class TestClass

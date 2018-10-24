@@ -9,119 +9,19 @@ using System.Text.RegularExpressions;
 namespace Factly
 {
     /// <summary>
-    /// A collection of extension methods for helper functions for <see cref="ValidatorBuilder"/>.
+    /// A collection of extension methods for helper functions for <see cref="ValidatorBuilder{TOptions}"/>.
     /// </summary>
     public static class ValidatorBuilderExtensions
     {
         /// <summary>
-        /// Adds a property filter for any property that has a return type that derives from <typeparamref name="T"/>.
-        /// </summary>
-        /// <typeparam name="T">Type of property to find.</typeparam>
-        /// <param name="builder">The current <see cref="ValidatorBuilder"/>.</param>
-        /// <returns><paramref name="builder"/>.</returns>
-        public static ValidatorBuilder AddPropertyFilter<T>(this ValidatorBuilder builder)
-        {
-            return builder.AddPropertyFilter(propertyInfo =>
-            {
-                return typeof(T).IsAssignableFrom(propertyInfo.PropertyType);
-            });
-        }
-
-        /// <summary>
-        /// Creates a property builder for <typeparamref name="TType"/>. If <typeparamref name="TType"/> is unknown,
-        /// it will be added to the known types of the <paramref name="validatorBuilder"/>.
-        /// </summary>
-        /// <typeparam name="TType">Type to add property filters.</typeparam>
-        /// <param name="validatorBuilder">The current <see cref="ValidatorBuilder"/>.</param>
-        /// <returns>A <see cref="ValidatorPropertyBuilder{TType}"/> for <typeparamref name="TType"/>.</returns>
-        public static ValidatorPropertyBuilder<TType> ForType<TType>(this ValidatorBuilder validatorBuilder) => new ValidatorPropertyBuilder<TType>(validatorBuilder);
-
-        /// <summary>
-        /// Adds known types from an <see cref="Assembly"/> given a <paramref name="selector"/>.
-        /// </summary>
-        /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
-        /// <param name="assembly">Assembly to search for exported types.</param>
-        /// <param name="selector">Type selector.</param>
-        /// <returns><paramref name="builder"/>.</returns>
-        public static ValidatorBuilder AddKnownTypes(this ValidatorBuilder builder, Assembly assembly, Func<Type, bool> selector)
-        {
-            var types = assembly.GetExportedTypes().Where(selector);
-
-            return builder.AddKnownTypes(types);
-        }
-
-        /// <summary>
-        /// Add a known type <typeparamref name="T"/>.
-        /// </summary>
-        /// <typeparam name="T">Type to add.</typeparam>
-        /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
-        /// <returns><paramref name="builder"/>.</returns>
-        public static ValidatorBuilder AddKnownType<T>(this ValidatorBuilder builder) => builder.AddKnownType(typeof(T));
-
-        /// <summary>
-        /// Add types from <see cref="Assembly"/> that are assignable from <typeparamref name="T"/>.
-        /// </summary>
-        /// <typeparam name="T">Base type to search for.</typeparam>
-        /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
-        /// <param name="assembly">Assembly to search.</param>
-        /// <returns><paramref name="builder"/>.</returns>
-        public static ValidatorBuilder AddKnownTypes<T>(this ValidatorBuilder builder, Assembly assembly)
-        {
-            return builder.AddKnownTypes(assembly, typeof(T).IsAssignableFrom);
-        }
-
-        /// <summary>
-        /// Adds a constraint for regular expressions based on a supplied attribute.
-        /// </summary>
-        /// <typeparam name="TAttribute">Attribute that identifies a regular expression constraint.</typeparam>
-        /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
-        /// <param name="stringSelector">Selector to retrieve <see cref="string"/> from <typeparamref name="TAttribute"/>.</param>
-        /// <returns><paramref name="builder"/>.</returns>
-        public static ConstraintBuilder<string> AddRegexAttributeConstraint<TAttribute>(this ValidatorBuilder builder, Func<TAttribute, string> stringSelector)
-            where TAttribute : Attribute
-        {
-            return builder.AddAttributeConstraint<TAttribute, string>((attribute, propertyInfo, ctx) =>
-            {
-                var pattern = stringSelector(attribute);
-                var regex = ctx.GetOrSetState(pattern, p => new Regex(pattern, RegexOptions.Compiled));
-
-                return new PatternConstraint(regex);
-            });
-        }
-
-        /// <summary>
-        /// Adds constraints when the property is annotated with <typeparamref name="TAttribute"/>.
-        /// </summary>
-        /// <typeparam name="TAttribute">Type of attribute.</typeparam>
-        /// <typeparam name="TValue">Expected type of constraint.</typeparam>
-        /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
-        /// <param name="factory">The factory to create a constraint given an attribute instance.</param>
-        /// <returns>A <see cref="ConstraintBuilder{TValue}"/> instance.</returns>
-        public static ConstraintBuilder<TValue> AddAttributeConstraint<TAttribute, TValue>(this ValidatorBuilder builder, Func<TAttribute, PropertyInfo, BuilderContext, IConstraint> factory)
-            where TAttribute : Attribute
-        {
-            return builder.AddConstraint<TValue>((propertyInfo, ctx) =>
-            {
-                var attribute = propertyInfo.GetCustomAttribute<TAttribute>();
-
-                if (attribute == null)
-                {
-                    return null;
-                }
-
-                return factory(attribute, propertyInfo, ctx);
-            });
-        }
-
-        /// <summary>
         /// Adds a constraint generator that depends on a <see cref="PropertyInfo"/>.
         /// </summary>
-        /// <param name="builder">Current <see cref="ValidatorBuilder"/>.</param>
+        /// <param name="builder">Current <see cref="ValidatorBuilder{TOptions}"/>.</param>
         /// <param name="factory">The factory to create a constraint given an attribute instance.</param>
         /// <returns>A <see cref="ConstraintBuilder{TValue}"/> instance.</returns>
-        public static ConstraintBuilder AddConstraint(this ValidatorBuilder builder, Func<PropertyInfo, IConstraint> factory)
+        public static ConstraintBuilder<TState> AddConstraint<TState>(this ValidatorBuilder<TState> builder, Func<PropertyInfo, IConstraint<TState>> factory)
         {
-            return builder.AddConstraint((property, _) => factory(property));
+            return builder.AddConstraint<TState>((property, _) => factory(property));
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Factly
 {
     /// <summary>
-    /// An exception thrown when an error occurs during building a <see cref="Validator"/>.
+    /// An exception thrown when an error occurs during building a <see cref="Validator{TState}"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

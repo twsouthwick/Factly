@@ -18,7 +18,7 @@ namespace Factly
         public void TestStruct()
         {
             var count = 0;
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             builder.AddKnownType<CustomStruct>();
             builder.AddPropertyFilter(_ => true);
             builder.AddConstraint(_ => new DelegateConstraint(() =>
@@ -28,7 +28,7 @@ namespace Factly
             }));
             var validator = builder.Build();
 
-            validator.Validate(default(CustomStruct));
+            validator.Validate(default(CustomStruct), null);
 
             Assert.Equal(1, count);
         }
@@ -37,7 +37,7 @@ namespace Factly
         public void VirtualPropertyTest()
         {
             var count = 0;
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             builder.AddKnownType<TestWithDerivedVirtualProperty>();
             builder.AddPropertyFilter<TestWithDerivedVirtualProperty>();
             builder.AddConstraint(_ => new DelegateConstraint(instanceValue =>
@@ -49,7 +49,7 @@ namespace Factly
             }));
             var validator = builder.Build();
 
-            validator.Validate(new TestWithDerivedVirtualProperty());
+            validator.Validate(new TestWithDerivedVirtualProperty(), null);
 
             Assert.Equal(1, count);
         }
@@ -58,7 +58,7 @@ namespace Factly
         public void VirtualPropertyNewTest()
         {
             var count = 0;
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             builder.AddKnownType<TestWithDerivedVirtualPropertyNew>();
             builder.AddPropertyFilter<TestWithDerivedVirtualPropertyNew>();
             builder.AddConstraint(_ => new DelegateConstraint(instanceValue =>
@@ -70,7 +70,7 @@ namespace Factly
             }));
             var validator = builder.Build();
 
-            validator.Validate(new TestWithDerivedVirtualPropertyNew());
+            validator.Validate(new TestWithDerivedVirtualPropertyNew(), null);
 
             Assert.Equal(1, count);
         }
@@ -79,7 +79,7 @@ namespace Factly
         public void VirtualPropertyDerived()
         {
             var count = 0;
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             builder.AddKnownType<TestWithVirtualPropertyDerived>();
             builder.AddPropertyFilter<TestWithVirtualPropertyDerived>();
             builder.AddConstraint(_ => new DelegateConstraint(instanceValue =>
@@ -91,7 +91,7 @@ namespace Factly
             }));
             var validator = builder.Build();
 
-            validator.Validate(new TestWithVirtualPropertyDerived());
+            validator.Validate(new TestWithVirtualPropertyDerived(), null);
 
             Assert.Equal(1, count);
         }
@@ -101,10 +101,10 @@ namespace Factly
         [Theory]
         public void TypeConstraint(bool input)
         {
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             var constraintId = Guid.NewGuid().ToString();
 
-            builder.AddConstraint<SimpleBoolean>(c => c.IsTrue, constraintId);
+            builder.AddConstraint<SimpleBoolean>((c, _) => c.IsTrue, constraintId);
 
             var validator = builder.Build();
 
@@ -131,7 +131,7 @@ namespace Factly
 
             var list = new HashSet<int>();
             var cts = new CancellationTokenSource();
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             builder.AddKnownType<RecursiveClass>();
             builder.AddPropertyFilter<RecursiveClass>();
             builder.AddConstraint(_ => new DelegateConstraint(instanceValue =>
@@ -210,7 +210,7 @@ namespace Factly
             var context = new TestValidationContext();
 
             // Must use a type with multiple types as cancellation is checked at the start of processing each type
-            var builder = ValidatorBuilder.Create();
+            var builder = new ValidatorBuilder<object>();
             builder.AddKnownType<TestClass1>();
             builder.AddPropertyFilter<TestClass2>();
             builder.AddConstraint(_ => new DelegateConstraint(() =>

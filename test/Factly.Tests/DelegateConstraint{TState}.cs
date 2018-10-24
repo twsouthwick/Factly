@@ -5,15 +5,20 @@ using System;
 
 namespace Factly
 {
-    internal class DelegateConstraint : DelegateConstraint<object>
+    internal class DelegateConstraint<TState> : DelegateConstraint<TState, object>
     {
         public DelegateConstraint(Func<bool> func)
-            : base(_ => func())
+            : this(_ => func())
         {
         }
 
         public DelegateConstraint(Func<object, bool> func)
-            : base((obj, _) => func(obj))
+            : this((obj, _) => func(obj))
+        {
+        }
+
+        public DelegateConstraint(Func<object, TState, bool> func)
+            : base(func, Guid.NewGuid().ToString())
         {
         }
     }
