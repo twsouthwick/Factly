@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Reflection;
 
 namespace Factly
 {
@@ -116,6 +117,12 @@ namespace Factly
                 _items = value;
             }
         }
+
+        internal PropertyInfo Property { get; set; }
+
+        internal object Instance { get; set; }
+
+        internal IConstraint<TState> Constraint { get; set; }
 
         private void CheckIfReadonly()
         {

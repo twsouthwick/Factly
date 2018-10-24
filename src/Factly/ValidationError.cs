@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Taylor Southwick. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Reflection;
 
 namespace Factly
@@ -56,5 +57,21 @@ namespace Factly
         /// Gets the property that raised the error.
         /// </summary>
         public PropertyInfo Property { get; }
+
+        /// <summary>
+        /// Create an instance of <see cref="ValidationError"/>.
+        /// </summary>
+        /// <typeparam name="TState">The context state type.</typeparam>
+        /// <param name="value">The value that raised the error.</param>
+        /// <param name="context">The context that raised the error.</param>
+        public static ValidationError Create<TState>(object value, ValidationContext<TState> context)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            return new ValidationError(value, context.Instance, context.Property, context.Constraint.Id, context.Constraint.Context);
+        }
     }
 }

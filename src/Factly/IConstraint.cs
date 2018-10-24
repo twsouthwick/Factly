@@ -24,7 +24,6 @@ namespace Factly
         /// </summary>
         /// <param name="value">The value of the property.</param>
         /// <param name="context">Validation context.</param>
-        /// <returns>Whether validation was successful or not.</returns>
-        bool Validate(object value, TState context);
+        void Validate(object value, ValidationContext<TState> context);
     }
 }

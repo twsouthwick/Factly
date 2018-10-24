@@ -19,7 +19,7 @@ namespace Factly
                 {
                     if (p == typeof(SimpleWithConstraint).GetProperty(nameof(SimpleWithConstraint.Test)))
                     {
-                        return new DelegateConstraint<TState>(() => true);
+                        return new DelegateConstraint<TState>(() => { });
                     }
 
                     return null;
@@ -27,7 +27,7 @@ namespace Factly
             }
             else
             {
-                builder.AddConstraint(_ => new DelegateConstraint<TState>(() => true));
+                builder.AddConstraint(_ => new DelegateConstraint<TState>(() => { }));
             }
         }
 
