@@ -12,7 +12,7 @@ namespace Factly.Benchmarks.Tests
     {
         private ValidatorBuilder<object> _validatorBuilder;
         private Validator<object> _validator;
-        private ValidationContext _context = new ValidationContext();
+        private ValidationContext<object> _context = new ValidationContext<object>();
 
         [GlobalSetup]
         public void Setup()

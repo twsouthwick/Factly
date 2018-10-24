@@ -33,66 +33,60 @@ namespace Factly
         /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/> and <paramref name="context"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
-        /// <param name="context"><see cref="ValidationContext"/> to pass through.</param>
-        /// <param name="state">Optional state passed to the validation.</param>
+        /// <param name="context"><see cref="ValidationContext{TState}"/> to pass through.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
-        public void Validate(object item, ValidationContext context, TState state, CancellationToken token = default)
+        public void Validate(object item, ValidationContext<TState> context, CancellationToken token = default)
         {
-            ValidateInternal(item, new ValidationContext(context), state, token);
+            ValidateInternal(item, new ValidationContext<TState>(context), token);
         }
 
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
-        /// <param name="state">Optional state passed to the validation.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
-        public void Validate(object item, TState state, CancellationToken token = default) => Validate(item, null, state, token);
+        public void Validate(object item, CancellationToken token = default) => Validate(item, null, token);
 
 #if FEATURE_PARALLEL
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/> and <paramref name="context"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
-        /// <param name="context"><see cref="ValidationContext"/> to pass through.</param>
-        /// <param name="state">Optional state passed to the validation.</param>
+        /// <param name="context"><see cref="ValidationContext{TState}"/> to pass through.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
-        public Task ValidateAsync(object item, ValidationContext context, TState state, CancellationToken token = default)
+        public Task ValidateAsync(object item, ValidationContext<TState> context, CancellationToken token = default)
         {
-            return ValidateInternalAsync(item, new ValidationContext(context), state, token);
+            return ValidateInternalAsync(item, new ValidationContext<TState>(context), token);
         }
 
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
-        /// <param name="state">Optional state passed to the validation.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
-        public Task ValidateAsync(object item, TState state, CancellationToken token = default) => ValidateAsync(item, null, state, token);
+        public Task ValidateAsync(object item, CancellationToken token = default) => ValidateAsync(item, null, token);
 #endif
 #else
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/> and <paramref name="context"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
-        /// <param name="context"><see cref="ValidationContext"/> to pass through.</param>
-        /// <param name="state">Optional state passed to the validation.</param>
-        public void Validate(object item, ValidationContext context, TState state)
+        /// <param name="context"><see cref="ValidationContext{TState}"/> to pass through.</param>
+        public void Validate(object item, ValidationContext<TState> context)
         {
-            var wrappedContext = new ValidationContext(context);
+            var wrappedContext = new ValidationContext<TState>(context);
 
-            ValidateInternal(item, wrappedContext, state, new CancellationToken(new ValidationContext(wrappedContext)));
+            ValidateInternal(item, wrappedContext, new CancellationToken(wrappedContext));
         }
 
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/>.
         /// </summary>
         /// <param name="item">Item to validate.</param>
-        /// <param name="state">Optional state passed to the validation.</param>
-        public void Validate(object item, TState state) => Validate(item, null, state);
+        public void Validate(object item) => Validate(item, null);
 #endif
 
-        private void ValidateInternal(object item, ValidationContext context, TState state, CancellationToken token)
+        private void ValidateInternal(object item, ValidationContext<TState> context, CancellationToken token)
         {
             if (context == null)
             {
@@ -111,11 +105,11 @@ namespace Factly
             }
 #endif
 
-            SingletonList.Create(item).Traverse(current => BuildItem(context, current, state), token);
+            SingletonList.Create(item).Traverse(current => BuildItem(context, current), token);
         }
 
 #if FEATURE_PARALLEL
-        private Task ValidateInternalAsync(object item, ValidationContext context, TState state, CancellationToken token)
+        private Task ValidateInternalAsync(object item, ValidationContext<TState> context, CancellationToken token)
         {
             if (context == null)
             {
@@ -132,11 +126,11 @@ namespace Factly
                 throw new ArgumentOutOfRangeException(nameof(context), context.MaxDegreeOfParallelism, SR.ParallelThreadNumberMustBeGreaterThan0);
             }
 
-            return SingletonList.Create(item).TraverseAsync(current => BuildItem(context, current, state), context.MaxDegreeOfParallelism, token);
+            return SingletonList.Create(item).TraverseAsync(current => BuildItem(context, current), context.MaxDegreeOfParallelism, token);
         }
 #endif
 
-        private IEnumerable<object> BuildItem(ValidationContext context, object current, TState state)
+        private IEnumerable<object> BuildItem(ValidationContext<TState> context, object current)
         {
             context.OnItem.Invoke(current);
 
@@ -146,7 +140,7 @@ namespace Factly
             {
                 foreach (var constraint in type.Constraints)
                 {
-                    if (!constraint.Validate(current, state))
+                    if (!constraint.Validate(current, context.State))
                     {
                         var error = new ValidationError(current, current, null, constraint.Id, constraint.Context);
                         context.OnError(error);
@@ -155,7 +149,7 @@ namespace Factly
 
                 foreach (var property in type.Properties)
                 {
-                    var value = property.Validate(current, state, context);
+                    var value = property.Validate(current, context);
 
                     if (value != null && property.IncludeChildren)
                     {

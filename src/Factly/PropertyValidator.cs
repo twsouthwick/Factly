@@ -68,7 +68,7 @@ namespace Factly
             return new PropertyValidator<TState>(property, shouldFollow, constraints);
         }
 
-        public object Validate(object item, TState state, ValidationContext context)
+        public object Validate(object item, ValidationContext<TState> context)
         {
             var value = Getter(item);
 
@@ -76,7 +76,7 @@ namespace Factly
             {
                 var updated = constraint is IObjectConverter converter ? converter.Convert(value) : value;
 
-                if (!constraint.Validate(updated, state))
+                if (!constraint.Validate(updated, context.State))
                 {
                     var error = new ValidationError(updated, item, Property, constraint.Id, constraint.Context);
                     context.OnError(error);

@@ -13,7 +13,7 @@ namespace Factly
             Errors = new List<ValidationError>();
             Items = new List<object>();
             UnknownTypes = new List<Type>();
-            Context = new ValidationContext
+            Context = new ValidationContext<object>
             {
                 OnError = Errors.Add,
                 OnItem = Items.Add,
@@ -27,6 +27,6 @@ namespace Factly
 
         public List<Type> UnknownTypes { get; }
 
-        public ValidationContext Context { get; }
+        public ValidationContext<object> Context { get; }
     }
 }

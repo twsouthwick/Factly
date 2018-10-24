@@ -15,7 +15,7 @@ namespace Factly
             var errors = new List<ValidationError>();
             var items = new List<object>();
             var unknownType = new List<Type>();
-            var context = new ValidationContext
+            var context = new ValidationContext<object>
             {
                 OnError = errors.Add,
                 OnItem = items.Add,

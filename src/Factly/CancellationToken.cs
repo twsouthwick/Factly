@@ -8,9 +8,9 @@ namespace Factly
 {
     internal readonly struct CancellationToken
     {
-        private readonly ValidationContext _context;
+        private readonly ICancellable _context;
 
-        public CancellationToken(ValidationContext context)
+        public CancellationToken(ICancellable context)
         {
             _context = context;
         }

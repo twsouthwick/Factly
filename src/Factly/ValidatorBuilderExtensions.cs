@@ -21,7 +21,7 @@ namespace Factly
         /// <returns>A <see cref="ConstraintBuilder{TValue}"/> instance.</returns>
         public static ConstraintBuilder<TState> AddConstraint<TState>(this ValidatorBuilder<TState> builder, Func<PropertyInfo, IConstraint<TState>> factory)
         {
-            return builder.AddConstraint<TState>((property, _) => factory(property));
+            return builder.AddConstraint((property, _) => factory(property));
         }
     }
 }

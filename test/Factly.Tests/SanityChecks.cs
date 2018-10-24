@@ -31,7 +31,7 @@ namespace Factly
             builder.AddKnownType<int>();
             var validator = builder.Build();
 
-            var context = new ValidationContext
+            var context = new ValidationContext<object>
             {
                 OnUnknownType = type =>
                 {

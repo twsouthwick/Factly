@@ -28,7 +28,7 @@ namespace Factly
             var item = new Test1 { Test = testValue };
             var issueRaised = 0;
 
-            var context = new ValidationContext
+            var context = new ValidationContext<object>
             {
                 OnError = error =>
                 {
@@ -109,7 +109,7 @@ namespace Factly
             var item = new TestNotString();
             var issueRaised = 0;
 
-            var context = new ValidationContext
+            var context = new ValidationContext<object>
             {
                 OnError = error =>
                 {
@@ -137,7 +137,7 @@ namespace Factly
 
             var item = new Test1();
             var items = new List<object>();
-            var context = new ValidationContext
+            var context = new ValidationContext<object>
             {
                 OnItem = items.Add,
             };
