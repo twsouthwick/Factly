@@ -4,7 +4,7 @@
 namespace Factly
 {
     /// <summary>
-    /// An abstraction that converts from one object to another
+    /// An abstraction that converts from one object to another.
     /// </summary>
     internal interface IObjectConverter
     {
