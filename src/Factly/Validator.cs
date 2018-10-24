@@ -136,7 +136,6 @@ namespace Factly
 
             var currentType = current.GetType();
 
-
             if (_typeValidators.TryGetValue(currentType, out var type))
             {
                 foreach (var constraint in type.Constraints)
