@@ -75,7 +75,7 @@ namespace Factly
 
             foreach (var constraint in _constraints)
             {
-                var updated = constraint is ITypedConstraint typed ? typed.Convert(value) : value;
+                var updated = constraint is IObjectConverter converter ? converter.Convert(value) : value;
 
                 if (!constraint.Validate(updated))
                 {

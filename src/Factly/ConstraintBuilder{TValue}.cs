@@ -67,7 +67,7 @@ namespace Factly
             }
         }
 
-        private class TypedConstraint : IConstraint, ITypedConstraint
+        private class TypedConstraint : IConstraint, IObjectConverter
         {
             private readonly IConstraint _constraint;
             private readonly Func<object, TValue> _func;
