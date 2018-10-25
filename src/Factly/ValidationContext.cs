@@ -9,25 +9,24 @@ namespace Factly
     /// <summary>
     /// Contains context information for validation that is passed through for validation.
     /// </summary>
-#if NO_CANCELLATION_TOKEN
-    public sealed class ValidationContext<TState> : ICancellable
-#else
     public sealed class ValidationContext<TState>
+#if NO_CANCELLATION_TOKEN
+        : ICancellable
 #endif
     {
 #if FEATURE_PARALLEL
         private const int DefaultMaxDegreeOfParallelism = 1;
 #endif
 
-        private static readonly Action<ValidationError> DefaultErrorHandler = error => throw new ValidationException(error);
-        private static readonly Action<Type> DefaultUnknownTypeHandler = type => throw new ValidatorBuilderException(SR.UnknownTypeEncountered, Errors.UnknownType, type, null);
-        private static readonly Action<object> DefaultItemHandler = _ => { };
+        private static readonly Action<ValidationError> DefaultOnErrorHandler = error => throw new ValidationException(error);
+        private static readonly Action<Type> DefaultOnUnknownTypeHandler = type => throw new ValidatorBuilderException(SR.UnknownTypeEncountered, Errors.UnknownType, type, null);
+        private static readonly Action<object> DefaultOnItemHandler = _ => { };
 
         private readonly bool _isReadonly;
 
-        private Action<ValidationError> _errors;
-        private Action<Type> _unknownTypes;
-        private Action<object> _items;
+        private Action<ValidationError> _onError;
+        private Action<Type> _onUnknownType;
+        private Action<object> _onItem;
 
 #if FEATURE_PARALLEL
         private int _maxDegreeOfParallelism = DefaultMaxDegreeOfParallelism;
@@ -49,10 +48,13 @@ namespace Factly
 #endif
             _isReadonly = true;
 
-            _errors = context?.OnError ?? DefaultErrorHandler;
-            _items = context?.OnItem ?? DefaultItemHandler;
-            _unknownTypes = context?.OnUnknownType ?? DefaultUnknownTypeHandler;
-            State = context == null ? default : context.State;
+            if (context != null)
+            {
+                _onError = context.OnError;
+                _onItem = context.OnItem;
+                _onUnknownType = context.OnUnknownType;
+                State = context.State;
+            }
 
 #if FEATURE_PARALLEL
             _maxDegreeOfParallelism = context?.MaxDegreeOfParallelism ?? MaxDegreeOfParallelism;
@@ -69,11 +71,11 @@ namespace Factly
         /// </summary>
         public Action<Type> OnUnknownType
         {
-            get => _unknownTypes;
+            get => _onUnknownType ?? DefaultOnUnknownTypeHandler;
             set
             {
                 CheckIfReadonly();
-                _unknownTypes = value;
+                _onUnknownType = value;
             }
         }
 
@@ -97,11 +99,11 @@ namespace Factly
         /// </summary>
         public Action<ValidationError> OnError
         {
-            get => _errors;
+            get => _onError ?? DefaultOnErrorHandler;
             set
             {
                 CheckIfReadonly();
-                _errors = value;
+                _onError = value;
             }
         }
 
@@ -110,11 +112,11 @@ namespace Factly
         /// </summary>
         public Action<object> OnItem
         {
-            get => _items;
+            get => _onItem ?? DefaultOnItemHandler;
             set
             {
                 CheckIfReadonly();
-                _items = value;
+                _onItem = value;
             }
         }
 
