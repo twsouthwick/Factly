@@ -41,7 +41,7 @@ namespace Factly
             State = state;
         }
 
-        private ValidationContext(
+        internal ValidationContext(
             ValidationContext<TState> context,
             PropertyInfo property = null,
             IConstraint<TState> constraint = null,
