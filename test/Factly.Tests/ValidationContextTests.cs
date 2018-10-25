@@ -27,9 +27,25 @@ namespace Factly
             Assert.Equal(unknownType.Add, context.OnUnknownType);
         }
 
-        private class Test
+        [Fact]
+        public void NotNull()
         {
-            public Test Instance { get; set; }
+            var context = new ValidationContext<object>();
+
+            void TrySetToNull<T>(Func<T> getter, Action<T> setter)
+                where T : class
+            {
+                var before = getter();
+                Assert.NotNull(before);
+
+                setter(null);
+
+                Assert.Same(before, getter());
+            }
+
+            TrySetToNull(() => context.OnError, value => context.OnError = value);
+            TrySetToNull(() => context.OnItem, value => context.OnItem = value);
+            TrySetToNull(() => context.OnUnknownType, value => context.OnUnknownType = value);
         }
     }
 }
