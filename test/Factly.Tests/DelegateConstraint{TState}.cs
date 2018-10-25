@@ -17,7 +17,7 @@ namespace Factly
         {
         }
 
-        public DelegateConstraint(Action<object, ValidationContext<TState>> func)
+        public DelegateConstraint(Action<object, ConstraintContext<TState>> func)
             : base(func, Guid.NewGuid().ToString())
         {
         }

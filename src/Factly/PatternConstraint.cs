@@ -29,13 +29,13 @@ namespace Factly
         public object Context => _regex;
 
         /// <inheritdoc/>
-        public void Validate(object value, ValidationContext<TState> context)
+        public void Validate(object value, ConstraintContext<TState> context)
         {
             var isValid = value is string str && _regex.IsMatch(str);
 
             if (!isValid)
             {
-                context.OnError(ValidationError.Create(value, context));
+                context.RaiseError($"'{value}' does not match '{_regex}'");
             }
         }
     }

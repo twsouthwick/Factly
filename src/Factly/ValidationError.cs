@@ -19,18 +19,21 @@ namespace Factly
         /// <param name="property">The property that raised the error.</param>
         /// <param name="id">Id of constraint that raised the error.</param>
         /// <param name="context">Context contained in the constraint of the raised the error.</param>
+        /// <param name="message">Error message.</param>
         internal ValidationError(
             object value,
             object instance,
             PropertyInfo property,
             string id,
-            object context)
+            object context,
+            string message)
         {
             Value = value;
             Instance = instance;
             Property = property;
             Id = id;
             Context = context;
+            Message = message;
         }
 
         /// <summary>
@@ -59,19 +62,8 @@ namespace Factly
         public PropertyInfo Property { get; }
 
         /// <summary>
-        /// Create an instance of <see cref="ValidationError"/>.
+        /// Gets the error message.
         /// </summary>
-        /// <typeparam name="TState">The context state type.</typeparam>
-        /// <param name="value">The value that raised the error.</param>
-        /// <param name="context">The context that raised the error.</param>
-        public static ValidationError Create<TState>(object value, ValidationContext<TState> context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            return new ValidationError(value, context.Instance, context.Property, context.Constraint.Id, context.Constraint.Context);
-        }
+        public string Message { get; }
     }
 }

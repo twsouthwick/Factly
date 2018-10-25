@@ -76,7 +76,7 @@ namespace Factly
             {
                 var updated = constraint is IObjectConverter converter ? converter.Convert(value) : value;
 
-                constraint.Validate(updated, context.Clone(Property, constraint, item));
+                constraint.Validate(updated, new ConstraintContext<TState>(context, constraint, Property, item, updated));
             }
 
             return value;

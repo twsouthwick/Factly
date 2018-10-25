@@ -85,7 +85,7 @@ namespace Factly
 
             public object Convert(object value) => _func(value);
 
-            public void Validate(object value, ValidationContext<TState> context) => _constraint.Validate(value, context);
+            public void Validate(object value, ConstraintContext<TState> context) => _constraint.Validate(value, context);
         }
     }
 }

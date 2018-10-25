@@ -57,7 +57,7 @@ namespace Factly
         /// <param name="constraint">The constraint function.</param>
         /// <param name="constraintId">The id for the constraint.</param>
         /// <returns>A builder instance for the constraint.</returns>
-        public ConstraintBuilder<TState, T> AddConstraint<T>(Action<T, ValidationContext<TState>> constraint, string constraintId)
+        public ConstraintBuilder<TState, T> AddConstraint<T>(Action<T, ConstraintContext<TState>> constraint, string constraintId)
         {
             var delegateConstraint = new DelegateConstraint<TState, T>(constraint, constraintId);
 
