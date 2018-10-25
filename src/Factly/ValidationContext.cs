@@ -41,7 +41,11 @@ namespace Factly
             State = state;
         }
 
-        private ValidationContext(ValidationContext<TState> context, PropertyInfo property = null, IConstraint<TState> constraint = null, object instance = null)
+        private ValidationContext(
+            ValidationContext<TState> context,
+            PropertyInfo property = null,
+            IConstraint<TState> constraint = null,
+            object instance = null)
         {
 #if NO_CANCELLATION_TOKEN
             _other = context;
