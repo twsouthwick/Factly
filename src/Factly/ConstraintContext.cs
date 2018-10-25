@@ -43,9 +43,9 @@ namespace Factly
         /// <param name="message">Message to raise as the error.</param>
         public void RaiseError(string message)
         {
-            if (_context == null)
+            if (_constraint == null)
             {
-                return;
+                throw new InvalidOperationException();
             }
 
             _context.OnError(new ValidationError(_value, _instance, _property, _constraint.Id, _constraint.Context, message));
