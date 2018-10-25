@@ -7,17 +7,17 @@ namespace Factly
 {
     internal class DelegateConstraint<TState> : DelegateConstraint<TState, object>
     {
-        public DelegateConstraint(Func<bool> func)
+        public DelegateConstraint(Action func)
             : this(_ => func())
         {
         }
 
-        public DelegateConstraint(Func<object, bool> func)
+        public DelegateConstraint(Action<object> func)
             : this((obj, _) => func(obj))
         {
         }
 
-        public DelegateConstraint(Func<object, TState, bool> func)
+        public DelegateConstraint(Action<object, ValidationContext<TState>> func)
             : base(func, Guid.NewGuid().ToString())
         {
         }

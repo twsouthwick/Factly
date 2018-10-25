@@ -29,9 +29,14 @@ namespace Factly
         public object Context => _regex;
 
         /// <inheritdoc/>
-        public virtual bool Validate(object value, TState state)
+        public void Validate(object value, ValidationContext<TState> context)
         {
-            return value is string str && _regex.IsMatch(str);
+            var isValid = value is string str && _regex.IsMatch(str);
+
+            if (!isValid)
+            {
+                context.OnError(ValidationError.Create(value, context));
+            }
         }
     }
 }

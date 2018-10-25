@@ -104,7 +104,13 @@ namespace Factly
             var builder = new ValidatorBuilder<object>();
             var constraintId = Guid.NewGuid().ToString();
 
-            builder.AddConstraint<SimpleBoolean>((c, _) => c.IsTrue, constraintId);
+            builder.AddConstraint<SimpleBoolean>((c, ctx) =>
+            {
+                if (!c.IsTrue)
+                {
+                    ctx.OnError(ValidationError.Create(c, ctx));
+                }
+            }, constraintId);
 
             var validator = builder.Build();
 

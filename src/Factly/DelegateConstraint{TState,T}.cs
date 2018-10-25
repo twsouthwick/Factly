@@ -12,7 +12,7 @@ namespace Factly
     /// <typeparam name="T">The expected type of a constraint value.</typeparam>
     public class DelegateConstraint<TState, T> : IConstraint<TState>
     {
-        private readonly Func<T, TState, bool> _constraint;
+        private readonly Action<T, ValidationContext<TState>> _constraint;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DelegateConstraint{TState, T}"/> class.
@@ -20,7 +20,7 @@ namespace Factly
         /// <param name="constraint">The constraint delegate.</param>
         /// <param name="id">The id of the constraint.</param>
         /// <param name="context">An option context value.</param>
-        public DelegateConstraint(Func<T, TState, bool> constraint, string id, object context = null)
+        public DelegateConstraint(Action<T, ValidationContext<TState>> constraint, string id, object context = null)
         {
             _constraint = constraint ?? throw new ArgumentNullException(nameof(constraint));
             Id = id ?? throw new ArgumentNullException(nameof(id));
@@ -34,6 +34,6 @@ namespace Factly
         public object Context { get; }
 
         /// <inheritdoc/>
-        public bool Validate(object value, TState context) => _constraint((T)value, context);
+        public void Validate(object value, ValidationContext<TState> context) => _constraint((T)value, context);
     }
 }
