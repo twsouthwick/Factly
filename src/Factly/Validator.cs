@@ -37,7 +37,7 @@ namespace Factly
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
         public void Validate(object item, ValidationContext<TState> context, CancellationToken token = default)
         {
-            ValidateInternal(item, new ValidationContext<TState>(context), token);
+            ValidateInternal(item, context.Clone(), token);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Factly
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
         public Task ValidateAsync(object item, ValidationContext<TState> context, CancellationToken token = default)
         {
-            return ValidateInternalAsync(item, new ValidationContext<TState>(context), token);
+            return ValidateInternalAsync(item, context.Clone(), token);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Factly
         /// <param name="context"><see cref="ValidationContext{TState}"/> to pass through.</param>
         public void Validate(object item, ValidationContext<TState> context)
         {
-            var wrappedContext = new ValidationContext<TState>(context);
+            var wrappedContext = context.Clone();
 
             ValidateInternal(item, wrappedContext, new CancellationToken(wrappedContext));
         }
@@ -140,7 +140,7 @@ namespace Factly
             {
                 foreach (var constraint in type.Constraints)
                 {
-                    constraint.Validate(current, new ValidationContext<TState>(context, constraint: constraint));
+                    constraint.Validate(current, context.Clone(constraint: constraint));
                 }
 
                 foreach (var property in type.Properties)

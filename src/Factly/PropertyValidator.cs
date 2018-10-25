@@ -75,9 +75,8 @@ namespace Factly
             foreach (var constraint in _constraints)
             {
                 var updated = constraint is IObjectConverter converter ? converter.Convert(value) : value;
-                var constraintContext = new ValidationContext<TState>(context, Property, constraint, item);
 
-                constraint.Validate(updated, context);
+                constraint.Validate(updated, context.Clone(Property, constraint, item));
             }
 
             return value;
