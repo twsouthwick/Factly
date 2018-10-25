@@ -41,7 +41,11 @@ namespace Factly
             State = state;
         }
 
-        internal ValidationContext(ValidationContext<TState> context)
+        internal ValidationContext(
+            ValidationContext<TState> context,
+            PropertyInfo property = null,
+            IConstraint<TState> constraint = null,
+            object instance = null)
         {
 #if NO_CANCELLATION_TOKEN
             _other = context;
@@ -53,7 +57,17 @@ namespace Factly
                 _onError = context.OnError;
                 _onItem = context.OnItem;
                 _onUnknownType = context.OnUnknownType;
+
                 State = context.State;
+                Property = property ?? context.Property;
+                Constraint = constraint ?? context.Constraint;
+                Instance = instance ?? context.Instance;
+            }
+            else
+            {
+                Property = property;
+                Constraint = constraint;
+                Instance = instance;
             }
 
 #if FEATURE_PARALLEL
@@ -120,11 +134,19 @@ namespace Factly
             }
         }
 
-        internal PropertyInfo Property { get; set; }
+        internal PropertyInfo Property { get; }
 
-        internal object Instance { get; set; }
+        internal object Instance { get; }
 
-        internal IConstraint<TState> Constraint { get; set; }
+        internal IConstraint<TState> Constraint { get; }
+
+        internal ValidationContext<TState> Clone(
+            PropertyInfo property = null,
+            IConstraint<TState> constraint = null,
+            object instance = null)
+        {
+            return new ValidationContext<TState>(this, property, constraint, instance);
+        }
 
         private void CheckIfReadonly()
         {
