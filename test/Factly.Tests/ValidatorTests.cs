@@ -101,6 +101,7 @@ namespace Factly
         [Theory]
         public void TypeConstraint(bool input)
         {
+            var message = Guid.NewGuid().ToString();
             var builder = new ValidatorBuilder<object>();
             var constraintId = Guid.NewGuid().ToString();
 
@@ -108,7 +109,7 @@ namespace Factly
             {
                 if (!c.IsTrue)
                 {
-                    ctx.OnError(ValidationError.Create(c, ctx));
+                    ctx.RaiseError(message);
                 }
             }, constraintId);
 
@@ -126,6 +127,7 @@ namespace Factly
                 var error = Assert.Single(context.Errors);
 
                 Assert.Equal(constraintId, error.Id);
+                Assert.Equal(message, error.Message);
             }
         }
 

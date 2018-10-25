@@ -24,6 +24,6 @@ namespace Factly
         /// </summary>
         /// <param name="value">The value of the property.</param>
         /// <param name="context">Validation context.</param>
-        void Validate(object value, ValidationContext<TState> context);
+        void Validate(object value, ConstraintContext<TState> context);
     }
 }
