@@ -72,20 +72,13 @@ namespace Factly
         {
             var value = Getter(item);
 
-            context.Instance = item;
-            context.Property = Property;
-
             foreach (var constraint in _constraints)
             {
                 var updated = constraint is IObjectConverter converter ? converter.Convert(value) : value;
-                context.Constraint = constraint;
+                var constraintContext = new ValidationContext<TState>(context, Property, constraint, item);
 
                 constraint.Validate(updated, context);
-                context.Constraint = null;
             }
-
-            context.Instance = null;
-            context.Property = null;
 
             return value;
         }

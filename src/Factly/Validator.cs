@@ -140,9 +140,7 @@ namespace Factly
             {
                 foreach (var constraint in type.Constraints)
                 {
-                    context.Constraint = constraint;
-                    constraint.Validate(current, context);
-                    context.Constraint = null;
+                    constraint.Validate(current, new ValidationContext<TState>(context, constraint: constraint));
                 }
 
                 foreach (var property in type.Properties)
