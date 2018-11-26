@@ -25,7 +25,7 @@ namespace Factly
 
         private static ReadonlyArray<PropertyValidator<TState>> GetPropertyValidators(Type type, BuilderContext<TState> context)
         {
-            var properties = type.GetProperties();
+            var properties = type.GetInstanceProperties();
             var array = new ArrayBuilder<PropertyValidator<TState>>(properties.Length);
 
             foreach (var property in properties)

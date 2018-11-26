@@ -152,6 +152,32 @@ namespace Factly
             }
         }
 
+        [Fact]
+        public void StaticProperty()
+        {
+            var builder = new ValidatorBuilder<object>();
+            var count = 0;
+
+            builder.AddEmptyConstraint(true);
+            builder.AddKnownType<StaticPropertyBoolean>();
+            builder.AddConstraint((property, _) =>
+            {
+                count++;
+                Assert.NotEqual(typeof(StaticPropertyBoolean).GetProperty(nameof(StaticPropertyBoolean.Test)), property);
+
+                return null;
+            });
+
+            var validator = builder.Build();
+            var context = new TestValidationContext();
+
+            validator.Validate(new StaticPropertyBoolean(), context.Context);
+
+            Assert.Equal(1, count);
+            Assert.Empty(context.Errors);
+            Assert.Empty(context.UnknownTypes);
+        }
+
         [InlineData(true)]
         [InlineData(false)]
         [Theory]
@@ -362,6 +388,11 @@ namespace Factly
             public RecursiveClass Entry1 { get; set; }
 
             public RecursiveClass Entry2 { get; set; }
+        }
+
+        private class StaticPropertyBoolean
+        {
+            public static object Test { get; } = new object();
         }
     }
 }
