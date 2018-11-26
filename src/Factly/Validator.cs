@@ -4,7 +4,6 @@
 using Factly.Collections;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 #if FEATURE_PARALLEL
 using System.Threading.Tasks;
@@ -36,9 +35,7 @@ namespace Factly
         /// <param name="context"><see cref="ValidationContext{TState}"/> to pass through.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
         public void Validate(object item, ValidationContext<TState> context, CancellationToken token = default)
-        {
-            ValidateInternal(item, new ValidationContext<TState>(context), token);
-        }
+            => ValidateInternal(item, new ValidationContext<TState>(context), token);
 
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/>.
@@ -55,9 +52,7 @@ namespace Factly
         /// <param name="context"><see cref="ValidationContext{TState}"/> to pass through.</param>
         /// <param name="token">An optional <see cref="CancellationToken"/>.</param>
         public Task ValidateAsync(object item, ValidationContext<TState> context, CancellationToken token = default)
-        {
-            return ValidateInternalAsync(item, new ValidationContext<TState>(context), token);
-        }
+            => ValidateInternalAsync(item, new ValidationContext<TState>(context), token);
 
         /// <summary>
         /// Validates an item and its object graph according to that defined in <see cref="Validator{TState}"/>.
@@ -136,24 +131,30 @@ namespace Factly
 
             var currentType = current.GetType();
 
-            if (_typeValidators.TryGetValue(currentType, out var type))
+            var visited = new HashSet<TypeValidator<TState>>();
+
+            foreach (var t in currentType.GetAllTypes())
             {
-                foreach (var constraint in type.Constraints)
+                if (_typeValidators.TryGetValue(t, out var type) && visited.Add(type))
                 {
-                    constraint.Validate(current, new ConstraintContext<TState>(context, constraint));
-                }
-
-                foreach (var property in type.Properties)
-                {
-                    var value = property.Validate(current, context);
-
-                    if (value != null && property.IncludeChildren)
+                    foreach (var constraint in type.Constraints)
                     {
-                        yield return value;
+                        constraint.Validate(current, new ConstraintContext<TState>(context, constraint));
+                    }
+
+                    foreach (var property in type.Properties)
+                    {
+                        var value = property.Validate(current, context);
+
+                        if (value != null && property.IncludeChildren)
+                        {
+                            yield return value;
+                        }
                     }
                 }
             }
-            else
+
+            if (visited.Count == 0)
             {
                 context.OnUnknownType(currentType);
             }

@@ -46,9 +46,7 @@ namespace Factly
         /// <param name="constraintGenerator">The generator to create a <see cref="IConstraint{TState}"/>.</param>
         /// <returns>A builder instance for the constraint.</returns>
         public ConstraintBuilder<TState, T> AddConstraint<T>(Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> constraintGenerator)
-        {
-            return AddConstraint(new ConstraintBuilder<TState, T>(constraintGenerator));
-        }
+            => AddConstraint(new ConstraintBuilder<TState, T>(constraintGenerator));
 
         /// <summary>
         /// Adds a constraint generator for an input <see cref="Type"/>.
@@ -59,13 +57,11 @@ namespace Factly
         /// <returns>A builder instance for the constraint.</returns>
         public ConstraintBuilder<TState, T> AddConstraint<T>(Action<T, ConstraintContext<TState>> constraint, string constraintId)
         {
-            var delegateConstraint = new DelegateConstraint<TState, T>(constraint, constraintId);
-
             IConstraint<TState> Generator(Type type, BuilderContext<TState> ctx)
             {
                 if (type == typeof(T))
                 {
-                    return delegateConstraint;
+                    return new DelegateConstraint<TState, T>(constraint, constraintId);
                 }
                 else
                 {
@@ -191,9 +187,7 @@ namespace Factly
         /// <param name="assembly">Assembly to search.</param>
         /// <returns>The current <see cref="ValidatorBuilder{TState}"/>.</returns>
         public ValidatorBuilder<TState> AddKnownTypes<T>(Assembly assembly)
-        {
-            return AddKnownTypes(assembly, typeof(T).IsAssignableFrom);
-        }
+            => AddKnownTypes(assembly, typeof(T).IsAssignableFrom);
 
         /// <summary>
         /// Adds a constraint for regular expressions based on a supplied attribute.

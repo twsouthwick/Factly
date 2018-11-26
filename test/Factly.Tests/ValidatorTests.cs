@@ -131,6 +131,41 @@ namespace Factly
             }
         }
 
+        [InlineData(true)]
+        [InlineData(false)]
+        [Theory]
+        public void TypeConstraintDerived(bool input)
+        {
+            var message = Guid.NewGuid().ToString();
+            var builder = new ValidatorBuilder<object>();
+            var constraintId = Guid.NewGuid().ToString();
+
+            builder.AddConstraint<SimpleBoolean>((c, ctx) =>
+            {
+                if (!c.IsTrue)
+                {
+                    ctx.RaiseError(message);
+                }
+            }, constraintId);
+
+            var validator = builder.Build();
+
+            var context = new TestValidationContext();
+            validator.Validate(new SimpleBooleanDerived { IsTrue = input }, context.Context);
+
+            if (input)
+            {
+                Assert.Empty(context.Errors);
+            }
+            else
+            {
+                var error = Assert.Single(context.Errors);
+
+                Assert.Equal(constraintId, error.Id);
+                Assert.Equal(message, error.Message);
+            }
+        }
+
 #if FEATURE_PARALLEL
         [Fact(Skip = "Non deterministic failures")]
         public async Task AsyncValidation()
@@ -245,6 +280,10 @@ namespace Factly
         private class SimpleBoolean
         {
             public bool IsTrue { get; set; }
+        }
+
+        private class SimpleBooleanDerived : SimpleBoolean
+        {
         }
 
         private class TestClass1
