@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 #if FEATURE_REFEMIT
@@ -11,7 +12,6 @@ using System.Linq.Expressions;
 #endif
 
 #if FEATURE_TYPEINFO
-using System.Collections.Generic;
 using System.Linq;
 #endif
 
@@ -62,7 +62,35 @@ namespace Factly
         }
 #endif
 
+        public static IEnumerable<Type> GetAllTypes(this Type type)
+        {
+            yield return type;
+
+            foreach (var i in type.GetInterfaces())
+            {
+                yield return i;
+            }
+
+            var b = type.GetBaseType();
+
+            while (b != null)
+            {
+                yield return b;
+                b = b.GetBaseType();
+            }
+        }
+
 #if FEATURE_TYPEINFO
+        public static Type GetBaseType(this Type type)
+        {
+            return type.GetTypeInfo().BaseType;
+        }
+
+        public static IEnumerable<Type> GetInterfaces(this Type type)
+        {
+            return type.GetTypeInfo().ImplementedInterfaces;
+        }
+
         public static PropertyInfo[] GetProperties(this Type type)
         {
             var properties = type.GetTypeInfo().DeclaredProperties;
@@ -85,11 +113,25 @@ namespace Factly
             return assembly.ExportedTypes;
         }
 
-        public static bool HasGetMethod(this PropertyInfo propertyInfo) => propertyInfo.GetMethod != null;
+        public static bool HasGetMethod(this PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetMethod != null;
+        }
 #else
-        public static Type GetTypeInfo(this Type type) => type;
+        public static Type GetBaseType(this Type type)
+        {
+            return type.BaseType;
+        }
 
-        public static bool HasGetMethod(this PropertyInfo propertyInfo) => propertyInfo.GetGetMethod(true) != null;
+        public static Type GetTypeInfo(this Type type)
+        {
+            return type;
+        }
+
+        public static bool HasGetMethod(this PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetGetMethod(true) != null;
+        }
 #endif
 
 #if !FEATURE_CUSTOMATTRIBUTE
