@@ -81,17 +81,11 @@ namespace Factly
         }
 
 #if FEATURE_TYPEINFO
-        public static Type GetBaseType(this Type type)
-        {
-            return type.GetTypeInfo().BaseType;
-        }
+        public static Type GetBaseType(this Type type) => type.GetTypeInfo().BaseType;
 
-        public static IEnumerable<Type> GetInterfaces(this Type type)
-        {
-            return type.GetTypeInfo().ImplementedInterfaces;
-        }
+        public static IEnumerable<Type> GetInterfaces(this Type type) => type.GetTypeInfo().ImplementedInterfaces;
 
-        public static PropertyInfo[] GetProperties(this Type type)
+        public static PropertyInfo[] GetInstanceProperties(this Type type)
         {
             var properties = type.GetTypeInfo().DeclaredProperties;
 
@@ -103,35 +97,19 @@ namespace Factly
             return properties.ToArray();
         }
 
-        public static bool IsAssignableFrom(this Type type, Type other)
-        {
-            return type.GetTypeInfo().IsAssignableFrom(other.GetTypeInfo());
-        }
+        public static bool IsAssignableFrom(this Type type, Type other) => type.GetTypeInfo().IsAssignableFrom(other.GetTypeInfo());
 
-        public static IEnumerable<Type> GetExportedTypes(this Assembly assembly)
-        {
-            return assembly.ExportedTypes;
-        }
+        public static IEnumerable<Type> GetExportedTypes(this Assembly assembly) => assembly.ExportedTypes;
 
-        public static bool HasGetMethod(this PropertyInfo propertyInfo)
-        {
-            return propertyInfo.GetMethod != null;
-        }
+        public static bool HasGetMethod(this PropertyInfo propertyInfo) => propertyInfo.GetMethod != null;
 #else
-        public static Type GetBaseType(this Type type)
-        {
-            return type.BaseType;
-        }
+        public static Type GetBaseType(this Type type) => type.BaseType;
 
-        public static Type GetTypeInfo(this Type type)
-        {
-            return type;
-        }
+        public static Type GetTypeInfo(this Type type) => type;
 
-        public static bool HasGetMethod(this PropertyInfo propertyInfo)
-        {
-            return propertyInfo.GetGetMethod(true) != null;
-        }
+        public static bool HasGetMethod(this PropertyInfo propertyInfo) => propertyInfo.GetGetMethod(true) != null;
+
+        public static PropertyInfo[] GetInstanceProperties(this Type type) => type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 #endif
 
 #if !FEATURE_CUSTOMATTRIBUTE
