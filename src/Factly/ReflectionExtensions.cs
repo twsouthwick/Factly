@@ -30,12 +30,13 @@ namespace Factly
             var isValueType = property.PropertyType.IsValueType;
             var callingClass = property.DeclaringType;
             var propertyType = isValueType ? typeof(object) : property.PropertyType;
-            var method = new DynamicMethod("ValidatorFastPropertyGetter", propertyType, new[] { typeof(object) }, callingClass, true);
+            var method = new DynamicMethod($"ValidatorFastPropertyGetter_{property.DeclaringType.FullName}_{property.Name}", propertyType, new[] { typeof(object) }, callingClass, true);
+            var getMethod = property.GetGetMethod(true);
 
             var il = method.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(callingClass.IsValueType ? OpCodes.Unbox : OpCodes.Castclass, callingClass);
-            il.Emit(OpCodes.Call, property.GetGetMethod(true));
+            il.Emit(getMethod.IsAbstract ? OpCodes.Callvirt : OpCodes.Call, getMethod);
             il.Emit(OpCodes.Ret);
 
             return (Func<object, object>)method.CreateDelegate(typeof(Func<object, object>));
