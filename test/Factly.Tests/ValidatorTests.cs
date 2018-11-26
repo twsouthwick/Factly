@@ -76,6 +76,27 @@ namespace Factly
         }
 
         [Fact]
+        public void AbstractPropertyTest()
+        {
+            var count = 0;
+            var builder = new ValidatorBuilder<object>();
+            builder.AddKnownType<TestWithAbstractProperty>();
+            builder.AddPropertyFilter<TestWithAbstractProperty>();
+            builder.AddConstraint(_ => new DelegateConstraint(instanceValue =>
+            {
+                var value = Assert.IsType<string>(instanceValue);
+                Assert.Equal(nameof(TestWithDerivedAbstractProperty), value);
+                count++;
+                return true;
+            }));
+            var validator = builder.Build();
+
+            validator.Validate(new TestWithDerivedAbstractProperty(), null);
+
+            Assert.Equal(1, count);
+        }
+
+        [Fact]
         public void VirtualPropertyDerived()
         {
             var count = 0;
@@ -314,6 +335,16 @@ namespace Factly
         private class TestWithDerivedVirtualProperty : TestWithVirtualProperty
         {
             public override string Test { get; set; } = nameof(TestWithDerivedVirtualProperty);
+        }
+
+        private abstract class TestWithAbstractProperty
+        {
+            public abstract string Test { get; set; }
+        }
+
+        private class TestWithDerivedAbstractProperty : TestWithAbstractProperty
+        {
+            public override string Test { get; set; } = nameof(TestWithDerivedAbstractProperty);
         }
 
         private class TestWithVirtualPropertyNew
