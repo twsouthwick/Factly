@@ -57,6 +57,12 @@ namespace Factly
                 return default;
             }
 
+            // Skip all indexers
+            if (property.GetIndexParameters().Length != 0)
+            {
+                return default;
+            }
+
             var constraints = GetConstraints(property, context.Builder.Constraints, context);
             var shouldFollow = ShouldFollow(property, context.Builder.PropertyFilters);
 

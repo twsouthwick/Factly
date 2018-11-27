@@ -306,6 +306,33 @@ namespace Factly
             }
         }
 
+        [Fact]
+        public void SkipIndexer()
+        {
+            var builder = new ValidatorBuilder<object>();
+            var count = 0;
+
+            builder.AddEmptyConstraint(true);
+            builder.AddKnownType<ClassWithIndexer>();
+            builder.AddConstraint((property, _) =>
+            {
+                Assert.Empty(property.GetIndexParameters());
+
+                count++;
+
+                return null;
+            });
+
+            var validator = builder.Build();
+            var context = new TestValidationContext();
+
+            validator.Validate(new ClassWithIndexer(), context.Context);
+
+            Assert.Equal(1, count);
+            Assert.Empty(context.Errors);
+            Assert.Empty(context.UnknownTypes);
+        }
+
 #if FEATURE_PARALLEL
         [Fact(Skip = "Non deterministic failures")]
         public async Task AsyncValidation()
@@ -503,6 +530,11 @@ namespace Factly
             public string Name { get; set; }
 
             public CyclicEnumerable[] Others { get; set; }
+        }
+
+        private class ClassWithIndexer
+        {
+            public int this[int i] => 5;
         }
     }
 }
