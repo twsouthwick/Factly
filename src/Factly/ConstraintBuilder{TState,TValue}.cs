@@ -16,16 +16,14 @@ namespace Factly
     {
         private readonly Dictionary<Type, Func<object, TValue>> _mappers = new Dictionary<Type, Func<object, TValue>>();
 
-        internal ConstraintBuilder(ValidatorBuilder<TState> builder, Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> factory)
+        internal ConstraintBuilder(Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> factory)
             : base(factory)
         {
-            ExpandEnumerables(builder);
         }
 
-        internal ConstraintBuilder(ValidatorBuilder<TState> builder, Func<Type, BuilderContext<TState>, IConstraint<TState>> factory)
+        internal ConstraintBuilder(Func<Type, BuilderContext<TState>, IConstraint<TState>> factory)
             : base(factory)
         {
-            ExpandEnumerables(builder);
         }
 
         /// <summary>
@@ -74,19 +72,6 @@ namespace Factly
             }
         }
 
-        private static void ExpandEnumerables(ValidatorBuilder<TState> builder)
-        {
-            builder.AddConstraint((property, ctx) =>
-            {
-                if (typeof(IEnumerable<TValue>).IsAssignableFrom(property.PropertyType))
-                {
-                    return ExpansionConstraint.Instance;
-                }
-
-                return null;
-            });
-        }
-
         private class EnumerableConstraint : IConstraint<TState>, IConstraintEnumerable
         {
             private readonly IConstraint<TState> _other;
@@ -123,25 +108,6 @@ namespace Factly
             public object Convert(object value) => _func(value);
 
             public void Validate(object value, ConstraintContext<TState> context) => _constraint.Validate(value, context);
-        }
-
-        private class ExpansionConstraint : IConstraint<TState>, IConstraintEnumerable
-        {
-            private ExpansionConstraint()
-            {
-            }
-
-            public static ExpansionConstraint Instance { get; } = new ExpansionConstraint();
-
-            public string Id => nameof(ExpansionConstraint);
-
-            public object Context => null;
-
-            public IEnumerable<object> GetItems(object instance) => (IEnumerable<object>)instance;
-
-            public void Validate(object value, ConstraintContext<TState> context)
-            {
-            }
         }
     }
 }

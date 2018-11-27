@@ -160,7 +160,6 @@ namespace Factly
             var key = Guid.NewGuid().ToString();
             var builder = new ValidatorBuilder<object>();
 
-            builder.AddKnownType<CyclicEnumerable>();
             builder.AddConstraint<CyclicEnumerable>((i, ctx) =>
             {
                 if (i.Name is null)
@@ -190,11 +189,14 @@ namespace Factly
             Assert.Equal(key, error.Id);
 
             Assert.Collection(context.Items,
-                i => Assert.Equal(i, item),
-                i => Assert.Equal(i, item.Others[0]),
-                i => Assert.Equal(i, item.Others[1]),
-                i => Assert.Equal(i, item.Others[2]),
-                i => Assert.Equal(i, item.Others[0].Others[0]));
+                i => Assert.Equal(item, i),
+                i => Assert.Equal(item.Others, i),
+                i => Assert.Equal(item.Others[0], i),
+                i => Assert.Equal(item.Others[1], i),
+                i => Assert.Equal(item.Others[2], i),
+                i => Assert.Equal(item.Others[0].Others, i),
+                i => Assert.Equal(item.Others[0].Others[0], i),
+                i => Assert.Equal(item.Others[1].Others, i));
         }
 
         [Fact]
@@ -236,10 +238,11 @@ namespace Factly
             Assert.Equal(key, error.Id);
 
             Assert.Collection(context.Items,
-                i => Assert.Equal(i, item),
-                i => Assert.Equal(i, item.Items[0]),
-                i => Assert.Equal(i, item.Items[1]),
-                i => Assert.Equal(i, item.Items[2]));
+                i => Assert.Equal(item, i),
+                i => Assert.Equal(item.Items, i),
+                i => Assert.Equal(item.Items[0], i),
+                i => Assert.Equal(item.Items[1], i),
+                i => Assert.Equal(item.Items[2], i));
         }
 
         [Fact]

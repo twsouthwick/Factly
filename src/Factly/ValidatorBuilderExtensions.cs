@@ -2,9 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace Factly
 {
@@ -19,9 +18,6 @@ namespace Factly
         /// <param name="builder">Current <see cref="ValidatorBuilder{TOptions}"/>.</param>
         /// <param name="factory">The factory to create a constraint given an attribute instance.</param>
         /// <returns>A <see cref="ConstraintBuilder{TValue}"/> instance.</returns>
-        public static ConstraintBuilder<TState> AddConstraint<TState>(this ValidatorBuilder<TState> builder, Func<PropertyInfo, IConstraint<TState>> factory)
-        {
-            return builder.AddConstraint((property, _) => factory(property));
-        }
+        public static ConstraintBuilder<TState> AddConstraint<TState>(this ValidatorBuilder<TState> builder, Func<PropertyInfo, IConstraint<TState>> factory) => builder.AddConstraint((property, _) => factory(property));
     }
 }

@@ -72,6 +72,11 @@ namespace Factly
         {
             var value = Getter(item);
 
+            if (IncludeChildren)
+            {
+                yield return value;
+            }
+
             foreach (var constraint in _constraints)
             {
                 var updated = constraint is IObjectConverter converter ? converter.Convert(value) : value;
@@ -87,11 +92,6 @@ namespace Factly
                 {
                     constraint.Validate(updated, new ConstraintContext<TState>(context, constraint, Property, item, updated));
                 }
-            }
-
-            if (IncludeChildren)
-            {
-                yield return value;
             }
         }
 
