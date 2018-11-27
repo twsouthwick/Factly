@@ -28,19 +28,6 @@ namespace Factly
             ExpandEnumerables(builder);
         }
 
-        private void ExpandEnumerables(ValidatorBuilder<TState> builder)
-        {
-            builder.AddConstraint((property, ctx) =>
-            {
-                if (typeof(IEnumerable<TValue>).IsAssignableFrom(property.PropertyType))
-                {
-                    return ExpansionConstraint.Instance;
-                }
-
-                return null;
-            });
-        }
-
         /// <summary>
         /// Add a mapping function between <typeparamref name="TFrom"/> and <typeparamref name="TValue"/>.
         /// </summary>
@@ -85,6 +72,19 @@ namespace Factly
             {
                 throw new ValidatorBuilderException(SR.UnknownTypeEncountered, Errors.UnsupportedTypeForConstraint, property.DeclaringType, property);
             }
+        }
+
+        private static void ExpandEnumerables(ValidatorBuilder<TState> builder)
+        {
+            builder.AddConstraint((property, ctx) =>
+            {
+                if (typeof(IEnumerable<TValue>).IsAssignableFrom(property.PropertyType))
+                {
+                    return ExpansionConstraint.Instance;
+                }
+
+                return null;
+            });
         }
 
         private class EnumerableConstraint : IConstraint<TState>, IConstraintEnumerable
