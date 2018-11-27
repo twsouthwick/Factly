@@ -69,6 +69,18 @@ namespace Factly
                 }
             }
 
+            AddPropertyFilter<T>();
+
+            AddConstraint((property, ctx) =>
+            {
+                if (typeof(IEnumerable<T>).IsAssignableFrom(property.PropertyType))
+                {
+                    return ExpansionConstraint<TState>.Instance;
+                }
+
+                return null;
+            });
+
             return AddConstraint(new ConstraintBuilder<TState, T>(Generator));
         }
 
@@ -104,7 +116,7 @@ namespace Factly
         {
             foreach (var type in types)
             {
-                Types.Add(type);
+                AddKnownType(type);
             }
 
             return this;
@@ -238,7 +250,7 @@ namespace Factly
         {
             return AddPropertyFilter(propertyInfo =>
             {
-                return typeof(T).IsAssignableFrom(propertyInfo.PropertyType);
+                return typeof(T).IsAssignableFrom(propertyInfo.PropertyType) || typeof(IEnumerable<T>).IsAssignableFrom(propertyInfo.PropertyType);
             });
         }
 

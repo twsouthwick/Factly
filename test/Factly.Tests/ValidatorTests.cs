@@ -153,6 +153,99 @@ namespace Factly
         }
 
         [Fact]
+        public void EnumerablePropertiesWithCycle()
+        {
+            // Arrange
+            var message = Guid.NewGuid().ToString();
+            var key = Guid.NewGuid().ToString();
+            var builder = new ValidatorBuilder<object>();
+
+            builder.AddConstraint<CyclicEnumerable>((i, ctx) =>
+            {
+                if (i.Name is null)
+                {
+                    ctx.RaiseError(message);
+                }
+            }, key);
+
+            var validator = builder.Build();
+
+            var context = new TestValidationContext();
+            var item = new CyclicEnumerable { Name = "0" };
+
+            item.Others = new[]
+            {
+                new CyclicEnumerable { Name = "1", Others = new[] { new CyclicEnumerable { Name = "2" } } },
+                new CyclicEnumerable { Name = null, Others = new[] { item } },
+                new CyclicEnumerable { Name = "3" },
+            };
+
+            // Act
+            validator.Validate(item, context.Context);
+
+            // Assert
+            var error = Assert.Single(context.Errors);
+            Assert.Equal(message, error.Message);
+            Assert.Equal(key, error.Id);
+
+            Assert.Collection(context.Items,
+                i => Assert.Equal(item, i),
+                i => Assert.Equal(item.Others, i),
+                i => Assert.Equal(item.Others[0], i),
+                i => Assert.Equal(item.Others[1], i),
+                i => Assert.Equal(item.Others[2], i),
+                i => Assert.Equal(item.Others[0].Others, i),
+                i => Assert.Equal(item.Others[0].Others[0], i),
+                i => Assert.Equal(item.Others[1].Others, i));
+        }
+
+        [Fact]
+        public void EnumerableProperties()
+        {
+            // Arrange
+            var message = Guid.NewGuid().ToString();
+            var key = Guid.NewGuid().ToString();
+            var builder = new ValidatorBuilder<object>();
+
+            builder.AddKnownType<TestWithEnumerableProperty1>();
+            builder.AddConstraint<StringItem>((i, ctx) =>
+            {
+                if (i.Item is null)
+                {
+                    ctx.RaiseError(message);
+                }
+            }, key);
+
+            var validator = builder.Build();
+
+            var context = new TestValidationContext();
+            var item = new TestWithEnumerableProperty1
+            {
+                Items = new[]
+                {
+                    new StringItem { Item = "1" },
+                    new StringItem { Item = null },
+                    new StringItem { Item = "3" },
+                },
+            };
+
+            // Act
+            validator.Validate(item, context.Context);
+
+            // Assert
+            var error = Assert.Single(context.Errors);
+            Assert.Equal(message, error.Message);
+            Assert.Equal(key, error.Id);
+
+            Assert.Collection(context.Items,
+                i => Assert.Equal(item, i),
+                i => Assert.Equal(item.Items, i),
+                i => Assert.Equal(item.Items[0], i),
+                i => Assert.Equal(item.Items[1], i),
+                i => Assert.Equal(item.Items[2], i));
+        }
+
+        [Fact]
         public void StaticProperty()
         {
             var builder = new ValidatorBuilder<object>();
@@ -393,6 +486,23 @@ namespace Factly
         private class StaticPropertyBoolean
         {
             public static object Test { get; } = new object();
+        }
+
+        private class TestWithEnumerableProperty1
+        {
+            public StringItem[] Items { get; set; }
+        }
+
+        private class StringItem
+        {
+            public string Item { get; set; }
+        }
+
+        private class CyclicEnumerable
+        {
+            public string Name { get; set; }
+
+            public CyclicEnumerable[] Others { get; set; }
         }
     }
 }

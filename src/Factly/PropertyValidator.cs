@@ -68,18 +68,31 @@ namespace Factly
             return new PropertyValidator<TState>(property, shouldFollow, constraints);
         }
 
-        public object Validate(object item, ValidationContext<TState> context)
+        public IEnumerable<object> Validate(object item, ValidationContext<TState> context)
         {
             var value = Getter(item);
+
+            if (IncludeChildren)
+            {
+                yield return value;
+            }
 
             foreach (var constraint in _constraints)
             {
                 var updated = constraint is IObjectConverter converter ? converter.Convert(value) : value;
 
-                constraint.Validate(updated, new ConstraintContext<TState>(context, constraint, Property, item, updated));
+                if (updated != null && constraint is IConstraintEnumerable enumerable)
+                {
+                    foreach (var inner in enumerable.GetItems(updated))
+                    {
+                        yield return inner;
+                    }
+                }
+                else
+                {
+                    constraint.Validate(updated, new ConstraintContext<TState>(context, constraint, Property, item, updated));
+                }
             }
-
-            return value;
         }
 
         private static bool ShouldFollow(PropertyInfo property, List<Func<PropertyInfo, bool>> selectors)

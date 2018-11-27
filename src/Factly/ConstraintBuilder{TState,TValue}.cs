@@ -58,6 +58,10 @@ namespace Factly
             {
                 return constraint;
             }
+            else if (typeof(IEnumerable<TValue>).IsAssignableFrom(property.PropertyType))
+            {
+                return new EnumerableConstraint(constraint);
+            }
             else if (_mappers.TryGetValue(property.PropertyType, out var func))
             {
                 return new TypedConstraint(constraint, func);
@@ -66,6 +70,24 @@ namespace Factly
             {
                 throw new ValidatorBuilderException(SR.UnknownTypeEncountered, Errors.UnsupportedTypeForConstraint, property.DeclaringType, property);
             }
+        }
+
+        private class EnumerableConstraint : IConstraint<TState>, IConstraintEnumerable
+        {
+            private readonly IConstraint<TState> _other;
+
+            public EnumerableConstraint(IConstraint<TState> other)
+            {
+                _other = other;
+            }
+
+            public string Id => _other.Id;
+
+            public object Context => _other.Context;
+
+            public IEnumerable<object> GetItems(object instance) => (IEnumerable<object>)instance;
+
+            public void Validate(object value, ConstraintContext<TState> context) => _other.Validate(value, context);
         }
 
         private class TypedConstraint : IConstraint<TState>, IObjectConverter
