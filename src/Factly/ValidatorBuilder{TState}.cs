@@ -46,7 +46,7 @@ namespace Factly
         /// <param name="constraintGenerator">The generator to create a <see cref="IConstraint{TState}"/>.</param>
         /// <returns>A builder instance for the constraint.</returns>
         public ConstraintBuilder<TState, T> AddConstraint<T>(Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> constraintGenerator)
-            => AddConstraint(new ConstraintBuilder<TState, T>(constraintGenerator));
+            => AddConstraint(new ConstraintBuilder<TState, T>(this, constraintGenerator));
 
         /// <summary>
         /// Adds a constraint generator for an input <see cref="Type"/>.
@@ -69,7 +69,7 @@ namespace Factly
                 }
             }
 
-            return AddConstraint(new ConstraintBuilder<TState, T>(Generator));
+            return AddConstraint(new ConstraintBuilder<TState, T>(this, Generator));
         }
 
         /// <summary>

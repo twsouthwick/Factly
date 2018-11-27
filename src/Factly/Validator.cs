@@ -144,11 +144,12 @@ namespace Factly
 
                     foreach (var property in type.Properties)
                     {
-                        var value = property.Validate(current, context);
-
-                        if (value != null && property.IncludeChildren)
+                        foreach (var child in property.Validate(current, context))
                         {
-                            yield return value;
+                            if (child != null)
+                            {
+                                yield return child;
+                            }
                         }
                     }
                 }
