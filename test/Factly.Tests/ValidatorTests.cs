@@ -126,7 +126,7 @@ namespace Factly
             var builder = new ValidatorBuilder<object>();
             var constraintId = Guid.NewGuid().ToString();
 
-            builder.AddConstraint<SimpleBoolean>((c, ctx) =>
+            builder.AddTypeConstraint<SimpleBoolean>((c, ctx) =>
             {
                 if (!c.IsTrue)
                 {
@@ -160,7 +160,7 @@ namespace Factly
             var key = Guid.NewGuid().ToString();
             var builder = new ValidatorBuilder<object>();
 
-            builder.AddConstraint<CyclicEnumerable>((i, ctx) =>
+            builder.AddTypeConstraint<CyclicEnumerable>((i, ctx) =>
             {
                 if (i.Name is null)
                 {
@@ -208,7 +208,7 @@ namespace Factly
             var builder = new ValidatorBuilder<object>();
 
             builder.AddKnownType<TestWithEnumerableProperty1>();
-            builder.AddConstraint<StringItem>((i, ctx) =>
+            builder.AddTypeConstraint<StringItem>((i, ctx) =>
             {
                 if (i.Item is null)
                 {
@@ -253,7 +253,7 @@ namespace Factly
 
             builder.AddEmptyConstraint(true);
             builder.AddKnownType<StaticPropertyBoolean>();
-            builder.AddConstraint((property, _) =>
+            builder.AddPropertyConstraintFactory((property, _) =>
             {
                 count++;
                 Assert.NotEqual(typeof(StaticPropertyBoolean).GetProperty(nameof(StaticPropertyBoolean.Test)), property);
@@ -280,7 +280,7 @@ namespace Factly
             var builder = new ValidatorBuilder<object>();
             var constraintId = Guid.NewGuid().ToString();
 
-            builder.AddConstraint<SimpleBoolean>((c, ctx) =>
+            builder.AddTypeConstraint<SimpleBoolean>((c, ctx) =>
             {
                 if (!c.IsTrue)
                 {
@@ -314,7 +314,7 @@ namespace Factly
 
             builder.AddEmptyConstraint(true);
             builder.AddKnownType<ClassWithIndexer>();
-            builder.AddConstraint((property, _) =>
+            builder.AddPropertyConstraintFactory((property, _) =>
             {
                 Assert.Empty(property.GetIndexParameters());
 

@@ -45,7 +45,7 @@ namespace Factly
         /// <typeparam name="T">Type of the constraint.</typeparam>
         /// <param name="constraintGenerator">The generator to create a <see cref="IConstraint{TState}"/>.</param>
         /// <returns>A builder instance for the constraint.</returns>
-        public ConstraintBuilder<TState, T> AddConstraint<T>(Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> constraintGenerator)
+        public ConstraintBuilder<TState, T> AddPropertyConstraintFactory<T>(Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> constraintGenerator)
             => AddConstraint(new ConstraintBuilder<TState, T>(constraintGenerator));
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Factly
         /// <param name="constraint">The constraint function.</param>
         /// <param name="constraintId">The id for the constraint.</param>
         /// <returns>A builder instance for the constraint.</returns>
-        public ConstraintBuilder<TState, T> AddConstraint<T>(Action<T, ConstraintContext<TState>> constraint, string constraintId)
+        public ConstraintBuilder<TState, T> AddTypeConstraint<T>(Action<T, ConstraintContext<TState>> constraint, string constraintId)
         {
             IConstraint<TState> Generator(Type type, BuilderContext<TState> ctx)
             {
@@ -71,7 +71,7 @@ namespace Factly
 
             AddPropertyFilter<T>();
 
-            AddConstraint((property, ctx) =>
+            AddPropertyConstraintFactory((property, ctx) =>
             {
                 if (typeof(IEnumerable<T>).IsAssignableFrom(property.PropertyType))
                 {
@@ -89,7 +89,7 @@ namespace Factly
         /// </summary>
         /// <param name="constraintGenerator">The generator to create a <see cref="IConstraint{TState}"/>.</param>
         /// <returns>A builder instance for the constraint.</returns>
-        public ConstraintBuilder<TState> AddConstraint(Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> constraintGenerator)
+        public ConstraintBuilder<TState> AddPropertyConstraintFactory(Func<PropertyInfo, BuilderContext<TState>, IConstraint<TState>> constraintGenerator)
         {
             var builder = new ConstraintBuilder<TState>(constraintGenerator);
             Constraints.Add(builder);
@@ -228,7 +228,7 @@ namespace Factly
         public ConstraintBuilder<TState, TValue> AddAttributeConstraint<TAttribute, TValue>(Func<TAttribute, PropertyInfo, BuilderContext<TState>, IConstraint<TState>> factory)
             where TAttribute : Attribute
         {
-            return AddConstraint<TValue>((propertyInfo, ctx) =>
+            return AddPropertyConstraintFactory<TValue>((propertyInfo, ctx) =>
             {
                 var attribute = propertyInfo.GetCustomAttribute<TAttribute>();
 

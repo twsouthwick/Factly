@@ -50,7 +50,7 @@ namespace Factly
             var context = default(BuilderContext<object>);
 
             builder.AddEmptyConstraint(withType: true);
-            builder.AddConstraint((property, ctx) =>
+            builder.AddPropertyConstraintFactory((property, ctx) =>
             {
                 context = ctx;
                 return null;
