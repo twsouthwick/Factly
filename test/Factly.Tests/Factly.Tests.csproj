@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net47;net452;netcoreapp2.0;netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>net47;net452;netcoreapp2.1</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);CA1822;CA1812;SA0001</NoWarn>
     <RootNamespace>Factly</RootNamespace>
