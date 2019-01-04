@@ -13,7 +13,6 @@ namespace Factly
     public readonly struct ConstraintContext<TState>
     {
         private readonly ValidationContext<TState> _context;
-        private readonly PropertyInfo _property;
         private readonly IConstraint<TState> _constraint;
         private readonly object _instance;
         private readonly object _value;
@@ -27,15 +26,21 @@ namespace Factly
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _constraint = constraint ?? throw new ArgumentNullException(nameof(constraint));
-            _property = property;
             _instance = instance;
             _value = value;
+
+            Property = property;
         }
 
         /// <summary>
         /// Gets the validation state.
         /// </summary>
         public TState State => _context == null ? default : _context.State;
+
+        /// <summary>
+        /// Gets the property that the value was on.
+        /// </summary>
+        public PropertyInfo Property { get; }
 
         /// <summary>
         /// Raise an error for the current constraint and value.
@@ -48,7 +53,7 @@ namespace Factly
                 throw new InvalidOperationException();
             }
 
-            _context.OnError(new ValidationError(_value, _instance, _property, _constraint.Id, _constraint.Context, message));
+            _context.OnError(new ValidationError(_value, _instance, Property, _constraint.Id, _constraint.Context, message));
         }
     }
 }
